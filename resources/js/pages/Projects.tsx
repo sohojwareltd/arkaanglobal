@@ -3,6 +3,7 @@ import { MapPin, Users } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
+import WhenVisible from '@/components/ui/when-visible';
 import { cn } from '@/lib/utils';
 
 export default function Projects() {
@@ -113,7 +114,12 @@ export default function Projects() {
                 <div className="container-custom">
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {filteredProjects.map((project, index) => (
-                            <div key={index} className="card-elevated overflow-hidden group">
+                            <WhenVisible
+                                key={index}
+                                className="card-elevated overflow-hidden group"
+                                options={{ threshold: 0.1 }}
+                                style={{ transitionDelay: `${index * 60}ms` }}
+                            >
                                 <div className="relative aspect-video overflow-hidden">
                                     <img
                                         src={project.image}
@@ -140,7 +146,7 @@ export default function Projects() {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </WhenVisible>
                         ))}
                     </div>
                 </div>

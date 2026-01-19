@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import WhenVisible from '@/components/ui/when-visible';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Contact() {
@@ -77,7 +78,7 @@ export default function Contact() {
                 <div className="container-custom">
                     <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
                         {/* Contact Form */}
-                        <div className="card-elevated p-8">
+                        <WhenVisible className="card-elevated p-8" options={{ threshold: 0.1 }}>
                             <h2 className="mb-6 text-2xl font-bold text-foreground">
                                 {language === 'en' ? 'Send Us a Message' : 'أرسل لنا رسالة'}
                             </h2>
@@ -115,37 +116,43 @@ export default function Contact() {
                                     {isSubmitting ? (language === 'en' ? 'Sending...' : 'جاري الإرسال...') : t('contact.form.submit')}
                                 </Button>
                             </form>
-                        </div>
+                        </WhenVisible>
 
                         {/* Contact Info */}
                         <div>
-                            <h2 className="mb-6 text-2xl font-bold text-foreground">{t('contact.info.title')}</h2>
-                            <div className="space-y-6">
-                                {contactInfo.map((info, index) => (
-                                    <div key={index} className="flex gap-4">
-                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl hero-gradient">
-                                            <info.icon className="h-6 w-6 text-primary-foreground" />
+                            <WhenVisible options={{ threshold: 0.1 }}>
+                                <h2 className="mb-6 text-2xl font-bold text-foreground">{t('contact.info.title')}</h2>
+                                <div className="space-y-6">
+                                    {contactInfo.map((info, index) => (
+                                        <div key={index} className="flex gap-4">
+                                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl hero-gradient">
+                                                <info.icon className="h-6 w-6 text-primary-foreground" />
+                                            </div>
+                                            <div>
+                                                <h3 className="mb-1 font-semibold text-foreground">{info.title}</h3>
+                                                {info.link ? (
+                                                    <a
+                                                        href={info.link}
+                                                        className="text-muted-foreground transition-colors hover:text-primary"
+                                                        dir={info.title === t('contact.info.phone') ? 'ltr' : undefined}
+                                                    >
+                                                        {info.value}
+                                                    </a>
+                                                ) : (
+                                                    <p className="whitespace-pre-line text-muted-foreground">{info.value}</p>
+                                                )}
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="mb-1 font-semibold text-foreground">{info.title}</h3>
-                                            {info.link ? (
-                                                <a
-                                                    href={info.link}
-                                                    className="text-muted-foreground transition-colors hover:text-primary"
-                                                    dir={info.title === t('contact.info.phone') ? 'ltr' : undefined}
-                                                >
-                                                    {info.value}
-                                                </a>
-                                            ) : (
-                                                <p className="whitespace-pre-line text-muted-foreground">{info.value}</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            </WhenVisible>
 
                             {/* Map */}
-                            <div className="mt-8 overflow-hidden rounded-xl border border-border">
+                            <WhenVisible
+                                className="mt-8 overflow-hidden rounded-xl border border-border"
+                                options={{ threshold: 0.1 }}
+                                style={{ transitionDelay: '120ms' }}
+                            >
                                 <iframe
                                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3624.4747989747!2d46.6823!3d24.7136!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjTCsDQyJzQ5LjAiTiA0NsKwNDAnNTYuMyJF!5e0!3m2!1sen!2ssa!4v1234567890"
                                     width="100%"
@@ -156,7 +163,7 @@ export default function Contact() {
                                     referrerPolicy="no-referrer-when-downgrade"
                                     title="Office Location"
                                 />
-                            </div>
+                            </WhenVisible>
                         </div>
                     </div>
                 </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Quote } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { useLanguage } from '@/contexts/LanguageContext';
+import WhenVisible from '@/components/ui/when-visible';
 
 export default function Clients() {
     const { t, language } = useLanguage();
@@ -68,11 +69,16 @@ export default function Clients() {
                 <div className="container-custom">
                     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
                         {clients.map((client, index) => (
-                            <div key={index} className="card-elevated p-6 text-center">
+                            <WhenVisible
+                                key={index}
+                                className="card-elevated p-6 text-center"
+                                options={{ threshold: 0.1 }}
+                                style={{ transitionDelay: `${index * 40}ms` }}
+                            >
                                 <div className="mb-2 text-3xl font-bold text-primary">{client.abbr}</div>
                                 <div className="mb-1 text-sm font-medium text-foreground">{client.name}</div>
                                 <div className="text-xs text-muted-foreground">{client.sector}</div>
-                            </div>
+                            </WhenVisible>
                         ))}
                     </div>
                 </div>
@@ -86,7 +92,12 @@ export default function Clients() {
                     </h2>
                     <div className="grid gap-6 md:grid-cols-3">
                         {testimonials.map((testimonial, index) => (
-                            <div key={index} className="card-elevated p-6">
+                            <WhenVisible
+                                key={index}
+                                className="card-elevated p-6"
+                                options={{ threshold: 0.15 }}
+                                style={{ transitionDelay: `${index * 80}ms` }}
+                            >
                                 <Quote className="mb-4 h-10 w-10 text-primary/30" />
                                 <p className="mb-6 italic text-muted-foreground">"{testimonial.quote}"</p>
                                 <div className="border-t border-border pt-4">
@@ -94,7 +105,7 @@ export default function Clients() {
                                     <p className="text-sm text-muted-foreground">{testimonial.position}</p>
                                     <p className="text-sm text-primary">{testimonial.company}</p>
                                 </div>
-                            </div>
+                            </WhenVisible>
                         ))}
                     </div>
                 </div>

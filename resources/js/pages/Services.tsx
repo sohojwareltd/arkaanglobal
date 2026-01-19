@@ -2,6 +2,7 @@ import React from 'react';
 import { HardHat, Users, FileSignature, Wrench, CheckCircle2 } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { useLanguage } from '@/contexts/LanguageContext';
+import WhenVisible from '@/components/ui/when-visible';
 
 export default function Services() {
     const { t, language } = useLanguage();
@@ -95,7 +96,12 @@ export default function Services() {
                 <div className="container-custom">
                     <div className="space-y-16">
                         {services.map((service, index) => (
-                            <div key={service.id} id={service.id} className="scroll-mt-24">
+                            <WhenVisible
+                                key={service.id}
+                                id={service.id}
+                                className="scroll-mt-24"
+                                options={{ threshold: 0.1 }}
+                            >
                                 <div
                                     className={`grid items-start gap-8 lg:grid-cols-2 lg:gap-12 ${
                                         index % 2 === 1 ? 'lg:flex-row-reverse' : ''
@@ -167,7 +173,7 @@ export default function Services() {
                                     </div>
                                 </div>
                                 {index < services.length - 1 && <div className="mt-16 border-b border-border" />}
-                            </div>
+                            </WhenVisible>
                         ))}
                     </div>
                 </div>
