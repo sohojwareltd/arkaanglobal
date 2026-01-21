@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 export default function Projects() {
     const { t, language } = useLanguage();
     const [activeFilter, setActiveFilter] = useState('all');
+    const [isFiltering, setIsFiltering] = useState(false);
 
     const filters = [
         { id: 'all', label: t('projects.filter.all') },
@@ -75,6 +76,19 @@ export default function Projects() {
 
     const filteredProjects = activeFilter === 'all' ? projects : projects.filter((p) => p.category === activeFilter);
 
+    const handleFilterChange = (id: string) => {
+        if (id === activeFilter) {
+            return;
+        }
+
+        setIsFiltering(true);
+
+        setTimeout(() => {
+            setActiveFilter(id);
+            setIsFiltering(false);
+        }, 180);
+    };
+
     return (
         <Layout>
             {/* Hero */}
@@ -91,7 +105,7 @@ export default function Projects() {
             </section>
 
             {/* Filters */}
-            <section className="sticky top-16 z-40 border-b border-border bg-background py-8 lg:top-20">
+            <section className=" top-16 z-40 border-b border-border bg-background py-8 lg:top-20">
                 <div className="container-custom">
                     <div className="flex flex-wrap justify-center gap-2">
                         {filters.map((filter) => (
@@ -99,7 +113,7 @@ export default function Projects() {
                                 key={filter.id}
                                 variant={activeFilter === filter.id ? 'default' : 'outline'}
                                 size="sm"
-                                onClick={() => setActiveFilter(filter.id)}
+                                onClick={() => handleFilterChange(filter.id)}
                                 className={cn(activeFilter === filter.id && 'hero-gradient border-0')}
                             >
                                 {filter.label}
@@ -112,13 +126,18 @@ export default function Projects() {
             {/* Projects Grid */}
             <section className="section-padding">
                 <div className="container-custom">
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <div
+                        className={cn(
+                            'grid gap-6 md:grid-cols-2 lg:grid-cols-3 transition-all duration-500',
+                            isFiltering ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0',
+                        )}
+                    >
                         {filteredProjects.map((project, index) => (
                             <WhenVisible
                                 key={index}
                                 className="card-elevated overflow-hidden group"
                                 options={{ threshold: 0.1 }}
-                                style={{ transitionDelay: `${index * 60}ms` }}
+                                style={{ transitionDelay: `${index * 40}ms` }}
                             >
                                 <div className="relative aspect-video overflow-hidden">
                                     <img

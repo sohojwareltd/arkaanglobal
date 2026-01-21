@@ -102,6 +102,10 @@ const translations: Record<Language, Record<string, string>> = {
         'about.values.compliance': 'Compliance',
         'about.values.compliance.desc': 'Full adherence to Saudi labor laws.',
 
+        // About Leaders
+        'about.leaders.title': 'Our Leaders',
+        'about.leaders.subtitle': 'Experienced leadership guiding Arkaan Global Contracting forward.',
+
         // Services Page
         'services.page.title': 'Our Services',
         'services.page.subtitle': 'Comprehensive Workforce Solutions',
@@ -244,6 +248,10 @@ const translations: Record<Language, Record<string, string>> = {
         'about.values.compliance': 'الامتثال',
         'about.values.compliance.desc': 'الالتزام الكامل بقوانين العمل السعودية.',
 
+        // About Leaders
+        'about.leaders.title': 'قيادتنا',
+        'about.leaders.subtitle': 'قيادة ذات خبرة تقود شركة أركان جلوبال للمقاولات نحو المستقبل.',
+
         // Services Page
         'services.page.title': 'خدماتنا',
         'services.page.subtitle': 'حلول شاملة للقوى العاملة',
@@ -301,7 +309,7 @@ const translations: Record<Language, Record<string, string>> = {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export function LanguageProvider({ children }: { children: ReactNode }): JSX.Element {
+export function LanguageProvider({ children }: { children: ReactNode }) {
     const [language, setLanguage] = useState<Language>('en');
     const direction: Direction = language === 'ar' ? 'rtl' : 'ltr';
 

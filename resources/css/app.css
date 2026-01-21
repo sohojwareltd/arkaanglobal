@@ -132,6 +132,23 @@
     .animation-delay-400 {
         animation-delay: 400ms;
     }
+
+    /* Diagonal clip paths for images */
+    .clip-path-diagonal {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 85%);
+    }
+
+    .clip-path-diagonal-rtl {
+        clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+    }
+
+    .clip-path-diagonal-top {
+        clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .clip-path-diagonal-top-rtl {
+        clip-path: polygon(0 0, 100% 15%, 100% 100%, 0 100%);
+    }
 }
 
 @keyframes fadeIn {
