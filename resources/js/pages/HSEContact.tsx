@@ -79,14 +79,39 @@ export default function HSEContact() {
                     {/* HSE & Quality Commitment */}
                     <WhenVisible id="hse" className="scroll-mt-24">
                         <section>
-                            <div className="mb-8 flex items-center gap-4">
-                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
+                            <div className="mb-12 text-center">
+                                <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient mb-4 mx-auto">
                                     <Shield className="h-8 w-8 text-primary-foreground" />
                                 </div>
-                                <div>
-                                    <h2 className="text-3xl font-bold text-foreground">
-                                        {language === 'en' ? 'HSE & Quality Commitment' : 'الالتزام بالصحة والسلامة والجودة'}
-                                    </h2>
+                                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
+                                    {language === 'en' ? 'HSE & Quality Commitment' : 'الالتزام بالصحة والسلامة والجودة'}
+                                </h2>
+                            </div>
+
+                            <div className="grid gap-6 lg:grid-cols-3 mb-8">
+                                <div className="relative rounded-xl overflow-hidden shadow-lg">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800"
+                                        alt="Safety equipment"
+                                        className="w-full h-64 object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-primary/50 to-transparent" />
+                                </div>
+                                <div className="relative rounded-xl overflow-hidden shadow-lg">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=800"
+                                        alt="Quality control"
+                                        className="w-full h-64 object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-primary/50 to-transparent" />
+                                </div>
+                                <div className="relative rounded-xl overflow-hidden shadow-lg">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=800"
+                                        alt="Team training"
+                                        className="w-full h-64 object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-primary/50 to-transparent" />
                                 </div>
                             </div>
 
@@ -148,15 +173,18 @@ export default function HSEContact() {
                     {/* Clients & Markets Served */}
                     <WhenVisible id="clients" className="scroll-mt-24">
                         <section>
-                            <div className="mb-8 flex items-center gap-4">
-                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
+                            <div className="mb-12 text-center">
+                                <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient mb-4 mx-auto">
                                     <Building2 className="h-8 w-8 text-primary-foreground" />
                                 </div>
-                                <div>
-                                    <h2 className="text-3xl font-bold text-foreground">
-                                        {language === 'en' ? 'Clients & Markets Served' : 'العملاء والأسواق المخدومة'}
-                                    </h2>
-                                </div>
+                                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
+                                    {language === 'en' ? 'Clients & Markets Served' : 'العملاء والأسواق المخدومة'}
+                                </h2>
+                                <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                                    {language === 'en' 
+                                        ? 'Trusted by leading organizations across multiple sectors in Saudi Arabia'
+                                        : 'موثوق به من قبل المنظمات الرائدة عبر قطاعات متعددة في المملكة العربية السعودية'}
+                                </p>
                             </div>
 
                             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -190,15 +218,18 @@ export default function HSEContact() {
                     {/* Why Choose Us */}
                     <WhenVisible id="why-choose" className="scroll-mt-24">
                         <section>
-                            <div className="mb-8 flex items-center gap-4">
-                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
+                            <div className="mb-12 text-center">
+                                <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient mb-4 mx-auto">
                                     <Award className="h-8 w-8 text-primary-foreground" />
                                 </div>
-                                <div>
-                                    <h2 className="text-3xl font-bold text-foreground">
-                                        {language === 'en' ? 'Why Choose Us' : 'لماذا تختارنا'}
-                                    </h2>
-                                </div>
+                                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
+                                    {language === 'en' ? 'Why Choose Us' : 'لماذا تختارنا'}
+                                </h2>
+                                <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                                    {language === 'en' 
+                                        ? 'Your success is our commitment. Here\'s what sets us apart'
+                                        : 'نجاحك هو التزامنا. إليك ما يميزنا'}
+                                </p>
                             </div>
 
                             <div className="grid gap-6 lg:grid-cols-3">

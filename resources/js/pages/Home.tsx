@@ -43,21 +43,67 @@ export default function Home() {
                 <ServicesSection />
             </WhenVisible>
 
+            {/* Stats Section */}
+            <WhenVisible>
+                <section className="section-padding bg-primary text-primary-foreground">
+                    <div className="container-custom">
+                        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                            <div className="text-center">
+                                <div className="mb-2 text-4xl font-bold sm:text-5xl">15+</div>
+                                <div className="text-primary-foreground/80">
+                                    {language === 'en' ? 'Years Experience' : 'سنوات الخبرة'}
+                                </div>
+                            </div>
+                            <div className="text-center">
+                                <div className="mb-2 text-4xl font-bold sm:text-5xl">500+</div>
+                                <div className="text-primary-foreground/80">
+                                    {language === 'en' ? 'Projects Completed' : 'مشروع مكتمل'}
+                                </div>
+                            </div>
+                            <div className="text-center">
+                                <div className="mb-2 text-4xl font-bold sm:text-5xl">10,000+</div>
+                                <div className="text-primary-foreground/80">
+                                    {language === 'en' ? 'Workers Deployed' : 'عامل تم توظيفهم'}
+                                </div>
+                            </div>
+                            <div className="text-center">
+                                <div className="mb-2 text-4xl font-bold sm:text-5xl">100+</div>
+                                <div className="text-primary-foreground/80">
+                                    {language === 'en' ? 'Satisfied Clients' : 'عميل راضٍ'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </WhenVisible>
+
             {/* About Section */}
             <WhenVisible>
                 <section className="section-padding bg-muted/30">
                     <div className="container-custom">
-                        <div className="mx-auto max-w-4xl">
-                            {/* Company Overview */}
-                            <div className="mb-12 text-center">
-                                <h2 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
-                                    {language === 'en' ? 'About Arkaan Global' : 'عن أركان جلوبال'}
-                                </h2>
-                                <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-                                    {language === 'en'
-                                        ? 'Arkaan Global Contracting is a leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. With a commitment to excellence and safety, we serve government, semi-government, industrial, and private sector clients across the Kingdom.'
-                                        : 'أركان جلوبال للمقاولات هي مزود رائد لخدمات البناء والميكانيكا والكهرباء والعمالة والتنظيف في المملكة العربية السعودية. مع التزام بالتميز والسلامة، نخدم عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة في جميع أنحاء المملكة.'}
-                                </p>
+                        <div className="mx-auto max-w-6xl">
+                            {/* Company Overview with Image */}
+                            <div className="mb-12 grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
+                                <div className="order-2 lg:order-1">
+                                    <h2 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
+                                        {language === 'en' ? 'About Arkaan Global' : 'عن أركان جلوبال'}
+                                    </h2>
+                                    <p className="text-lg text-muted-foreground leading-relaxed">
+                                        {language === 'en'
+                                            ? 'Arkaan Global Contracting is a leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. With a commitment to excellence and safety, we serve government, semi-government, industrial, and private sector clients across the Kingdom.'
+                                            : 'أركان جلوبال للمقاولات هي مزود رائد لخدمات البناء والميكانيكا والكهرباء والعمالة والتنظيف في المملكة العربية السعودية. مع التزام بالتميز والسلامة، نخدم عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة في جميع أنحاء المملكة.'}
+                                    </p>
+                                </div>
+                                <div className="order-1 lg:order-2">
+                                    <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070"
+                                            alt="Construction team"
+                                            className="w-full h-[400px] object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Vision & Mission */}
@@ -86,6 +132,33 @@ export default function Home() {
                                     </p>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </section>
+            </WhenVisible>
+
+            {/* Trusted By Section */}
+            <WhenVisible>
+                <section className="section-padding bg-muted/30">
+                    <div className="container-custom">
+                        <div className="text-center mb-12">
+                            <h2 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
+                                {language === 'en' ? 'Trusted By Leading Organizations' : 'موثوق به من قبل المنظمات الرائدة'}
+                            </h2>
+                            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+                                {language === 'en'
+                                    ? 'Serving government, semi-government, industrial, and private sector clients across Saudi Arabia'
+                                    : 'خدمة عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة في جميع أنحاء المملكة العربية السعودية'}
+                            </p>
+                        </div>
+                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                            {[1, 2, 3, 4].map((i) => (
+                                <div key={i} className="card-elevated p-8 flex items-center justify-center h-32 bg-white">
+                                    <div className="text-center text-muted-foreground font-semibold">
+                                        {language === 'en' ? `Client ${i}` : `عميل ${i}`}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </section>

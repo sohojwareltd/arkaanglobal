@@ -55,16 +55,22 @@ export default function Header() {
                                 size="icon"
                                 onClick={toggleLanguage}
                                 type="button"
+                                className="hover:bg-[#22a845]/10"
                             >
-                                <Globe className="h-5 w-5" />
+                                <Globe className="h-6 w-6 text-[#22a845] drop-shadow-sm" style={{ filter: 'drop-shadow(0 2px 4px rgba(34, 168, 69, 0.3))' }} />
                             </Button>
                             <Button
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => setIsMenuOpen((open) => !open)}
                                 type="button"
+                                className="hover:bg-[#22a845]/10"
                             >
-                                {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                                {isMenuOpen ? (
+                                    <X className="h-6 w-6 text-[#22a845] drop-shadow-sm" style={{ filter: 'drop-shadow(0 2px 4px rgba(34, 168, 69, 0.3))' }} />
+                                ) : (
+                                    <Menu className="h-6 w-6 text-[#22a845] drop-shadow-sm" style={{ filter: 'drop-shadow(0 2px 4px rgba(34, 168, 69, 0.3))' }} />
+                                )}
                             </Button>
                         </div>
                     </div>
@@ -245,8 +251,9 @@ export default function Header() {
                                 size="icon"
                                 onClick={() => setIsMenuOpen(false)}
                                 type="button"
+                                className="hover:bg-[#22a845]/10"
                             >
-                                <X className="h-5 w-5" />
+                                <X className="h-6 w-6 text-[#22a845] drop-shadow-sm" style={{ filter: 'drop-shadow(0 2px 4px rgba(34, 168, 69, 0.3))' }} />
                             </Button>
                         </div>
                         <div className="flex flex-col gap-1 p-4 overflow-y-auto">

@@ -192,46 +192,58 @@ export default function Services() {
                     {/* General Construction & Civil Works */}
                     <WhenVisible id="construction" className="scroll-mt-24">
                         <section>
-                            <div className="mb-8 flex items-center gap-4">
-                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
-                                    <Building2 className="h-8 w-8 text-primary-foreground" />
-                                </div>
+                            <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
                                 <div>
-                                    <h2 className="text-3xl font-bold text-foreground">
-                                        {t('services.construction.title')}
-                                    </h2>
-                                    <p className="text-muted-foreground">{t('services.construction.description')}</p>
+                                    <div className="mb-6 flex items-center gap-4">
+                                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
+                                            <Building2 className="h-8 w-8 text-primary-foreground" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-3xl font-bold text-foreground">
+                                                {t('services.construction.title')}
+                                            </h2>
+                                            <p className="text-muted-foreground">{t('services.construction.description')}</p>
+                                        </div>
+                                    </div>
+                                    <div className="card-elevated p-8">
+                                        <ul className="space-y-3">
+                                            {(
+                                                language === 'en'
+                                                    ? [
+                                                          'Building construction and renovation',
+                                                          'Infrastructure development',
+                                                          'Road and bridge construction',
+                                                          'Site preparation and earthworks',
+                                                          'Concrete works',
+                                                          'Steel structure installation',
+                                                          'Finishing works',
+                                                      ]
+                                                    : [
+                                                          'بناء وتجديد المباني',
+                                                          'تطوير البنية التحتية',
+                                                          'بناء الطرق والجسور',
+                                                          'إعداد الموقع والأعمال الترابية',
+                                                          'أعمال الخرسانة',
+                                                          'تركيب الهياكل الفولاذية',
+                                                          'أعمال التشطيب',
+                                                      ]
+                                            ).map((item, i) => (
+                                                <li key={i} className="flex items-center gap-3">
+                                                    <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
+                                                    <span className="text-muted-foreground">{item}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="card-elevated p-8">
-                                <ul className="space-y-3">
-                                    {(
-                                        language === 'en'
-                                            ? [
-                                                  'Building construction and renovation',
-                                                  'Infrastructure development',
-                                                  'Road and bridge construction',
-                                                  'Site preparation and earthworks',
-                                                  'Concrete works',
-                                                  'Steel structure installation',
-                                                  'Finishing works',
-                                              ]
-                                            : [
-                                                  'بناء وتجديد المباني',
-                                                  'تطوير البنية التحتية',
-                                                  'بناء الطرق والجسور',
-                                                  'إعداد الموقع والأعمال الترابية',
-                                                  'أعمال الخرسانة',
-                                                  'تركيب الهياكل الفولاذية',
-                                                  'أعمال التشطيب',
-                                              ]
-                                    ).map((item, i) => (
-                                        <li key={i} className="flex items-center gap-3">
-                                            <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
-                                            <span className="text-muted-foreground">{item}</span>
-                                        </li>
-                                    ))}
-                                </ul>
+                                <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2070"
+                                        alt="Construction work"
+                                        className="w-full h-[400px] object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
+                                </div>
                             </div>
                         </section>
                     </WhenVisible>
@@ -239,44 +251,56 @@ export default function Services() {
                     {/* MEP Services */}
                     <WhenVisible id="mep" className="scroll-mt-24">
                         <section>
-                            <div className="mb-8 flex items-center gap-4">
-                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
-                                    <Zap className="h-8 w-8 text-primary-foreground" />
+                            <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
+                                <div className="relative rounded-2xl overflow-hidden shadow-2xl order-2 lg:order-1">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=2069"
+                                        alt="MEP services"
+                                        className="w-full h-[400px] object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
                                 </div>
-                                <div>
-                                    <h2 className="text-3xl font-bold text-foreground">{t('services.mep.title')}</h2>
-                                    <p className="text-muted-foreground">{t('services.mep.description')}</p>
+                                <div className="order-1 lg:order-2">
+                                    <div className="mb-6 flex items-center gap-4">
+                                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
+                                            <Zap className="h-8 w-8 text-primary-foreground" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-3xl font-bold text-foreground">{t('services.mep.title')}</h2>
+                                            <p className="text-muted-foreground">{t('services.mep.description')}</p>
+                                        </div>
+                                    </div>
+                                    <div className="card-elevated p-8">
+                                        <ul className="space-y-3">
+                                            {(
+                                                language === 'en'
+                                                    ? [
+                                                          'Electrical installation and maintenance',
+                                                          'HVAC systems installation',
+                                                          'Plumbing and water systems',
+                                                          'Fire safety systems',
+                                                          'Low voltage systems',
+                                                          'Building automation',
+                                                          'MEP maintenance and repair',
+                                                      ]
+                                                    : [
+                                                          'تركيب وصيانة الكهرباء',
+                                                          'تركيب أنظمة التكييف والتهوية',
+                                                          'السباكة وأنظمة المياه',
+                                                          'أنظمة السلامة من الحرائق',
+                                                          'أنظمة الجهد المنخفض',
+                                                          'أتمتة المباني',
+                                                          'صيانة وإصلاح الميكانيكا والكهرباء',
+                                                      ]
+                                            ).map((item, i) => (
+                                                <li key={i} className="flex items-center gap-3">
+                                                    <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
+                                                    <span className="text-muted-foreground">{item}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="card-elevated p-8">
-                                <ul className="space-y-3">
-                                    {(
-                                        language === 'en'
-                                            ? [
-                                                  'Electrical installation and maintenance',
-                                                  'HVAC systems installation',
-                                                  'Plumbing and water systems',
-                                                  'Fire safety systems',
-                                                  'Low voltage systems',
-                                                  'Building automation',
-                                                  'MEP maintenance and repair',
-                                              ]
-                                            : [
-                                                  'تركيب وصيانة الكهرباء',
-                                                  'تركيب أنظمة التكييف والتهوية',
-                                                  'السباكة وأنظمة المياه',
-                                                  'أنظمة السلامة من الحرائق',
-                                                  'أنظمة الجهد المنخفض',
-                                                  'أتمتة المباني',
-                                                  'صيانة وإصلاح الميكانيكا والكهرباء',
-                                              ]
-                                    ).map((item, i) => (
-                                        <li key={i} className="flex items-center gap-3">
-                                            <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
-                                            <span className="text-muted-foreground">{item}</span>
-                                        </li>
-                                    ))}
-                                </ul>
                             </div>
                         </section>
                     </WhenVisible>
@@ -284,15 +308,40 @@ export default function Services() {
                     {/* Manpower Solutions */}
                     <WhenVisible id="manpower" className="scroll-mt-24">
                         <section>
-                            <div className="mb-8 flex items-center gap-4">
-                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
+                            <div className="mb-8 text-center">
+                                <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient mb-4 mx-auto">
                                     <Users className="h-8 w-8 text-primary-foreground" />
                                 </div>
-                                <div>
-                                    <h2 className="text-3xl font-bold text-foreground">
-                                        {t('services.manpower.title')}
-                                    </h2>
-                                    <p className="text-muted-foreground">{t('services.manpower.description')}</p>
+                                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
+                                    {t('services.manpower.title')}
+                                </h2>
+                                <p className="mt-2 text-muted-foreground">{t('services.manpower.description')}</p>
+                            </div>
+
+                            <div className="mb-8 grid gap-4 sm:grid-cols-3">
+                                <div className="relative rounded-xl overflow-hidden shadow-lg">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800"
+                                        alt="Workforce"
+                                        className="w-full h-48 object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-primary/50 to-transparent" />
+                                </div>
+                                <div className="relative rounded-xl overflow-hidden shadow-lg">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800"
+                                        alt="Construction team"
+                                        className="w-full h-48 object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-primary/50 to-transparent" />
+                                </div>
+                                <div className="relative rounded-xl overflow-hidden shadow-lg">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=800"
+                                        alt="Skilled workers"
+                                        className="w-full h-48 object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-primary/50 to-transparent" />
                                 </div>
                             </div>
 
@@ -392,15 +441,40 @@ export default function Services() {
                     {/* Dedicated Cleaning Services */}
                     <WhenVisible id="cleaning" className="scroll-mt-24">
                         <section>
-                            <div className="mb-8 flex items-center gap-4">
-                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
+                            <div className="mb-8 text-center">
+                                <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient mb-4 mx-auto">
                                     <Sparkles className="h-8 w-8 text-primary-foreground" />
                                 </div>
-                                <div>
-                                    <h2 className="text-3xl font-bold text-foreground">
-                                        {t('services.cleaning.title')}
-                                    </h2>
-                                    <p className="text-muted-foreground">{t('services.cleaning.description')}</p>
+                                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
+                                    {t('services.cleaning.title')}
+                                </h2>
+                                <p className="mt-2 text-muted-foreground">{t('services.cleaning.description')}</p>
+                            </div>
+
+                            <div className="mb-8 grid gap-4 sm:grid-cols-2">
+                                <div className="relative rounded-xl overflow-hidden shadow-lg">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=800"
+                                        alt="Office cleaning"
+                                        className="w-full h-56 object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-primary/50 to-transparent flex items-end p-4">
+                                        <span className="text-white font-semibold text-lg">
+                                            {language === 'en' ? 'Professional Cleaning' : 'تنظيف احترافي'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="relative rounded-xl overflow-hidden shadow-lg">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?q=80&w=800"
+                                        alt="Industrial cleaning"
+                                        className="w-full h-56 object-cover"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-primary/50 to-transparent flex items-end p-4">
+                                        <span className="text-white font-semibold text-lg">
+                                            {language === 'en' ? 'Industrial Solutions' : 'حلول صناعية'}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 

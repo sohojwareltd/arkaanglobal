@@ -118,20 +118,48 @@ export default function About() {
                     {/* Company Overview */}
                     <WhenVisible className="scroll-mt-24">
                         <section>
-                            <h2 className="mb-6 text-3xl font-bold text-foreground">
-                                {language === 'en' ? 'Company Overview' : 'نظرة عامة على الشركة'}
-                            </h2>
-                            <div className="card-elevated p-8">
-                                <p className="mb-4 text-lg leading-relaxed text-muted-foreground">
-                                    {language === 'en'
-                                        ? 'Arkaan Global Contracting is a leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. With a commitment to excellence and safety, we serve government, semi-government, industrial, and private sector clients across the Kingdom.'
-                                        : 'أركان جلوبال للمقاولات هي مزود رائد لخدمات البناء والميكانيكا والكهرباء والعمالة والتنظيف في المملكة العربية السعودية. مع التزام بالتميز والسلامة، نخدم عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة في جميع أنحاء المملكة.'}
-                                </p>
-                                <p className="text-lg leading-relaxed text-muted-foreground">
-                                    {language === 'en'
-                                        ? 'Our comprehensive service portfolio, combined with our experienced team and commitment to quality, makes us the preferred partner for major construction projects and ongoing maintenance needs throughout Saudi Arabia.'
-                                        : 'محفظة خدماتنا الشاملة، جنباً إلى جنب مع فريقنا ذو الخبرة والتزامنا بالجودة، يجعلنا الشريك المفضل للمشاريع الإنشائية الكبرى واحتياجات الصيانة المستمرة في جميع أنحاء المملكة العربية السعودية.'}
-                                </p>
+                            <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
+                                <div>
+                                    <h2 className="mb-6 text-3xl font-bold text-foreground">
+                                        {language === 'en' ? 'Company Overview' : 'نظرة عامة على الشركة'}
+                                    </h2>
+                                    <div className="space-y-4">
+                                        <p className="text-lg leading-relaxed text-muted-foreground">
+                                            {language === 'en'
+                                                ? 'Arkaan Global Contracting is a leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. With a commitment to excellence and safety, we serve government, semi-government, industrial, and private sector clients across the Kingdom.'
+                                                : 'أركان جلوبال للمقاولات هي مزود رائد لخدمات البناء والميكانيكا والكهرباء والعمالة والتنظيف في المملكة العربية السعودية. مع التزام بالتميز والسلامة، نخدم عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة في جميع أنحاء المملكة.'}
+                                        </p>
+                                        <p className="text-lg leading-relaxed text-muted-foreground">
+                                            {language === 'en'
+                                                ? 'Our comprehensive service portfolio, combined with our experienced team and commitment to quality, makes us the preferred partner for major construction projects and ongoing maintenance needs throughout Saudi Arabia.'
+                                                : 'محفظة خدماتنا الشاملة، جنباً إلى جنب مع فريقنا ذو الخبرة والتزامنا بالجودة، يجعلنا الشريك المفضل للمشاريع الإنشائية الكبرى واحتياجات الصيانة المستمرة في جميع أنحاء المملكة العربية السعودية.'}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="relative">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <img
+                                            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800"
+                                            alt="Construction site"
+                                            className="rounded-xl h-48 w-full object-cover shadow-lg"
+                                        />
+                                        <img
+                                            src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800"
+                                            alt="Safety equipment"
+                                            className="rounded-xl h-48 w-full object-cover shadow-lg mt-8"
+                                        />
+                                        <img
+                                            src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800"
+                                            alt="Team work"
+                                            className="rounded-xl h-48 w-full object-cover shadow-lg -mt-8"
+                                        />
+                                        <img
+                                            src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800"
+                                            alt="Modern building"
+                                            className="rounded-xl h-48 w-full object-cover shadow-lg"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </section>
                     </WhenVisible>
@@ -172,7 +200,12 @@ export default function About() {
                     {/* Core Values */}
                     <WhenVisible className="scroll-mt-24">
                         <section>
-                            <h2 className="mb-8 text-3xl font-bold text-foreground">{t('about.values.title')}</h2>
+                            <h2 className="mb-4 text-3xl font-bold text-foreground text-center">{t('about.values.title')}</h2>
+                            <p className="mb-8 text-center text-lg text-muted-foreground max-w-2xl mx-auto">
+                                {language === 'en' 
+                                    ? 'The principles that guide everything we do'
+                                    : 'المبادئ التي توجه كل ما نقوم به'}
+                            </p>
                             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                                 {coreValues.map((value, i) => (
                                     <div key={i} className="card-elevated p-6">
