@@ -44,7 +44,7 @@ export default function Footer(): JSX.Element {
                             </div>
                             <div className="flex items-center gap-3">
                                 <Phone className="h-4 w-4 text-primary-foreground/80" />
-                                <span dir="ltr">+966 11 123 4567</span>
+                                <span dir="ltr">0572914027</span>
                             </div>
                             <div className="flex items-center gap-3">
                                 <Mail className="h-4 w-4 text-primary-foreground/80" />

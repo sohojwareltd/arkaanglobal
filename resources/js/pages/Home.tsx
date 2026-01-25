@@ -31,7 +31,7 @@ export default function Home() {
         (e.target as HTMLFormElement).reset();
     };
 
-    const whatsappNumber = '+966501234567';
+    const whatsappNumber = '0572914027';
     const whatsappMessage = language === 'en' 
         ? 'Hello, I would like to inquire about your services.'
         : 'مرحباً، أود الاستفسار عن خدماتكم.';

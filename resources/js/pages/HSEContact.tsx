@@ -30,7 +30,7 @@ export default function HSEContact() {
         (e.target as HTMLFormElement).reset();
     };
 
-    const whatsappNumber = '+966501234567'; // Update with actual Jubail number
+    const whatsappNumber = '0572914027'; // Update with actual Jubail number
     const whatsappMessage = language === 'en' 
         ? 'Hello, I would like to inquire about your services.'
         : 'مرحباً، أود الاستفسار عن خدماتكم.';
