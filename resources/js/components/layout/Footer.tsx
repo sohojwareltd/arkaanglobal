@@ -22,33 +22,32 @@ export default function Footer(): JSX.Element {
     ];
 
     return (
-        <footer className="bg-secondary text-secondary-foreground">
+        <footer className="bg-primary text-primary-foreground">
             <div className="container-custom section-padding">
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-4 lg:gap-12">
                     {/* Company Info */}
                     <div>
-                        <div className="mb-4 flex items-center gap-2">
-                            <div className="hero-gradient flex h-10 w-10 items-center justify-center rounded-lg">
-                                <span className="text-xl font-bold text-primary-foreground">A</span>
-                            </div>
-                            <span className="text-lg font-bold">
-                                {language === 'en' ? 'Arkaan Global Contracting' : 'أركان جلوبال للمقاولات'}
-                            </span>
+                        <div className="mb-4">
+                            <img 
+                                src="/logo-main.png" 
+                                alt={language === 'en' ? 'Arkaan Global Contracting' : 'أركان جلوبال للمقاولات'}
+                                className="h-16 w-auto"
+                            />
                         </div>
-                        <p className="mb-6 text-sm text-secondary-foreground/80">
+                        <p className="mb-6 text-sm text-primary-foreground/80">
                             {t('footer.description')}
                         </p>
                         <div className="flex flex-col gap-3 text-sm">
                             <div className="flex items-center gap-3">
-                                <MapPin className="h-4 w-4 text-primary" />
+                                <MapPin className="h-4 w-4 text-primary-foreground/80" />
                                 <span>{t('footer.address')}</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <Phone className="h-4 w-4 text-primary" />
+                                <Phone className="h-4 w-4 text-primary-foreground/80" />
                                 <span dir="ltr">+966 11 123 4567</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <Mail className="h-4 w-4 text-primary" />
+                                <Mail className="h-4 w-4 text-primary-foreground/80" />
                                 <span>info@arkaanglobal.com</span>
                             </div>
                         </div>
@@ -62,7 +61,7 @@ export default function Footer(): JSX.Element {
                                 <li key={link.path}>
                                     <Link
                                         href={link.path}
-                                        className="text-sm text-secondary-foreground/80 transition-colors hover:text-primary"
+                                        className="text-sm text-primary-foreground/80 transition-colors hover:text-primary-foreground"
                                     >
                                         {link.label}
                                     </Link>
@@ -79,7 +78,7 @@ export default function Footer(): JSX.Element {
                                 <li key={service.path}>
                                     <Link
                                         href={service.path}
-                                        className="text-sm text-secondary-foreground/80 transition-colors hover:text-primary"
+                                        className="text-sm text-primary-foreground/80 transition-colors hover:text-primary-foreground"
                                     >
                                         {service.label}
                                     </Link>
@@ -91,12 +90,12 @@ export default function Footer(): JSX.Element {
                     {/* Contact */}
                     <div>
                         <h4 className="mb-4 text-lg font-semibold">{t('footer.contact')}</h4>
-                        <ul className="space-y-2 text-sm text-secondary-foreground/80">
+                        <ul className="space-y-2 text-sm text-primary-foreground/80">
                             <li>{t('contact.info.hours.value')}</li>
                             <li>
                                 <Link
                                     href="/careers"
-                                    className="transition-colors hover:text-primary"
+                                    className="transition-colors hover:text-primary-foreground"
                                 >
                                     {t('nav.careers')}
                                 </Link>
@@ -104,7 +103,7 @@ export default function Footer(): JSX.Element {
                             <li>
                                 <Link
                                     href="/contact"
-                                    className="transition-colors hover:text-primary"
+                                    className="transition-colors hover:text-primary-foreground"
                                 >
                                     {t('nav.contact')}
                                 </Link>
@@ -114,21 +113,21 @@ export default function Footer(): JSX.Element {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="mt-12 border-t border-secondary-foreground/10 pt-8">
+                <div className="mt-12 border-t border-primary-foreground/20 pt-8">
                     <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-                        <p className="text-sm text-secondary-foreground/60">
+                        <p className="text-sm text-primary-foreground/60">
                             © {new Date().getFullYear()} Arkaan Global Contracting. {t('footer.rights')}
                         </p>
                         <div className="flex items-center gap-4">
                             <Link
                                 href="/privacy"
-                                className="text-sm text-secondary-foreground/60 transition-colors hover:text-primary"
+                                className="text-sm text-primary-foreground/60 transition-colors hover:text-primary-foreground"
                             >
                                 Privacy Policy
                             </Link>
                             <Link
                                 href="/terms"
-                                className="text-sm text-secondary-foreground/60 transition-colors hover:text-primary"
+                                className="text-sm text-primary-foreground/60 transition-colors hover:text-primary-foreground"
                             >
                                 Terms of Service
                             </Link>

@@ -36,15 +36,17 @@ export default function Header() {
     return (
         <>
             {/* Full width header for mobile */}
-            <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-card/95 backdrop-blur-md lg:hidden">
+            <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-primary backdrop-blur-md lg:hidden">
                 <div className="container-custom">
                     <div className="flex h-16 items-center justify-between">
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-2">
-                            <div className="hero-gradient flex h-10 w-10 items-center justify-center rounded-lg">
-                                <span className="text-xl font-bold text-primary-foreground">A</span>
-                            </div>
-                            <span className="text-lg font-bold text-foreground">
+                            <img 
+                                src="/logo.png" 
+                                alt={language === 'en' ? 'Arkaan Global' : 'أركان جلوبال'}
+                                className="h-10 w-auto"
+                            />
+                            <span className="text-lg font-bold text-primary-foreground">
                                 {language === 'en' ? 'Arkaan Global' : 'أركان جلوبال'}
                             </span>
                         </Link>
@@ -77,7 +79,7 @@ export default function Header() {
                 <div className="fixed inset-x-0 top-4 z-50 flex justify-center pointer-events-none">
                     <div
                         className={cn(
-                            'pointer-events-auto bg-card/95 backdrop-blur-md border border-border shadow-lg flex items-center gap-3 px-4 py-3',
+                            'pointer-events-auto bg-primary backdrop-blur-md border border-border shadow-lg flex items-center gap-3 px-4 py-3',
                             'transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]',
                             isExpanded
                                 ? 'rounded-full max-w-[90vw] min-w-fit'
@@ -91,14 +93,16 @@ export default function Header() {
                     >
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-                            <div className={cn(
-                                'flex h-10 w-10 items-center justify-center rounded-full transition-all duration-700',
-                                isExpanded ? 'hero-gradient' : 'hero-gradient scale-95'
-                            )}>
-                                <span className="text-lg font-bold text-primary-foreground">A</span>
-                            </div>
+                            <img 
+                                src="/logo.png" 
+                                alt={language === 'en' ? 'Arkaan Global' : 'أركان جلوبال'}
+                                className={cn(
+                                    'h-10 w-auto transition-all duration-700',
+                                    isExpanded ? 'scale-100' : 'scale-95'
+                                )}
+                            />
                             <span className={cn(
-                                'text-base font-bold text-foreground whitespace-nowrap transition-all duration-500',
+                                'text-base font-bold text-primary-foreground whitespace-nowrap transition-all duration-500',
                                 isExpanded 
                                     ? 'opacity-100 max-w-xs' 
                                     : 'opacity-0 max-w-0 overflow-hidden'
@@ -109,7 +113,7 @@ export default function Header() {
 
                         {/* Divider */}
                         <div className={cn(
-                            'h-8 w-px bg-border transition-all duration-500',
+                            'h-8 w-px bg-primary-foreground/20 transition-all duration-500',
                             isExpanded ? 'opacity-100 mx-2' : 'opacity-0 w-0 mx-0'
                         )} />
 
@@ -126,8 +130,8 @@ export default function Header() {
                                         className={cn(
                                             'px-3 py-1.5 text-sm font-medium transition-all duration-300 rounded-full whitespace-nowrap flex-shrink-0',
                                             isActive(item.path)
-                                                ? 'bg-primary text-primary-foreground'
-                                                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                                                ? 'bg-primary-foreground/20 text-primary-foreground'
+                                                : 'text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground',
                                         )}
                                         style={{
                                             transitionDelay: `${index * 30}ms`
@@ -142,7 +146,7 @@ export default function Header() {
                             <div className="flex items-center gap-2">
                                 <button
                                     type="button"
-                                    className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary hover:bg-primary/20 transition-all duration-300"
+                                    className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/20 transition-all duration-300"
                                     aria-label="Expand Menu"
                                 >
                                     <Plus className="h-5 w-5" />
@@ -152,7 +156,7 @@ export default function Header() {
 
                         {/* Divider */}
                         <div className={cn(
-                            'h-8 w-px bg-border transition-all duration-500',
+                            'h-8 w-px bg-primary-foreground/20 transition-all duration-500',
                             isExpanded ? 'opacity-100 mx-2' : 'opacity-0 w-0 mx-0'
                         )} />
 
@@ -166,7 +170,7 @@ export default function Header() {
                                         size="sm"
                                         onClick={toggleLanguage}
                                         className={cn(
-                                            'rounded-full transition-all duration-500',
+                                            'rounded-full transition-all duration-500 text-primary-foreground hover:bg-primary-foreground/10',
                                             isExpanded ? 'opacity-100' : 'opacity-0'
                                         )}
                                         type="button"
@@ -181,7 +185,7 @@ export default function Header() {
                                     {/* CTA Button */}
                                     <Button
                                         className={cn(
-                                            'hero-gradient border-0 text-primary-foreground rounded-full text-sm px-5 transition-all duration-500 whitespace-nowrap flex-shrink-0',
+                                            'bg-primary-foreground text-primary border-0 rounded-full text-sm px-5 transition-all duration-500 whitespace-nowrap flex-shrink-0 hover:bg-primary-foreground/90',
                                             isExpanded ? 'opacity-100' : 'opacity-0'
                                         )}
                                         asChild
@@ -194,7 +198,7 @@ export default function Header() {
                                 <button
                                     type="button"
                                     onClick={toggleLanguage}
-                                    className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-all duration-300"
+                                    className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary-foreground/20 transition-all duration-300 text-primary-foreground"
                                     aria-label="Language"
                                 >
                                     <Globe className="h-4 w-4" />
@@ -216,7 +220,7 @@ export default function Header() {
                 >
                     <nav
                         className={cn(
-                            'fixed top-0 h-full w-64 bg-card shadow-lg transition-transform duration-300 flex flex-col',
+                            'fixed top-0 h-full w-64 bg-primary shadow-lg transition-transform duration-300 flex flex-col',
                             direction === 'ltr' ? 'left-0' : 'right-0',
                             isMenuOpen
                                 ? direction === 'ltr'
@@ -228,12 +232,14 @@ export default function Header() {
                         )}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <div className="flex items-center justify-between border-b border-border p-4">
+                        <div className="flex items-center justify-between border-b border-primary-foreground/20 p-4">
                             <Link href="/" className="flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
-                                <div className="hero-gradient flex h-10 w-10 items-center justify-center rounded-lg">
-                                    <span className="text-xl font-bold text-primary-foreground">A</span>
-                                </div>
-                                <span className="text-lg font-bold text-foreground">
+                                <img 
+                                    src="/logo.png" 
+                                    alt={language === 'en' ? 'Arkaan Global' : 'أركان جلوبال'}
+                                    className="h-10 w-auto"
+                                />
+                                <span className="text-lg font-bold text-primary-foreground">
                                     {language === 'en' ? 'Arkaan Global' : 'أركان جلوبال'}
                                 </span>
                             </Link>
@@ -255,15 +261,15 @@ export default function Header() {
                                     className={cn(
                                         'px-4 py-3 text-sm font-medium transition-colors rounded-lg',
                                         isActive(item.path)
-                                            ? 'bg-primary text-primary-foreground'
-                                            : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                                            ? 'bg-primary-foreground/20 text-primary-foreground'
+                                            : 'text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground',
                                     )}
                                 >
                                     {item.label}
                                 </Link>
                             ))}
                             <Button
-                                className="hero-gradient mt-4 border-0 text-primary-foreground"
+                                className="bg-primary-foreground text-primary mt-4 border-0 hover:bg-primary-foreground/90"
                                 asChild
                             >
                                 <Link href="/contact" onClick={() => setIsMenuOpen(false)}>
