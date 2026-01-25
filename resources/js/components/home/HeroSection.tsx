@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Building2, Users } from 'lucide-react';
+import { ArrowRight, Building2, Users, Download } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 
 import { Button } from '@/components/ui/button';
@@ -47,9 +47,12 @@ export default function HeroSection(): JSX.Element {
                     {/* Title */}
                     <h1 className="mb-4 text-4xl font-bold text-primary-foreground sm:text-5xl lg:text-6xl animate-fade-in-up">
                         {t('hero.title')}
-                        <br />
-                        <span className="text-gradient-gold">{t('hero.subtitle')}</span>
                     </h1>
+
+                    {/* Tagline */}
+                    <p className="mb-6 text-xl font-semibold text-primary-foreground/90 sm:text-2xl animate-fade-in-up animation-delay-50">
+                        {t('hero.tagline')}
+                    </p>
 
                     {/* Description */}
                     <p className="mb-8 max-w-2xl text-lg text-primary-foreground/80 sm:text-xl animate-fade-in-up animation-delay-100">
@@ -63,7 +66,7 @@ export default function HeroSection(): JSX.Element {
                             className="gold-gradient px-8 py-6 text-lg font-semibold text-accent-foreground transition-opacity hover:opacity-90"
                             asChild
                         >
-                            <Link href="/contact" className="flex items-center gap-2">
+                            <Link href="/hse-contact" className="flex items-center gap-2">
                                 {t('hero.cta.primary')}
                                 <ArrowRight
                                     className={`h-5 w-5 ${direction === 'rtl' ? 'rotate-180' : ''}`}
@@ -76,7 +79,10 @@ export default function HeroSection(): JSX.Element {
                             className="bg-transparent px-8 py-6 text-lg text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground/10"
                             asChild
                         >
-                            <Link href="/services">{t('hero.cta.secondary')}</Link>
+                            <a href="/company-profile.pdf" download className="flex items-center gap-2">
+                                <Download className="h-5 w-5" />
+                                {t('hero.cta.secondary')}
+                            </a>
                         </Button>
                     </div>
 

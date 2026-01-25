@@ -11,14 +11,14 @@ export default function Footer(): JSX.Element {
         { path: '/', label: t('nav.home') },
         { path: '/about', label: t('nav.about') },
         { path: '/services', label: t('nav.services') },
-        { path: '/projects', label: t('nav.projects') },
+        { path: '/hse-contact', label: t('nav.hseContact') },
     ];
 
     const services = [
-        { path: '/services#skilled', label: t('services.skilled.title') },
-        { path: '/services#unskilled', label: t('services.unskilled.title') },
-        { path: '/services#contracting', label: t('services.contracting.title') },
-        { path: '/services#subcontracting', label: t('services.subcontracting.title') },
+        { path: '/services#construction', label: t('services.construction.title') },
+        { path: '/services#mep', label: t('services.mep.title') },
+        { path: '/services#manpower', label: t('services.manpower.title') },
+        { path: '/services#cleaning', label: t('services.cleaning.title') },
     ];
 
     return (
@@ -94,26 +94,41 @@ export default function Footer(): JSX.Element {
                             <li>{t('contact.info.hours.value')}</li>
                             <li>
                                 <Link
-                                    href="/careers"
+                                    href="/hse-contact"
                                     className="transition-colors hover:text-primary-foreground"
                                 >
-                                    {t('nav.careers')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/contact"
-                                    className="transition-colors hover:text-primary-foreground"
-                                >
-                                    {t('nav.contact')}
+                                    {t('nav.hseContact')}
                                 </Link>
                             </li>
                         </ul>
                     </div>
                 </div>
 
+                {/* Registration Info Strip */}
+                <div className="mt-12 border-t border-primary-foreground/20 pt-6">
+                    <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-primary-foreground/70">
+                        <div>
+                            <span className="font-semibold">{t('footer.cr.label')}: </span>
+                            <span>{t('footer.cr.number')}</span>
+                        </div>
+                        <div>
+                            <span className="font-semibold">{t('footer.vat.label')}: </span>
+                            <span>{t('footer.vat.number')}</span>
+                        </div>
+                        <div>
+                            <a
+                                href="/company-profile.pdf"
+                                download
+                                className="flex items-center gap-2 transition-colors hover:text-primary-foreground"
+                            >
+                                <span>{t('footer.downloadProfile')}</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 {/* Bottom Bar */}
-                <div className="mt-12 border-t border-primary-foreground/20 pt-8">
+                <div className="mt-8 border-t border-primary-foreground/20 pt-8">
                     <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
                         <p className="text-sm text-primary-foreground/60">
                             © {new Date().getFullYear()} Arkaan Global Contracting. {t('footer.rights')}

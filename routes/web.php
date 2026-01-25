@@ -15,21 +15,9 @@ Route::get('/services', function () {
     return Inertia::render('Services');
 })->name('services');
 
-Route::get('/projects', function () {
-    return Inertia::render('Projects');
-})->name('projects');
-
-Route::get('/clients', function () {
-    return Inertia::render('Clients');
-})->name('clients');
-
-Route::get('/careers', function () {
-    return Inertia::render('Careers');
-})->name('careers');
-
-Route::get('/contact', function () {
-    return Inertia::render('Contact');
-})->name('contact');
+Route::get('/hse-contact', function () {
+    return Inertia::render('HSEContact');
+})->name('hse-contact');
 
 // 404 fallback - must be last
 Route::fallback(function () {

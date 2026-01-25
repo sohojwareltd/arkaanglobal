@@ -21,10 +21,7 @@ export default function Header() {
         { path: '/', label: t('nav.home') },
         { path: '/about', label: t('nav.about') },
         { path: '/services', label: t('nav.services') },
-        { path: '/projects', label: t('nav.projects') },
-        { path: '/clients', label: t('nav.clients') },
-        { path: '/careers', label: t('nav.careers') },
-        { path: '/contact', label: t('nav.contact') },
+        { path: '/hse-contact', label: t('nav.hseContact') },
     ];
 
     const toggleLanguage = () => {
@@ -191,7 +188,7 @@ export default function Header() {
                                         asChild
                                         style={{ transitionDelay: '250ms' }}
                                     >
-                                        <Link href="/contact">{t('hero.cta.primary')}</Link>
+                                        <Link href="/hse-contact">{t('hero.cta.primary')}</Link>
                                     </Button>
                                 </>
                             ) : (
@@ -272,7 +269,7 @@ export default function Header() {
                                 className="bg-primary-foreground text-primary mt-4 border-0 hover:bg-primary-foreground/90"
                                 asChild
                             >
-                                <Link href="/contact" onClick={() => setIsMenuOpen(false)}>
+                                <Link href="/hse-contact" onClick={() => setIsMenuOpen(false)}>
                                     {t('hero.cta.primary')}
                                 </Link>
                             </Button>

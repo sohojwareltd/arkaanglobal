@@ -10,28 +10,22 @@ export default function ServicesSection(): JSX.Element {
 
     const services = [
         {
-            icon: HardHat,
-            title: t('services.skilled.title'),
-            description: t('services.skilled.description'),
-            link: '/services#skilled',
-        },
-        {
             icon: Users,
-            title: t('services.unskilled.title'),
-            description: t('services.unskilled.description'),
-            link: '/services#unskilled',
+            title: t('services.summary.manpower'),
+            description: 'Comprehensive workforce deployment solutions',
+            link: '/services#manpower',
         },
         {
-            icon: FileSignature,
-            title: t('services.contracting.title'),
-            description: t('services.contracting.description'),
-            link: '/services#contracting',
+            icon: HardHat,
+            title: t('services.summary.construction'),
+            description: 'General construction, civil works, and MEP services',
+            link: '/services#construction',
         },
         {
             icon: Wrench,
-            title: t('services.subcontracting.title'),
-            description: t('services.subcontracting.description'),
-            link: '/services#subcontracting',
+            title: t('services.summary.cleaning'),
+            description: 'Professional post-construction cleaning services',
+            link: '/services#cleaning',
         },
     ];
 
@@ -49,7 +43,7 @@ export default function ServicesSection(): JSX.Element {
                 </div>
 
                 {/* Services Grid */}
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-6 sm:grid-cols-3">
                     {services.map((service) => (
                         <Link
                             key={service.link}

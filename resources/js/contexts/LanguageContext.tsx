@@ -16,18 +16,16 @@ const translations: Record<Language, Record<string, string>> = {
         'nav.home': 'Home',
         'nav.about': 'About Us',
         'nav.services': 'Services',
-        'nav.projects': 'Projects',
-        'nav.clients': 'Clients',
-        'nav.careers': 'Careers',
-        'nav.contact': 'Contact',
+        'nav.hseContact': 'HSE & Contact',
 
         // Hero
-        'hero.title': 'Reliable Construction Manpower Solutions',
-        'hero.subtitle': 'Across Saudi Arabia',
+        'hero.title': 'Strength in People, Precision in Work',
+        'hero.subtitle': 'Arkaan Global Contracting',
         'hero.description':
-            'Over 15 years of excellence in providing skilled and unskilled workforce for major construction projects. Your trusted partner for scalable manpower solutions.',
-        'hero.cta.primary': 'Request Manpower',
-        'hero.cta.secondary': 'View Services',
+            'Your trusted partner for construction, MEP, manpower, and cleaning services across Saudi Arabia.',
+        'hero.cta.primary': 'Get Quote',
+        'hero.cta.secondary': 'Download Profile',
+        'hero.tagline': 'Strength in People, Precision in Work',
 
         // Stats
         'stats.years': 'Years Experience',
@@ -44,19 +42,18 @@ const translations: Record<Language, Record<string, string>> = {
 
         // Services
         'services.title': 'Our Services',
-        'services.subtitle': 'Comprehensive Manpower Solutions',
-        'services.skilled.title': 'Skilled Manpower',
-        'services.skilled.description':
-            'Engineers, supervisors, technicians, and certified operators for specialized construction roles.',
-        'services.unskilled.title': 'Unskilled Labor',
-        'services.unskilled.description':
-            'Reliable general laborers and helpers for construction sites, warehouses, and infrastructure projects.',
-        'services.contracting.title': 'Contracting Services',
-        'services.contracting.description':
-            'Full project-based workforce solutions with dedicated teams for your construction needs.',
-        'services.subcontracting.title': 'Subcontracting',
-        'services.subcontracting.description':
-            'Specialized subcontracting services for specific trades and construction phases.',
+        'services.subtitle': 'Comprehensive Solutions',
+        'services.summary.manpower': 'Manpower Solutions',
+        'services.summary.construction': 'Construction & MEP',
+        'services.summary.cleaning': 'Post-construction Cleaning',
+        'services.construction.title': 'General Construction & Civil Works',
+        'services.construction.description': 'Complete construction and civil engineering services.',
+        'services.mep.title': 'MEP Services',
+        'services.mep.description': 'Mechanical, Electrical, and Plumbing solutions.',
+        'services.manpower.title': 'Manpower Solutions',
+        'services.manpower.description': 'Comprehensive workforce deployment services.',
+        'services.cleaning.title': 'Dedicated Cleaning Services',
+        'services.cleaning.description': 'Professional cleaning and maintenance solutions.',
 
         // Projects
         'projects.title': 'Our Projects',
@@ -79,11 +76,16 @@ const translations: Record<Language, Record<string, string>> = {
         'footer.services': 'Services',
         'footer.contact': 'Contact Us',
         'footer.rights': 'All rights reserved.',
-        'footer.address': 'Riyadh, Saudi Arabia',
+        'footer.address': 'Jubail, Saudi Arabia',
+        'footer.cr.label': 'CR No.',
+        'footer.cr.number': 'To be added from PDF',
+        'footer.vat.label': 'VAT No.',
+        'footer.vat.number': 'To be added from PDF',
+        'footer.downloadProfile': 'Download Company Profile',
 
         // About Page
         'about.page.title': 'About Our Company',
-        'about.page.subtitle': 'Leading Manpower Solutions Since 2009',
+        'about.page.subtitle': 'Your trusted partner for construction, MEP, manpower, and cleaning services across Saudi Arabia.',
         'about.mission.title': 'Our Mission',
         'about.mission.text':
             'To provide reliable, skilled, and compliant workforce solutions that empower construction companies to deliver their projects on time and within budget.',
@@ -164,18 +166,16 @@ const translations: Record<Language, Record<string, string>> = {
         'nav.home': 'الرئيسية',
         'nav.about': 'من نحن',
         'nav.services': 'خدماتنا',
-        'nav.projects': 'مشاريعنا',
-        'nav.clients': 'عملاؤنا',
-        'nav.careers': 'التوظيف',
-        'nav.contact': 'اتصل بنا',
+        'nav.hseContact': 'السلامة والاتصال',
 
         // Hero
-        'hero.title': 'حلول القوى العاملة الموثوقة للبناء',
-        'hero.subtitle': 'في جميع أنحاء المملكة العربية السعودية',
+        'hero.title': 'القوة في الناس، الدقة في العمل',
+        'hero.subtitle': 'أركان جلوبال للمقاولات',
         'hero.description':
-            'أكثر من 15 عامًا من التميز في توفير القوى العاملة الماهرة وغير الماهرة لمشاريع البناء الكبرى. شريككم الموثوق لحلول القوى العاملة القابلة للتطوير.',
-        'hero.cta.primary': 'طلب عمالة',
-        'hero.cta.secondary': 'عرض الخدمات',
+            'شريككم الموثوق لخدمات البناء والميكانيكا والكهرباء والعمالة والتنظيف في جميع أنحاء المملكة العربية السعودية.',
+        'hero.cta.primary': 'احصل على عرض سعر',
+        'hero.cta.secondary': 'تحميل الملف التعريفي',
+        'hero.tagline': 'القوة في الناس، الدقة في العمل',
 
         // Stats
         'stats.years': 'سنوات الخبرة',
@@ -192,17 +192,18 @@ const translations: Record<Language, Record<string, string>> = {
 
         // Services
         'services.title': 'خدماتنا',
-        'services.subtitle': 'حلول شاملة للقوى العاملة',
-        'services.skilled.title': 'العمالة الماهرة',
-        'services.skilled.description': 'مهندسون ومشرفون وفنيون ومشغلون معتمدون للأدوار المتخصصة في البناء.',
-        'services.unskilled.title': 'العمالة غير الماهرة',
-        'services.unskilled.description':
-            'عمال عامون ومساعدون موثوقون لمواقع البناء والمستودعات ومشاريع البنية التحتية.',
-        'services.contracting.title': 'خدمات المقاولات',
-        'services.contracting.description':
-            'حلول القوى العاملة الكاملة القائمة على المشاريع مع فرق مخصصة لاحتياجات البناء الخاصة بك.',
-        'services.subcontracting.title': 'المقاولات من الباطن',
-        'services.subcontracting.description': 'خدمات المقاولات من الباطن المتخصصة لحرف ومراحل بناء محددة.',
+        'services.subtitle': 'حلول شاملة',
+        'services.summary.manpower': 'حلول القوى العاملة',
+        'services.summary.construction': 'البناء والميكانيكا والكهرباء',
+        'services.summary.cleaning': 'التنظيف بعد البناء',
+        'services.construction.title': 'البناء العام والأعمال المدنية',
+        'services.construction.description': 'خدمات البناء والهندسة المدنية الكاملة.',
+        'services.mep.title': 'خدمات الميكانيكا والكهرباء',
+        'services.mep.description': 'حلول الميكانيكا والكهرباء والسباكة.',
+        'services.manpower.title': 'حلول القوى العاملة',
+        'services.manpower.description': 'خدمات توفير القوى العاملة الشاملة.',
+        'services.cleaning.title': 'خدمات التنظيف المخصصة',
+        'services.cleaning.description': 'حلول التنظيف والصيانة المهنية.',
 
         // Projects
         'projects.title': 'مشاريعنا',
@@ -225,11 +226,16 @@ const translations: Record<Language, Record<string, string>> = {
         'footer.services': 'الخدمات',
         'footer.contact': 'اتصل بنا',
         'footer.rights': 'جميع الحقوق محفوظة.',
-        'footer.address': 'الرياض، المملكة العربية السعودية',
+        'footer.address': 'الجبيل، المملكة العربية السعودية',
+        'footer.cr.label': 'رقم السجل التجاري',
+        'footer.cr.number': 'سيتم إضافته من ملف PDF',
+        'footer.vat.label': 'رقم ضريبة القيمة المضافة',
+        'footer.vat.number': 'سيتم إضافته من ملف PDF',
+        'footer.downloadProfile': 'تحميل الملف التعريفي للشركة',
 
         // About Page
         'about.page.title': 'عن شركتنا',
-        'about.page.subtitle': 'حلول رائدة للقوى العاملة منذ 2009',
+        'about.page.subtitle': 'شريككم الموثوق لخدمات البناء والميكانيكا والكهرباء والعمالة والتنظيف في جميع أنحاء المملكة العربية السعودية.',
         'about.mission.title': 'مهمتنا',
         'about.mission.text':
             'توفير حلول قوى عاملة موثوقة وماهرة ومتوافقة تمكّن شركات البناء من تسليم مشاريعها في الوقت المحدد وضمن الميزانية.',
