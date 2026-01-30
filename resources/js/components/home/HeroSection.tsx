@@ -65,15 +65,7 @@ export default function HeroSection({ hero }: HeroSectionProps): JSX.Element {
             {/* Content */}
             <div className="container-custom relative z-10">
                 <div className="max-w-3xl">
-                    {/* Badge */}
-                    <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/20 px-4 py-2 backdrop-blur-sm animate-fade-in">
-                        <Building2 className="h-4 w-4 text-primary" />
-                        <span className="text-sm font-medium text-primary-foreground/90">
-                            {direction === 'ltr'
-                                ? "Saudi Arabia's Trusted Partner"
-                                : 'شريك المملكة الموثوق'}
-                        </span>
-                    </div>
+                    
 
                     {/* Title */}
                     <h1 className="mb-4 text-4xl font-bold text-primary-foreground sm:text-5xl lg:text-6xl animate-fade-in-up">
