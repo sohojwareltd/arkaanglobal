@@ -1,0 +1,40 @@
+:root {
+    --primary-50: 236 253 245;
+    --primary-100: 209 250 229;
+    --primary-200: 167 243 208;
+    --primary-300: 110 231 183;
+    --primary-400: 52 211 153;
+    --primary-500: 13 69 84;
+    --primary-600: 11 57 70;
+    --primary-700: 9 46 56;
+    --primary-800: 7 35 42;
+    --primary-900: 5 24 28;
+    --primary-950: 3 13 14;
+}
+
+/* Custom branding */
+.fi-sidebar {
+    background: linear-gradient(180deg, #0d4554 0%, #0a3642 100%);
+}
+
+.fi-sidebar-nav-item {
+    border-radius: 0.5rem;
+}
+
+.fi-sidebar-nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Brand logo styling */
+.fi-brand {
+    padding: 1rem;
+}
+
+/* Primary button styling */
+.fi-btn-primary {
+    background-color: #0d4554;
+}
+
+.fi-btn-primary:hover {
+    background-color: #0a3642;
+}

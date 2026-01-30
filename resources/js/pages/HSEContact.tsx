@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Shield, Users, Award, MapPin, Phone, Mail, Clock, CheckCircle2, Building2, Download, MessageCircle } from 'lucide-react';
+import { Head, usePage } from '@inertiajs/react';
+import { Shield, Award, MapPin, Phone, Mail, Clock, CheckCircle2, Building2, Download, MessageCircle } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
+import PageHero from '@/components/ui/page-hero';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,12 +10,77 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import WhenVisible from '@/components/ui/when-visible';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
 
-export default function HSEContact() {
-    const { t, language, direction } = useLanguage();
+interface ClientCategory {
+    id: number;
+    name_en: string;
+    name_ar: string;
+    description_en?: string;
+    description_ar?: string;
+}
+
+interface WhyChooseUsItem {
+    id: number;
+    title_en: string;
+    title_ar: string;
+    description_en: string;
+    description_ar: string;
+}
+
+interface HseContentItem {
+    id: number;
+    key: string;
+    content_en?: string;
+    content_ar?: string;
+    link?: string;
+}
+
+interface HeroData {
+    title_en?: string;
+    title_ar?: string;
+    subtitle_en?: string;
+    subtitle_ar?: string;
+    background_image?: string;
+    meta_title_en?: string;
+    meta_title_ar?: string;
+    meta_description_en?: string;
+    meta_description_ar?: string;
+    meta_keywords?: string;
+}
+
+interface ContactInfoMap {
+    [key: string]: { value_en: string; value_ar: string };
+}
+
+interface HSEContactProps {
+    hero?: HeroData | null;
+    hseCommitments?: HseContentItem[];
+    hsePolicyLink?: HseContentItem | null;
+    clientCategories?: ClientCategory[];
+    whyChooseUs?: WhyChooseUsItem[];
+}
+
+export default function HSEContact({
+    hero,
+    hseCommitments = [],
+    hsePolicyLink,
+    clientCategories = [],
+    whyChooseUs = [],
+}: HSEContactProps) {
+    const { t, language } = useLanguage();
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const { contactInfo = {} } = usePage().props as { contactInfo?: ContactInfoMap };
+
+    const getContactValue = (key: string): string => {
+        const item = contactInfo?.[key];
+        if (!item) return '';
+        return language === 'en' ? item.value_en : item.value_ar;
+    };
+
+    const phoneVal = getContactValue('phone') || '0572914027';
+    const whatsappVal = getContactValue('whatsapp') || phoneVal;
+    const whatsappNumber = (whatsappVal || phoneVal).replace(/\D/g, '');
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -30,49 +97,57 @@ export default function HSEContact() {
         (e.target as HTMLFormElement).reset();
     };
 
-    const whatsappNumber = '0572914027'; // Update with actual Jubail number
     const whatsappMessage = language === 'en' 
         ? 'Hello, I would like to inquire about your services.'
         : 'مرحباً، أود الاستفسار عن خدماتكم.';
 
-    return (
-        <Layout>
-            {/* Hero */}
-            <section className="relative overflow-hidden py-20 lg:py-32">
-                {/* Background Image */}
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{
-                        backgroundImage:
-                            "url('https://images.unsplash.com/photo-1565008447742-97f6f38c985c?q=80&w=3431&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
-                    }}
-                />
-                <div className="hero-overlay absolute inset-0" />
-                
-                {/* Pattern Overlay */}
-                <div className="absolute inset-0 opacity-10">
-                    <div
-                        className="absolute inset-0"
-                        style={{
-                            backgroundImage:
-                                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-                        }}
-                    />
-                </div>
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+    const pageTitle = hero ? (language === 'en' ? hero.meta_title_en : hero.meta_title_ar) || undefined : undefined;
+    const metaDescription = hero ? (language === 'en' ? hero.meta_description_en : hero.meta_description_ar) || undefined : undefined;
+    const metaKeywords = hero?.meta_keywords || undefined;
 
-                <div className="container-custom relative z-10">
-                    <div className="mx-auto max-w-3xl text-center">
-                        <h1 className="mb-4 text-4xl font-bold text-primary-foreground sm:text-5xl lg:text-6xl">
-                            {language === 'en' ? 'HSE & Contact' : 'السلامة والاتصال'}
-                        </h1>
-                        <p className="text-xl text-primary-foreground/90">
-                            {language === 'en' 
-                                ? 'Health, Safety, Quality Commitment & Get In Touch' 
-                                : 'الالتزام بالصحة والسلامة والجودة والتواصل معنا'}
-                        </p>
-                    </div>
-                </div>
-            </section>
+    return (
+        <>
+            <Head>
+                <title>{pageTitle || 'HSE, Clients & Contact - Arkaan Global Contracting | Get In Touch'}</title>
+                <meta name="description" content={metaDescription || 'Contact Arkaan Global Contracting for construction, MEP, manpower, and cleaning services. Learn about our HSE commitment, clients, and why choose us.'} />
+                <meta name="keywords" content={metaKeywords || 'contact Arkaan Global, HSE policy, safety commitment, construction contact, Saudi Arabia construction company'} />
+                
+                <meta property="og:title" content={pageTitle || 'HSE, Clients & Contact - Arkaan Global Contracting'} />
+                <meta property="og:description" content={metaDescription || 'Contact us for construction, MEP, manpower, and cleaning services. Learn about our HSE commitment and clients.'} />
+                <meta property="og:url" content={currentUrl} />
+                <meta property="og:type" content="website" />
+                
+                <meta name="twitter:title" content={pageTitle || 'HSE, Clients & Contact - Arkaan Global Contracting'} />
+                <meta name="twitter:description" content={metaDescription || 'Contact us for construction, MEP, manpower, and cleaning services in Saudi Arabia.'} />
+                
+                <link rel="canonical" href={currentUrl} />
+                
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "ContactPage",
+                        "mainEntity": {
+                            "@type": "Organization",
+                            "name": "Arkaan Global Contracting",
+                            "url": siteUrl,
+                            "contactPoint": {
+                                "@type": "ContactPoint",
+                                "contactType": "Customer Service",
+                                "availableLanguage": ["English", "Arabic"]
+                            }
+                        }
+                    })}
+                </script>
+            </Head>
+            <Layout>
+            <PageHero
+                hero={hero}
+                fallbackTitle={language === 'en' ? 'HSE & Contact' : 'السلامة والاتصال'}
+                fallbackSubtitle={language === 'en' ? 'Health, Safety, Quality Commitment & Get In Touch' : 'الالتزام بالصحة والسلامة والجودة والتواصل معنا'}
+                language={language}
+            />
 
             <div className="section-padding">
                 <div className="container-custom space-y-20">
@@ -120,9 +195,18 @@ export default function HSEContact() {
                                     <h3 className="mb-4 text-xl font-semibold text-foreground">
                                         {language === 'en' ? 'Our Commitment' : 'التزامنا'}
                                     </h3>
-                                    <ul className="space-y-3">
-                                        {(
-                                            language === 'en'
+                                    {hseCommitments.length > 0 ? (
+                                        <div
+                                            className="prose prose-muted-foreground max-w-none [&_ul]:space-y-3 [&_li]:flex [&_li]:items-start [&_li]:gap-3 [&_li]:text-muted-foreground"
+                                            dangerouslySetInnerHTML={{
+                                                __html: language === 'en'
+                                                    ? (hseCommitments[0]?.content_en || '')
+                                                    : (hseCommitments[0]?.content_ar || ''),
+                                            }}
+                                        />
+                                    ) : (
+                                        <ul className="space-y-3">
+                                            {(language === 'en'
                                                 ? [
                                                       'Comprehensive safety induction for all workers',
                                                       'Mandatory Personal Protective Equipment (PPE)',
@@ -139,13 +223,14 @@ export default function HSEContact() {
                                                       'إجراءات الاستجابة للطوارئ',
                                                       'تدابير ضمان الجودة والتحكم',
                                                   ]
-                                        ).map((item, i) => (
-                                            <li key={i} className="flex items-start gap-3">
-                                                <CheckCircle2 className="h-5 w-5 shrink-0 text-primary mt-0.5" />
-                                                <span className="text-muted-foreground">{item}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                            ).map((item, i) => (
+                                                <li key={i} className="flex items-start gap-3">
+                                                    <CheckCircle2 className="h-5 w-5 shrink-0 text-primary mt-0.5" />
+                                                    <span className="text-muted-foreground">{item}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
                                 </div>
 
                                 <div className="card-elevated p-8">
@@ -158,7 +243,7 @@ export default function HSEContact() {
                                             : 'قم بتنزيل وثيقة سياسة الصحة والسلامة والبيئة الشاملة لمعرفة المزيد عن التزامنا بالسلامة والجودة.'}
                                     </p>
                                     <a
-                                        href="/hse-policy.pdf"
+                                        href={hsePolicyLink?.link || '/hse-policy.pdf'}
                                         download
                                         className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
                                     >
@@ -188,27 +273,26 @@ export default function HSEContact() {
                             </div>
 
                             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                                {(
-                                    language === 'en'
-                                        ? [
-                                              { title: 'Government', description: 'Public sector projects and infrastructure' },
-                                              { title: 'Semi-Government', description: 'Quasi-governmental organizations' },
-                                              { title: 'Industrial', description: 'Manufacturing and industrial facilities' },
-                                              { title: 'Private', description: 'Commercial and private developments' },
-                                          ]
-                                        : [
-                                              { title: 'حكومي', description: 'مشاريع القطاع العام والبنية التحتية' },
-                                              { title: 'شبه حكومي', description: 'المنظمات شبه الحكومية' },
-                                              { title: 'صناعي', description: 'مرافق التصنيع والصناعة' },
-                                              { title: 'خاص', description: 'التطويرات التجارية والخاصة' },
-                                          ]
+                                {(clientCategories.length > 0
+                                    ? clientCategories.map((c) => ({
+                                          title: language === 'en' ? c.name_en : c.name_ar,
+                                          description: (language === 'en' ? c.description_en : c.description_ar) || '',
+                                      }))
+                                    : [
+                                          { title: language === 'en' ? 'Government' : 'حكومي', description: language === 'en' ? 'Public sector projects and infrastructure' : 'مشاريع القطاع العام والبنية التحتية' },
+                                          { title: language === 'en' ? 'Semi-Government' : 'شبه حكومي', description: language === 'en' ? 'Quasi-governmental organizations' : 'المنظمات شبه الحكومية' },
+                                          { title: language === 'en' ? 'Industrial' : 'صناعي', description: language === 'en' ? 'Manufacturing and industrial facilities' : 'مرافق التصنيع والصناعة' },
+                                          { title: language === 'en' ? 'Private' : 'خاص', description: language === 'en' ? 'Commercial and private developments' : 'التطويرات التجارية والخاصة' },
+                                      ]
                                 ).map((client, i) => (
                                     <div key={i} className="card-elevated p-6 text-center">
                                         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mx-auto">
                                             <Building2 className="h-6 w-6 text-primary" />
                                         </div>
                                         <h3 className="mb-2 text-lg font-semibold text-foreground">{client.title}</h3>
-                                        <p className="text-sm text-muted-foreground">{client.description}</p>
+                                        {client.description && (
+                                            <p className="text-sm text-muted-foreground">{client.description}</p>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -233,60 +317,16 @@ export default function HSEContact() {
                             </div>
 
                             <div className="grid gap-6 lg:grid-cols-3">
-                                {(
-                                    language === 'en'
-                                        ? [
-                                              {
-                                                  title: 'Reliability',
-                                                  description: 'Consistent delivery on all commitments with proven track record.',
-                                              },
-                                              {
-                                                  title: 'Safety',
-                                                  description: 'Zero compromise on worker safety and compliance with all regulations.',
-                                              },
-                                              {
-                                                  title: 'Compliance',
-                                                  description: 'Full adherence to Saudi labor laws and industry standards.',
-                                              },
-                                              {
-                                                  title: 'Transparency',
-                                                  description: 'Clear communication and honest business practices throughout.',
-                                              },
-                                              {
-                                                  title: 'Quality',
-                                                  description: 'Highly skilled and trained workers for all project needs.',
-                                              },
-                                              {
-                                                  title: 'Experience',
-                                                  description: 'Years of expertise serving major projects across Saudi Arabia.',
-                                              },
-                                          ]
-                                        : [
-                                              {
-                                                  title: 'الموثوقية',
-                                                  description: 'التسليم المستمر لجميع الالتزامات مع سجل حافل مثبت.',
-                                              },
-                                              {
-                                                  title: 'السلامة',
-                                                  description: 'لا تنازل عن سلامة العمال والامتثال لجميع اللوائح.',
-                                              },
-                                              {
-                                                  title: 'الامتثال',
-                                                  description: 'الالتزام الكامل بقوانين العمل السعودية ومعايير الصناعة.',
-                                              },
-                                              {
-                                                  title: 'الشفافية',
-                                                  description: 'التواصل الواضح والممارسات التجارية الصادقة في جميع أنحاء.',
-                                              },
-                                              {
-                                                  title: 'الجودة',
-                                                  description: 'عمال مهرة ومدربون لجميع احتياجات المشروع.',
-                                              },
-                                              {
-                                                  title: 'الخبرة',
-                                                  description: 'سنوات من الخبرة في خدمة المشاريع الكبرى في جميع أنحاء المملكة العربية السعودية.',
-                                              },
-                                          ]
+                                {(whyChooseUs.length > 0
+                                    ? whyChooseUs.map((w) => ({
+                                          title: language === 'en' ? w.title_en : w.title_ar,
+                                          description: language === 'en' ? w.description_en : w.description_ar,
+                                      }))
+                                    : [
+                                          { title: language === 'en' ? 'Reliability' : 'الموثوقية', description: language === 'en' ? 'Consistent delivery on all commitments with proven track record.' : 'التسليم المستمر لجميع الالتزامات مع سجل حافل مثبت.' },
+                                          { title: language === 'en' ? 'Safety' : 'السلامة', description: language === 'en' ? 'Zero compromise on worker safety and compliance with all regulations.' : 'لا تنازل عن سلامة العمال والامتثال لجميع اللوائح.' },
+                                          { title: language === 'en' ? 'Compliance' : 'الامتثال', description: language === 'en' ? 'Full adherence to Saudi labor laws and industry standards.' : 'الالتزام الكامل بقوانين العمل السعودية ومعايير الصناعة.' },
+                                      ]
                                 ).map((item, i) => (
                                     <div key={i} className="card-elevated p-6">
                                         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
@@ -329,9 +369,7 @@ export default function HSEContact() {
                                                         {language === 'en' ? 'Address' : 'العنوان'}
                                                     </p>
                                                     <p className="text-sm text-muted-foreground">
-                                                        {language === 'en' 
-                                                            ? 'Jubail, Eastern Province, Saudi Arabia'
-                                                            : 'الجبيل، المنطقة الشرقية، المملكة العربية السعودية'}
+                                                        {getContactValue('address') || (language === 'en' ? 'Jubail, Eastern Province, Saudi Arabia' : 'الجبيل، المنطقة الشرقية، المملكة العربية السعودية')}
                                                     </p>
                                                 </div>
                                             </div>
@@ -341,8 +379,8 @@ export default function HSEContact() {
                                                     <p className="font-medium text-foreground">
                                                         {language === 'en' ? 'Phone' : 'الهاتف'}
                                                     </p>
-                                                    <a href="tel:+966501234567" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                                                        +966 50 123 4567
+                                                    <a href={`tel:${phoneVal.replace(/\D/g, '')}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                                                        {phoneVal}
                                                     </a>
                                                 </div>
                                             </div>
@@ -352,8 +390,8 @@ export default function HSEContact() {
                                                     <p className="font-medium text-foreground">
                                                         {language === 'en' ? 'Email' : 'البريد الإلكتروني'}
                                                     </p>
-                                                    <a href="mailto:info@arkaanglobal.com" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                                                        info@arkaanglobal.com
+                                                    <a href={`mailto:${getContactValue('email') || 'info@arkaanglobal.com'}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                                                        {getContactValue('email') || 'info@arkaanglobal.com'}
                                                     </a>
                                                 </div>
                                             </div>
@@ -364,9 +402,7 @@ export default function HSEContact() {
                                                         {language === 'en' ? 'Business Hours' : 'ساعات العمل'}
                                                     </p>
                                                     <p className="text-sm text-muted-foreground">
-                                                        {language === 'en' 
-                                                            ? 'Sun - Thu: 8:00 AM - 5:00 PM'
-                                                            : 'الأحد - الخميس: 8:00 صباحًا - 5:00 مساءً'}
+                                                        {getContactValue('hours') || (language === 'en' ? 'Sun - Thu: 8:00 AM - 5:00 PM' : 'الأحد - الخميس: 8:00 صباحًا - 5:00 مساءً')}
                                                     </p>
                                                 </div>
                                             </div>
@@ -375,7 +411,7 @@ export default function HSEContact() {
                                         {/* WhatsApp Button */}
                                         <div className="mt-6 pt-6 border-t border-border">
                                             <a
-                                                href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`}
+                                                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="inline-flex items-center gap-2 rounded-lg bg-[#25D366] px-6 py-3 text-white hover:bg-[#20BA5A] transition-colors"
@@ -461,7 +497,7 @@ export default function HSEContact() {
 
             {/* Floating WhatsApp Button */}
             <a
-                href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`}
+                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] shadow-lg hover:bg-[#20BA5A] transition-all hover:scale-110"
@@ -470,5 +506,6 @@ export default function HSEContact() {
                 <MessageCircle className="h-7 w-7 text-white" />
             </a>
         </Layout>
+        </>
     );
 }

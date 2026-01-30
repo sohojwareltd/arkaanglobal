@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'google_analytics_id' => env('GOOGLE_ANALYTICS_ID'),
+    'facebook_pixel_id' => env('FACEBOOK_PIXEL_ID'),
+    'microsoft_clarity_id' => env('MICROSOFT_CLARITY_ID'),
+
 ];

@@ -1,33 +1,49 @@
 import React from 'react';
-import { FileSignature, HardHat, Users, Wrench, ArrowRight } from 'lucide-react';
+import { HardHat, Users, Wrench, Sparkles, ArrowRight } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-export default function ServicesSection(): JSX.Element {
-    const { t, direction } = useLanguage();
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+    'hard-hat': HardHat,
+    'users': Users,
+    'wrench': Wrench,
+    'sparkles': Sparkles,
+};
 
-    const services = [
-        {
-            icon: Users,
-            title: t('services.summary.manpower'),
-            description: 'Comprehensive workforce deployment solutions',
-            link: '/services#manpower',
-        },
-        {
-            icon: HardHat,
-            title: t('services.summary.construction'),
-            description: 'General construction, civil works, and MEP services',
-            link: '/services#construction',
-        },
-        {
-            icon: Wrench,
-            title: t('services.summary.cleaning'),
-            description: 'Professional post-construction cleaning services',
-            link: '/services#cleaning',
-        },
-    ];
+interface ServiceItem {
+    id: number;
+    slug: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string;
+    description_ar?: string;
+    icon?: string;
+}
+
+interface ServicesSectionProps {
+    services?: ServiceItem[];
+}
+
+export default function ServicesSection({ services: propServices = [] }: ServicesSectionProps): JSX.Element {
+    const { t, direction, language } = useLanguage();
+
+    const services = propServices.length > 0
+        ? propServices.map((s) => {
+            const IconComponent = iconMap[s.icon || ''] || HardHat;
+            return {
+                icon: IconComponent,
+                title: language === 'en' ? s.title_en : s.title_ar,
+                description: language === 'en' ? (s.description_en || '') : (s.description_ar || ''),
+                link: `/services#${s.slug}`,
+            };
+        })
+        : [
+            { icon: Users, title: t('services.summary.manpower'), description: 'Comprehensive workforce deployment solutions', link: '/services#manpower' },
+            { icon: HardHat, title: t('services.summary.construction'), description: 'General construction, civil works, and MEP services', link: '/services#construction' },
+            { icon: Wrench, title: t('services.summary.cleaning'), description: 'Professional post-construction cleaning services', link: '/services#cleaning' },
+        ];
 
     return (
         <section className="section-padding bg-muted/30">
@@ -43,15 +59,17 @@ export default function ServicesSection(): JSX.Element {
                 </div>
 
                 {/* Services Grid */}
-                <div className="grid gap-6 sm:grid-cols-3">
-                    {services.map((service) => (
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    {services.map((service) => {
+                        const IconComponent = service.icon;
+                        return (
                         <Link
                             key={service.link}
                             href={service.link}
                             className="card-elevated group p-6"
                         >
                             <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl hero-gradient transition-transform group-hover:scale-110">
-                                <service.icon className="h-7 w-7 text-primary-foreground" />
+                                <IconComponent className="h-7 w-7 text-primary-foreground" />
                             </div>
                             <h3 className="mb-2 text-xl font-semibold text-foreground">
                                 {service.title}
@@ -70,7 +88,8 @@ export default function ServicesSection(): JSX.Element {
                                 />
                             </div>
                         </Link>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* CTA */}

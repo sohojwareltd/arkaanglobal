@@ -7,25 +7,41 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useScroll } from '@/hooks/useScroll';
 import { cn } from '@/lib/utils';
 
+interface NavigationItem {
+    path: string;
+    label_en: string;
+    label_ar: string;
+}
+
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const { language, setLanguage, t, direction } = useLanguage();
-    const { url } = usePage();
+    const { url, props } = usePage();
     const scrollY = useScroll();
 
     // Expanded when at top or hovered
     const isExpanded = scrollY < 50 || isHovered;
 
-    const navItems = [
-        { path: '/', label: t('nav.home') },
-        { path: '/about', label: t('nav.about') },
-        { path: '/services', label: t('nav.services') },
-        { path: '/hse-contact', label: t('nav.hseContact') },
-    ];
+    // Get navigation from shared props
+    const rawNav = props.navigation;
+    const navigation = Array.isArray(rawNav) ? rawNav : [];
+    const navItems = navigation.map((item) => ({
+        path: item.path,
+        label: language === 'en' ? item.label_en : item.label_ar,
+    }));
 
+    const { languages } = useLanguage();
+    
     const toggleLanguage = () => {
-        setLanguage(language === 'en' ? 'ar' : 'en');
+        // Cycle through available languages
+        const currentIndex = languages.findIndex(lang => lang.code === language);
+        const nextIndex = (currentIndex + 1) % languages.length;
+        setLanguage(languages[nextIndex].code);
+    };
+
+    const switchToLanguage = (code: string) => {
+        setLanguage(code);
     };
 
     const isActive = (path: string) => url === path;
@@ -50,15 +66,33 @@ export default function Header() {
 
                         {/* Mobile actions */}
                         <div className="flex items-center gap-2">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={toggleLanguage}
-                                type="button"
-                                className="hover:bg-[#22a845]/10"
-                            >
-                                <Globe className="h-6 w-6 text-[#22a845] drop-shadow-sm" style={{ filter: 'drop-shadow(0 2px 4px rgba(34, 168, 69, 0.3))' }} />
-                            </Button>
+                            <div className="relative group">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={toggleLanguage}
+                                    type="button"
+                                    className="hover:bg-[#22a845]/10"
+                                    title={languages.find(l => l.code === language)?.native_name || 'Language'}
+                                >
+                                    <Globe className="h-6 w-6 text-[#22a845] drop-shadow-sm" style={{ filter: 'drop-shadow(0 2px 4px rgba(34, 168, 69, 0.3))' }} />
+                                </Button>
+                                {/* Language dropdown for mobile */}
+                                <div className="absolute right-0 top-full mt-2 bg-primary rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 min-w-[120px]">
+                                    {languages.map((lang) => (
+                                        <button
+                                            key={lang.code}
+                                            onClick={() => switchToLanguage(lang.code)}
+                                            className={`w-full text-left px-4 py-2 text-sm text-primary-foreground hover:bg-primary-foreground/10 transition-colors flex items-center gap-2 ${
+                                                language === lang.code ? 'bg-primary-foreground/20' : ''
+                                            }`}
+                                        >
+                                            {lang.flag && <span>{lang.flag}</span>}
+                                            <span>{lang.native_name}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                             <Button
                                 variant="ghost"
                                 size="icon"
@@ -168,22 +202,40 @@ export default function Header() {
                             {isExpanded ? (
                                 <>
                                     {/* Language Toggle */}
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={toggleLanguage}
-                                        className={cn(
-                                            'rounded-full transition-all duration-500 text-primary-foreground hover:bg-primary-foreground/10',
-                                            isExpanded ? 'opacity-100' : 'opacity-0'
-                                        )}
-                                        type="button"
-                                        style={{ transitionDelay: '200ms' }}
-                                    >
-                                        <Globe className="h-4 w-4 mr-1" />
-                                        <span className="text-xs">
-                                            {language === 'en' ? 'AR' : 'EN'}
-                                        </span>
-                                    </Button>
+                                    <div className="relative group">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={toggleLanguage}
+                                            className={cn(
+                                                'rounded-full transition-all duration-500 text-primary-foreground hover:bg-primary-foreground/10',
+                                                isExpanded ? 'opacity-100' : 'opacity-0'
+                                            )}
+                                            type="button"
+                                            style={{ transitionDelay: '200ms' }}
+                                        >
+                                            <Globe className="h-4 w-4 mr-1" />
+                                            <span className="text-xs">
+                                                {languages.find(l => l.code === language)?.code.toUpperCase() || 'EN'}
+                                            </span>
+                                        </Button>
+                                        {/* Language dropdown for desktop */}
+                                        <div className="absolute right-0 top-full mt-2 bg-primary rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 min-w-[150px]">
+                                            {languages.map((lang) => (
+                                                <button
+                                                    key={lang.code}
+                                                    onClick={() => switchToLanguage(lang.code)}
+                                                    className={`w-full text-left px-4 py-2 text-sm text-primary-foreground hover:bg-primary-foreground/10 transition-colors flex items-center gap-2 ${
+                                                        language === lang.code ? 'bg-primary-foreground/20' : ''
+                                                    }`}
+                                                >
+                                                    {lang.flag && <span>{lang.flag}</span>}
+                                                    <span>{lang.native_name}</span>
+                                                    {language === lang.code && <span className="ml-auto">✓</span>}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
 
                                     {/* CTA Button */}
                                     <Button
@@ -198,14 +250,32 @@ export default function Header() {
                                     </Button>
                                 </>
                             ) : (
-                                <button
-                                    type="button"
-                                    onClick={toggleLanguage}
-                                    className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary-foreground/20 transition-all duration-300 text-primary-foreground"
-                                    aria-label="Language"
-                                >
-                                    <Globe className="h-4 w-4" />
-                                </button>
+                                <div className="relative group">
+                                    <button
+                                        type="button"
+                                        onClick={toggleLanguage}
+                                        className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary-foreground/20 transition-all duration-300 text-primary-foreground"
+                                        aria-label="Language"
+                                        title={languages.find(l => l.code === language)?.native_name || 'Language'}
+                                    >
+                                        <Globe className="h-4 w-4" />
+                                    </button>
+                                    {/* Language dropdown for compact desktop */}
+                                    <div className="absolute right-0 top-full mt-2 bg-primary rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 min-w-[120px]">
+                                        {languages.map((lang) => (
+                                            <button
+                                                key={lang.code}
+                                                onClick={() => switchToLanguage(lang.code)}
+                                                className={`w-full text-left px-4 py-2 text-sm text-primary-foreground hover:bg-primary-foreground/10 transition-colors flex items-center gap-2 ${
+                                                    language === lang.code ? 'bg-primary-foreground/20' : ''
+                                                }`}
+                                            >
+                                                {lang.flag && <span>{lang.flag}</span>}
+                                                <span>{lang.native_name}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                             )}
                         </div>
                     </div>

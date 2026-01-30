@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { Building2, Zap, Users, Sparkles, Download, CheckCircle2 } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
+import PageHero from '@/components/ui/page-hero';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,11 +13,133 @@ import WhenVisible from '@/components/ui/when-visible';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
-export default function Services() {
+interface ServiceItem {
+    id: number;
+    text_en: string;
+    text_ar: string;
+}
+
+interface Service {
+    id: number;
+    slug: string;
+    title_en: string;
+    title_ar: string;
+    description_en: string;
+    description_ar: string;
+    icon?: string;
+    image?: string;
+    items?: ServiceItem[];
+}
+
+interface HeroData {
+    title_en?: string;
+    title_ar?: string;
+    subtitle_en?: string;
+    subtitle_ar?: string;
+    background_image?: string;
+    meta_title_en?: string;
+    meta_title_ar?: string;
+    meta_description_en?: string;
+    meta_description_ar?: string;
+    meta_keywords?: string;
+}
+
+interface ManpowerCategoryItem {
+    id: number;
+    category_en: string;
+    category_ar: string;
+    short_term: boolean;
+    long_term: boolean;
+    project_based: boolean;
+}
+
+interface CleaningScopeItemType {
+    id: number;
+    text_en: string;
+    text_ar: string;
+}
+
+interface CleaningScope {
+    id: number;
+    category_en: string;
+    category_ar: string;
+    items?: CleaningScopeItemType[];
+}
+
+interface HseContentItem {
+    id: number;
+    key: string;
+    content_en?: string;
+    content_ar?: string;
+    link?: string;
+}
+
+interface ServicesProps {
+    hero?: HeroData | null;
+    services?: Service[];
+    manpowerCategories?: ManpowerCategoryItem[];
+    cleaningScopes?: CleaningScope[];
+    manpowerCategoriesTitle?: HseContentItem | null;
+    cleaningMatrixTitle?: HseContentItem | null;
+    manpowerFormLink?: HseContentItem | null;
+}
+
+function getImageUrl(img: string | undefined | null): string {
+    if (!img || typeof img !== 'string') return '';
+    return img.startsWith('http') || img.startsWith('/') ? img : `/storage/${img}`;
+}
+
+export default function Services({
+    hero,
+    services = [],
+    manpowerCategories: rawManpower = [],
+    cleaningScopes: rawCleaning = [],
+    manpowerCategoriesTitle,
+    cleaningMatrixTitle,
+    manpowerFormLink,
+}: ServicesProps) {
     const { t, language, direction } = useLanguage();
     const { toast } = useToast();
+    const { flash } = usePage().props as { flash?: { success?: boolean } };
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+
+    const manpowerCategories = rawManpower.length > 0
+        ? rawManpower.map((c) => ({
+            category: language === 'en' ? c.category_en : c.category_ar,
+            shortTerm: c.short_term ? '✓' : '',
+            longTerm: c.long_term ? '✓' : '',
+            projectBased: c.project_based ? '✓' : '',
+        }))
+        : [
+            { category: language === 'en' ? 'Project Managers' : 'مديرو المشاريع', shortTerm: '✓', longTerm: '✓', projectBased: '✓' },
+            { category: language === 'en' ? 'Engineers' : 'المهندسون', shortTerm: '✓', longTerm: '✓', projectBased: '✓' },
+            { category: language === 'en' ? 'Supervisors' : 'المشرفون', shortTerm: '✓', longTerm: '✓', projectBased: '✓' },
+            { category: language === 'en' ? 'Skilled Workers' : 'العمال المهرة', shortTerm: '✓', longTerm: '✓', projectBased: '✓' },
+            { category: language === 'en' ? 'Semi-skilled Workers' : 'العمال شبه المهرة', shortTerm: '✓', longTerm: '✓', projectBased: '✓' },
+            { category: language === 'en' ? 'Male Cleaners' : 'عمال النظافة (ذكور)', shortTerm: '✓', longTerm: '✓', projectBased: '✓' },
+            { category: language === 'en' ? 'Female Cleaners' : 'عمال النظافة (إناث)', shortTerm: '✓', longTerm: '✓', projectBased: '✓' },
+        ];
+
+    const cleaningMatrix = rawCleaning.length > 0
+        ? rawCleaning.map((s) => ({
+            category: language === 'en' ? s.category_en : s.category_ar,
+            services: (s.items ?? []).map((i) => (language === 'en' ? i.text_en : i.text_ar)),
+        }))
+        : [
+            { category: language === 'en' ? 'Office Cleaning' : 'تنظيف المكاتب', services: language === 'en' ? ['Daily office cleaning', 'Carpet and upholstery cleaning', 'Window cleaning', 'Restroom maintenance', 'Waste management', 'Floor care and polishing'] : ['تنظيف المكاتب اليومي', 'تنظيف السجاد والأثاث', 'تنظيف النوافذ', 'صيانة دورات المياه', 'إدارة النفايات', 'العناية بالأرضيات وتلميعها'] },
+            { category: language === 'en' ? 'Industrial Cleaning' : 'التنظيف الصناعي', services: language === 'en' ? ['Factory floor cleaning', 'Equipment cleaning', 'Hazardous waste handling', 'High-pressure washing', 'Tank and vessel cleaning', 'Industrial degreasing'] : ['تنظيف أرضيات المصانع', 'تنظيف المعدات', 'معالجة النفايات الخطرة', 'الغسيل بالضغط العالي', 'تنظيف الخزانات والأوعية', 'إزالة الشحوم الصناعية'] },
+            { category: language === 'en' ? 'Post-Construction Cleaning' : 'التنظيف بعد البناء', services: language === 'en' ? ['Construction debris removal', 'Final cleaning and polishing', 'Window and glass cleaning', 'Floor deep cleaning', 'Sanitization', 'Waste disposal'] : ['إزالة مخلفات البناء', 'التنظيف النهائي والتلميع', 'تنظيف النوافذ والزجاج', 'التنظيف العميق للأرضيات', 'التعقيم', 'التخلص من النفايات'] },
+        ];
+
+    useEffect(() => {
+        if (flash?.success) {
+            toast({
+                title: language === 'en' ? 'Request Submitted' : 'تم إرسال الطلب',
+                description: language === 'en' ? 'We will contact you soon.' : 'سنتواصل معك قريبًا.',
+            });
+        }
+    }, [flash?.success, language, toast]);
 
     const toggleRow = (index: number) => {
         const newExpanded = new Set(expandedRows);
@@ -27,165 +151,112 @@ export default function Services() {
         setExpandedRows(newExpanded);
     };
 
-    const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const form = e.target as HTMLFormElement;
+        const formData = new FormData(form);
         setIsSubmitting(true);
 
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        toast({
-            title: language === 'en' ? 'Request Submitted' : 'تم إرسال الطلب',
-            description: language === 'en' ? 'We will contact you soon.' : 'سنتواصل معك قريبًا.',
+        router.post('/quote-request', {
+            company: formData.get('company') as string,
+            contact_person: formData.get('contact') as string,
+            email: formData.get('email') as string,
+            phone: formData.get('phone') as string,
+            service_type: formData.get('serviceType') as string || null,
+            preferred_start_date: formData.get('startDate') as string || null,
+            requirement_details: formData.get('requirement') as string || null,
+        }, {
+            preserveScroll: true,
+            onFinish: () => setIsSubmitting(false),
+            onSuccess: () => form.reset(),
         });
-
-        setIsSubmitting(false);
-        (e.target as HTMLFormElement).reset();
     };
 
-    // Cleaning Services Scope Matrix
-    const cleaningMatrix = [
-        {
-            category: language === 'en' ? 'Office Cleaning' : 'تنظيف المكاتب',
-            services: language === 'en'
-                ? [
-                      'Daily office cleaning',
-                      'Carpet and upholstery cleaning',
-                      'Window cleaning',
-                      'Restroom maintenance',
-                      'Waste management',
-                      'Floor care and polishing',
-                  ]
-                : [
-                      'تنظيف المكاتب اليومي',
-                      'تنظيف السجاد والأثاث',
-                      'تنظيف النوافذ',
-                      'صيانة دورات المياه',
-                      'إدارة النفايات',
-                      'العناية بالأرضيات وتلميعها',
-                  ],
-        },
-        {
-            category: language === 'en' ? 'Industrial Cleaning' : 'التنظيف الصناعي',
-            services: language === 'en'
-                ? [
-                      'Factory floor cleaning',
-                      'Equipment cleaning',
-                      'Hazardous waste handling',
-                      'High-pressure washing',
-                      'Tank and vessel cleaning',
-                      'Industrial degreasing',
-                  ]
-                : [
-                      'تنظيف أرضيات المصانع',
-                      'تنظيف المعدات',
-                      'معالجة النفايات الخطرة',
-                      'الغسيل بالضغط العالي',
-                      'تنظيف الخزانات والأوعية',
-                      'إزالة الشحوم الصناعية',
-                  ],
-        },
-        {
-            category: language === 'en' ? 'Post-Construction Cleaning' : 'التنظيف بعد البناء',
-            services: language === 'en'
-                ? [
-                      'Construction debris removal',
-                      'Final cleaning and polishing',
-                      'Window and glass cleaning',
-                      'Floor deep cleaning',
-                      'Sanitization',
-                      'Waste disposal',
-                  ]
-                : [
-                      'إزالة مخلفات البناء',
-                      'التنظيف النهائي والتلميع',
-                      'تنظيف النوافذ والزجاج',
-                      'التنظيف العميق للأرضيات',
-                      'التعقيم',
-                      'التخلص من النفايات',
-                  ],
-        },
-    ];
+    const pageTitle = hero?.meta_title_en || hero?.meta_title_ar
+        ? (language === 'en' ? hero.meta_title_en : hero.meta_title_ar) ?? 'Services - Arkaan Global Contracting'
+        : 'Services - Arkaan Global Contracting | Construction, MEP, Manpower & Cleaning';
+    const metaDesc = hero?.meta_description_en || hero?.meta_description_ar
+        ? (language === 'en' ? hero.meta_description_en : hero.meta_description_ar) ?? ''
+        : 'Comprehensive services: General Construction & Civil Works, MEP Services, Manpower Solutions, and Dedicated Cleaning Services across Saudi Arabia.';
+    const metaKeywords = hero?.meta_keywords ?? 'construction services, MEP services, manpower solutions, cleaning services, civil works, HVAC, electrical, plumbing';
 
-    // Manpower Categories Table Data
-    const manpowerCategories = [
-        {
-            category: language === 'en' ? 'Project Managers' : 'مديرو المشاريع',
-            shortTerm: '✓',
-            longTerm: '✓',
-            projectBased: '✓',
-        },
-        {
-            category: language === 'en' ? 'Engineers' : 'المهندسون',
-            shortTerm: '✓',
-            longTerm: '✓',
-            projectBased: '✓',
-        },
-        {
-            category: language === 'en' ? 'Supervisors' : 'المشرفون',
-            shortTerm: '✓',
-            longTerm: '✓',
-            projectBased: '✓',
-        },
-        {
-            category: language === 'en' ? 'Skilled Workers' : 'العمال المهرة',
-            shortTerm: '✓',
-            longTerm: '✓',
-            projectBased: '✓',
-        },
-        {
-            category: language === 'en' ? 'Semi-skilled Workers' : 'العمال شبه المهرة',
-            shortTerm: '✓',
-            longTerm: '✓',
-            projectBased: '✓',
-        },
-        {
-            category: language === 'en' ? 'Male Cleaners' : 'عمال النظافة (ذكور)',
-            shortTerm: '✓',
-            longTerm: '✓',
-            projectBased: '✓',
-        },
-        {
-            category: language === 'en' ? 'Female Cleaners' : 'عمال النظافة (إناث)',
-            shortTerm: '✓',
-            longTerm: '✓',
-            projectBased: '✓',
-        },
-    ];
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
     return (
-        <Layout>
-            {/* Hero */}
-            <section className="relative overflow-hidden py-20 lg:py-32">
-                {/* Background Image */}
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{
-                        backgroundImage:
-                            "url('https://images.unsplash.com/photo-1516216628859-9bccecab13ca?q=80&w=2369&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
-                    }}
-                />
-                <div className="hero-overlay absolute inset-0" />
+        <>
+            <Head>
+                <title>{pageTitle}</title>
+                <meta name="description" content={metaDesc} />
+                <meta name="keywords" content={metaKeywords} />
                 
-                {/* Pattern Overlay */}
-                <div className="absolute inset-0 opacity-10">
-                    <div
-                        className="absolute inset-0"
-                        style={{
-                            backgroundImage:
-                                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-                        }}
-                    />
-                </div>
-
-                <div className="container-custom relative z-10">
-                    <div className="mx-auto max-w-3xl text-center">
-                        <h1 className="mb-4 text-4xl font-bold text-primary-foreground sm:text-5xl lg:text-6xl">
-                            {t('services.page.title')}
-                        </h1>
-                        <p className="text-xl text-primary-foreground/90">{t('services.page.subtitle')}</p>
-                    </div>
-                </div>
-            </section>
+                <meta property="og:title" content={pageTitle} />
+                <meta property="og:description" content={metaDesc} />
+                <meta property="og:url" content={currentUrl} />
+                <meta property="og:type" content="website" />
+                
+                <meta name="twitter:title" content={pageTitle} />
+                <meta name="twitter:description" content={metaDesc} />
+                
+                <link rel="canonical" href={currentUrl} />
+                
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "Service",
+                        "serviceType": "Construction, MEP, Manpower, Cleaning Services",
+                        "provider": {
+                            "@type": "Organization",
+                            "name": "Arkaan Global Contracting"
+                        },
+                        "areaServed": {
+                            "@type": "Country",
+                            "name": "Saudi Arabia"
+                        },
+                        "hasOfferCatalog": {
+                            "@type": "OfferCatalog",
+                            "name": "Construction Services",
+                            "itemListElement": [
+                                {
+                                    "@type": "Offer",
+                                    "itemOffered": {
+                                        "@type": "Service",
+                                        "name": "General Construction & Civil Works"
+                                    }
+                                },
+                                {
+                                    "@type": "Offer",
+                                    "itemOffered": {
+                                        "@type": "Service",
+                                        "name": "MEP Services"
+                                    }
+                                },
+                                {
+                                    "@type": "Offer",
+                                    "itemOffered": {
+                                        "@type": "Service",
+                                        "name": "Manpower Solutions"
+                                    }
+                                },
+                                {
+                                    "@type": "Offer",
+                                    "itemOffered": {
+                                        "@type": "Service",
+                                        "name": "Dedicated Cleaning Services"
+                                    }
+                                }
+                            ]
+                        }
+                    })}
+                </script>
+            </Head>
+            <Layout>
+            <PageHero
+                hero={hero}
+                fallbackTitle={t('services.page.title')}
+                fallbackSubtitle={t('services.page.subtitle')}
+                language={language}
+            />
 
             <div className="section-padding">
                 <div className="container-custom space-y-20">
@@ -200,33 +271,35 @@ export default function Services() {
                                         </div>
                                         <div>
                                             <h2 className="text-3xl font-bold text-foreground">
-                                                {t('services.construction.title')}
+                                                {services.find((s) => s.slug === 'construction')
+                                                    ? (language === 'en'
+                                                        ? services.find((s) => s.slug === 'construction')!.title_en
+                                                        : services.find((s) => s.slug === 'construction')!.title_ar)
+                                                    : t('services.construction.title')}
                                             </h2>
-                                            <p className="text-muted-foreground">{t('services.construction.description')}</p>
+                                            <p className="text-muted-foreground">
+                                                {services.find((s) => s.slug === 'construction')
+                                                    ? (language === 'en'
+                                                        ? services.find((s) => s.slug === 'construction')!.description_en
+                                                        : services.find((s) => s.slug === 'construction')!.description_ar)
+                                                    : t('services.construction.description')}
+                                            </p>
                                         </div>
                                     </div>
                                     <div className="card-elevated p-8">
                                         <ul className="space-y-3">
                                             {(
-                                                language === 'en'
-                                                    ? [
-                                                          'Building construction and renovation',
-                                                          'Infrastructure development',
-                                                          'Road and bridge construction',
-                                                          'Site preparation and earthworks',
-                                                          'Concrete works',
-                                                          'Steel structure installation',
-                                                          'Finishing works',
-                                                      ]
-                                                    : [
-                                                          'بناء وتجديد المباني',
-                                                          'تطوير البنية التحتية',
-                                                          'بناء الطرق والجسور',
-                                                          'إعداد الموقع والأعمال الترابية',
-                                                          'أعمال الخرسانة',
-                                                          'تركيب الهياكل الفولاذية',
-                                                          'أعمال التشطيب',
-                                                      ]
+                                                (() => {
+                                                    const svc = services.find((s) => s.slug === 'construction');
+                                                    if (svc?.items?.length) {
+                                                        return svc.items.map((it) =>
+                                                            language === 'en' ? it.text_en : it.text_ar
+                                                        );
+                                                    }
+                                                    return language === 'en'
+                                                        ? ['Building construction and renovation', 'Infrastructure development', 'Road and bridge construction', 'Site preparation and earthworks', 'Concrete works', 'Steel structure installation', 'Finishing works']
+                                                        : ['بناء وتجديد المباني', 'تطوير البنية التحتية', 'بناء الطرق والجسور', 'إعداد الموقع والأعمال الترابية', 'أعمال الخرسانة', 'تركيب الهياكل الفولاذية', 'أعمال التشطيب'];
+                                                })()
                                             ).map((item, i) => (
                                                 <li key={i} className="flex items-center gap-3">
                                                     <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
@@ -238,7 +311,7 @@ export default function Services() {
                                 </div>
                                 <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                                     <img
-                                        src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2070"
+                                        src={getImageUrl(services.find((s) => s.slug === 'construction')?.image) || 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2070'}
                                         alt="Construction work"
                                         className="w-full h-[400px] object-cover"
                                     />
@@ -254,7 +327,7 @@ export default function Services() {
                             <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
                                 <div className="relative rounded-2xl overflow-hidden shadow-2xl order-2 lg:order-1">
                                     <img
-                                        src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=2069"
+                                        src={getImageUrl(services.find((s) => s.slug === 'mep')?.image) || 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=2069'}
                                         alt="MEP services"
                                         className="w-full h-[400px] object-cover"
                                     />
@@ -266,32 +339,36 @@ export default function Services() {
                                             <Zap className="h-8 w-8 text-primary-foreground" />
                                         </div>
                                         <div>
-                                            <h2 className="text-3xl font-bold text-foreground">{t('services.mep.title')}</h2>
-                                            <p className="text-muted-foreground">{t('services.mep.description')}</p>
+                                            <h2 className="text-3xl font-bold text-foreground">
+                                                {services.find((s) => s.slug === 'mep')
+                                                    ? (language === 'en'
+                                                        ? services.find((s) => s.slug === 'mep')!.title_en
+                                                        : services.find((s) => s.slug === 'mep')!.title_ar)
+                                                    : t('services.mep.title')}
+                                            </h2>
+                                            <p className="text-muted-foreground">
+                                                {services.find((s) => s.slug === 'mep')
+                                                    ? (language === 'en'
+                                                        ? services.find((s) => s.slug === 'mep')!.description_en
+                                                        : services.find((s) => s.slug === 'mep')!.description_ar)
+                                                    : t('services.mep.description')}
+                                            </p>
                                         </div>
                                     </div>
                                     <div className="card-elevated p-8">
                                         <ul className="space-y-3">
                                             {(
-                                                language === 'en'
-                                                    ? [
-                                                          'Electrical installation and maintenance',
-                                                          'HVAC systems installation',
-                                                          'Plumbing and water systems',
-                                                          'Fire safety systems',
-                                                          'Low voltage systems',
-                                                          'Building automation',
-                                                          'MEP maintenance and repair',
-                                                      ]
-                                                    : [
-                                                          'تركيب وصيانة الكهرباء',
-                                                          'تركيب أنظمة التكييف والتهوية',
-                                                          'السباكة وأنظمة المياه',
-                                                          'أنظمة السلامة من الحرائق',
-                                                          'أنظمة الجهد المنخفض',
-                                                          'أتمتة المباني',
-                                                          'صيانة وإصلاح الميكانيكا والكهرباء',
-                                                      ]
+                                                (() => {
+                                                    const svc = services.find((s) => s.slug === 'mep');
+                                                    if (svc?.items?.length) {
+                                                        return svc.items.map((it) =>
+                                                            language === 'en' ? it.text_en : it.text_ar
+                                                        );
+                                                    }
+                                                    return language === 'en'
+                                                        ? ['Electrical installation and maintenance', 'HVAC systems installation', 'Plumbing and water systems', 'Fire safety systems', 'Low voltage systems', 'Building automation', 'MEP maintenance and repair']
+                                                        : ['تركيب وصيانة الكهرباء', 'تركيب أنظمة التكييف والتهوية', 'السباكة وأنظمة المياه', 'أنظمة السلامة من الحرائق', 'أنظمة الجهد المنخفض', 'أتمتة المباني', 'صيانة وإصلاح الميكانيكا والكهرباء'];
+                                                })()
                                             ).map((item, i) => (
                                                 <li key={i} className="flex items-center gap-3">
                                                     <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
@@ -313,15 +390,25 @@ export default function Services() {
                                     <Users className="h-8 w-8 text-primary-foreground" />
                                 </div>
                                 <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
-                                    {t('services.manpower.title')}
+                                    {services.find((s) => s.slug === 'manpower')
+                                        ? (language === 'en'
+                                            ? services.find((s) => s.slug === 'manpower')!.title_en
+                                            : services.find((s) => s.slug === 'manpower')!.title_ar)
+                                        : t('services.manpower.title')}
                                 </h2>
-                                <p className="mt-2 text-muted-foreground">{t('services.manpower.description')}</p>
+                                <p className="mt-2 text-muted-foreground">
+                                    {services.find((s) => s.slug === 'manpower')
+                                        ? (language === 'en'
+                                            ? services.find((s) => s.slug === 'manpower')!.description_en
+                                            : services.find((s) => s.slug === 'manpower')!.description_ar)
+                                        : t('services.manpower.description')}
+                                </p>
                             </div>
 
                             <div className="mb-8 grid gap-4 sm:grid-cols-3">
                                 <div className="relative rounded-xl overflow-hidden shadow-lg">
                                     <img
-                                        src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800"
+                                        src={getImageUrl(services.find((s) => s.slug === 'manpower')?.image) || 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800'}
                                         alt="Workforce"
                                         className="w-full h-48 object-cover"
                                     />
@@ -348,7 +435,9 @@ export default function Services() {
                             <div className="card-elevated overflow-hidden p-8">
                                 <div className="mb-6">
                                     <h3 className="mb-4 text-xl font-semibold text-foreground">
-                                        {language === 'en' ? 'Manpower Categories & Deployment Options' : 'فئات القوى العاملة وخيارات النشر'}
+                                        {manpowerCategoriesTitle
+                                            ? (language === 'en' ? manpowerCategoriesTitle.content_en : manpowerCategoriesTitle.content_ar) || (language === 'en' ? 'Manpower Categories & Deployment Options' : 'فئات القوى العاملة وخيارات النشر')
+                                            : language === 'en' ? 'Manpower Categories & Deployment Options' : 'فئات القوى العاملة وخيارات النشر'}
                                     </h3>
                                 </div>
 
@@ -426,7 +515,7 @@ export default function Services() {
 
                                 <div className="mt-6 pt-6 border-t border-border">
                                     <a
-                                        href="/manpower-request-form.pdf"
+                                        href={manpowerFormLink?.link || '/manpower-request-form.pdf'}
                                         download
                                         className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
                                     >
@@ -446,15 +535,25 @@ export default function Services() {
                                     <Sparkles className="h-8 w-8 text-primary-foreground" />
                                 </div>
                                 <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
-                                    {t('services.cleaning.title')}
+                                    {services.find((s) => s.slug === 'cleaning')
+                                        ? (language === 'en'
+                                            ? services.find((s) => s.slug === 'cleaning')!.title_en
+                                            : services.find((s) => s.slug === 'cleaning')!.title_ar)
+                                        : t('services.cleaning.title')}
                                 </h2>
-                                <p className="mt-2 text-muted-foreground">{t('services.cleaning.description')}</p>
+                                <p className="mt-2 text-muted-foreground">
+                                    {services.find((s) => s.slug === 'cleaning')
+                                        ? (language === 'en'
+                                            ? services.find((s) => s.slug === 'cleaning')!.description_en
+                                            : services.find((s) => s.slug === 'cleaning')!.description_ar)
+                                        : t('services.cleaning.description')}
+                                </p>
                             </div>
 
                             <div className="mb-8 grid gap-4 sm:grid-cols-2">
                                 <div className="relative rounded-xl overflow-hidden shadow-lg">
                                     <img
-                                        src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=800"
+                                        src={getImageUrl(services.find((s) => s.slug === 'cleaning')?.image) || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=800'}
                                         alt="Office cleaning"
                                         className="w-full h-56 object-cover"
                                     />
@@ -480,7 +579,9 @@ export default function Services() {
 
                             <div className="card-elevated overflow-hidden p-8">
                                 <h3 className="mb-6 text-xl font-semibold text-foreground">
-                                    {language === 'en' ? 'Cleaning Services Scope Matrix' : 'مصفوفة نطاق خدمات التنظيف'}
+                                    {cleaningMatrixTitle
+                                        ? (language === 'en' ? cleaningMatrixTitle.content_en : cleaningMatrixTitle.content_ar) || (language === 'en' ? 'Cleaning Services Scope Matrix' : 'مصفوفة نطاق خدمات التنظيف')
+                                        : language === 'en' ? 'Cleaning Services Scope Matrix' : 'مصفوفة نطاق خدمات التنظيف'}
                                 </h3>
 
                                 {/* Desktop Table */}
@@ -595,10 +696,18 @@ export default function Services() {
                                             <SelectValue placeholder={language === 'en' ? 'Select service...' : 'اختر الخدمة...'} />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="construction">{t('services.construction.title')}</SelectItem>
-                                            <SelectItem value="mep">{t('services.mep.title')}</SelectItem>
-                                            <SelectItem value="manpower">{t('services.manpower.title')}</SelectItem>
-                                            <SelectItem value="cleaning">{t('services.cleaning.title')}</SelectItem>
+                                            {services.length > 0
+                                                ? services.map((s) => (
+                                                      <SelectItem key={s.id} value={s.slug}>
+                                                          {language === 'en' ? s.title_en : s.title_ar}
+                                                      </SelectItem>
+                                                  ))
+                                                : [
+                                                      <SelectItem key="construction" value="construction">{t('services.construction.title')}</SelectItem>,
+                                                      <SelectItem key="mep" value="mep">{t('services.mep.title')}</SelectItem>,
+                                                      <SelectItem key="manpower" value="manpower">{t('services.manpower.title')}</SelectItem>,
+                                                      <SelectItem key="cleaning" value="cleaning">{t('services.cleaning.title')}</SelectItem>,
+                                                  ]}
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -629,5 +738,6 @@ export default function Services() {
                 </div>
             </div>
         </Layout>
+        </>
     );
 }

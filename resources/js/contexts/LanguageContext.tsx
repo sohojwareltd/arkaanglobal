@@ -1,12 +1,22 @@
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { usePage, router } from '@inertiajs/react';
 
-type Language = 'en' | 'ar';
+interface Language {
+    code: string;
+    name: string;
+    native_name: string;
+    direction: 'ltr' | 'rtl';
+    flag?: string;
+    is_default: boolean;
+}
+
 type Direction = 'ltr' | 'rtl';
 
 interface LanguageContextType {
-    language: Language;
+    language: string;
     direction: Direction;
-    setLanguage: (lang: Language) => void;
+    languages: Language[];
+    setLanguage: (code: string) => void;
     t: (key: string) => string;
 }
 
@@ -316,16 +326,51 @@ const translations: Record<Language, Record<string, string>> = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-    const [language, setLanguage] = useState<Language>('en');
-    const direction: Direction = language === 'ar' ? 'rtl' : 'ltr';
+    const { props } = usePage();
+    const rawLanguages = props.languages;
+    const availableLanguages = Array.isArray(rawLanguages) ? rawLanguages : [];
+    const defaultLang = (props.defaultLanguage as { code: string; direction: Direction }) || { code: 'en', direction: 'ltr' };
+    const currentLocale = (props.locale as string) || defaultLang.code;
+
+    const [language, setLanguageState] = useState<string>(currentLocale);
+    
+    // Find current language details
+    const currentLanguage = availableLanguages.find(lang => lang.code === language) || availableLanguages.find(lang => lang.is_default) || availableLanguages[0] || { code: 'en', direction: 'ltr' as Direction };
+    const direction: Direction = currentLanguage?.direction || 'ltr';
+
+    // Update language when locale changes from backend
+    useEffect(() => {
+        if (currentLocale && currentLocale !== language) {
+            setLanguageState(currentLocale);
+        }
+    }, [currentLocale]);
 
     useEffect(() => {
         document.documentElement.lang = language;
         document.documentElement.dir = direction;
     }, [language, direction]);
 
+    const setLanguage = (code: string): void => {
+        setLanguageState(code);
+        // Switch language via backend to persist in session
+        router.get(`/language/${code}`, {}, {
+            preserveState: true,
+            preserveScroll: true,
+            only: ['locale', 'languages', 'defaultLanguage'],
+        });
+    };
+
     const t = (key: string): string => {
-        return translations[language][key] ?? key;
+        // Fallback to hardcoded translations for now
+        const lang = language as 'en' | 'ar';
+        if (translations[lang] && translations[lang][key]) {
+            return translations[lang][key];
+        }
+        // Try English as fallback
+        if (translations.en && translations.en[key]) {
+            return translations.en[key];
+        }
+        return key;
     };
 
     return (
@@ -333,6 +378,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
             value={{
                 language,
                 direction,
+                languages: availableLanguages.length > 0 ? availableLanguages : [
+                    { code: 'en', name: 'English', native_name: 'English', direction: 'ltr' as Direction, is_default: true },
+                    { code: 'ar', name: 'Arabic', native_name: 'العربية', direction: 'rtl' as Direction, is_default: false },
+                ],
                 setLanguage,
                 t,
             }}

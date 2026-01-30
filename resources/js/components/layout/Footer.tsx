@@ -1,11 +1,26 @@
 import React from 'react';
 import { Mail, MapPin, Phone } from 'lucide-react';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 
 import { useLanguage } from '@/contexts/LanguageContext';
 
+interface ContactInfoMap {
+    [key: string]: { value_en: string; value_ar: string };
+}
+
 export default function Footer(): JSX.Element {
     const { t, language } = useLanguage();
+    const { contactInfo = {} } = usePage().props as { contactInfo?: ContactInfoMap };
+
+    const getContactValue = (key: string): string => {
+        const item = contactInfo?.[key];
+        if (!item) return '';
+        return language === 'en' ? item.value_en : item.value_ar;
+    };
+
+    const addressVal = getContactValue('address') || t('footer.address');
+    const phoneVal = getContactValue('phone') || '0572914027';
+    const emailVal = getContactValue('email') || 'info@arkaanglobal.com';
 
     const quickLinks = [
         { path: '/', label: t('nav.home') },
@@ -39,16 +54,20 @@ export default function Footer(): JSX.Element {
                         </p>
                         <div className="flex flex-col gap-3 text-sm">
                             <div className="flex items-center gap-3">
-                                <MapPin className="h-4 w-4 text-primary-foreground/80" />
-                                <span>{t('footer.address')}</span>
+                                <MapPin className="h-4 w-4 text-primary-foreground/80 shrink-0" />
+                                <span>{addressVal}</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <Phone className="h-4 w-4 text-primary-foreground/80" />
-                                <span dir="ltr">0572914027</span>
+                                <Phone className="h-4 w-4 text-primary-foreground/80 shrink-0" />
+                                <a href={`tel:${phoneVal.replace(/\D/g, '')}`} dir="ltr" className="hover:text-primary-foreground transition-colors">
+                                    {phoneVal}
+                                </a>
                             </div>
                             <div className="flex items-center gap-3">
-                                <Mail className="h-4 w-4 text-primary-foreground/80" />
-                                <span>info@arkaanglobal.com</span>
+                                <Mail className="h-4 w-4 text-primary-foreground/80 shrink-0" />
+                                <a href={`mailto:${emailVal}`} className="hover:text-primary-foreground transition-colors">
+                                    {emailVal}
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -91,7 +110,7 @@ export default function Footer(): JSX.Element {
                     <div>
                         <h4 className="mb-4 text-lg font-semibold">{t('footer.contact')}</h4>
                         <ul className="space-y-2 text-sm text-primary-foreground/80">
-                            <li>{t('contact.info.hours.value')}</li>
+                            <li>{getContactValue('hours') || t('contact.info.hours.value')}</li>
                             <li>
                                 <Link
                                     href="/hse-contact"

@@ -1,12 +1,47 @@
 import React, { useState } from 'react';
-import { MapPin, Users } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { MapPin, Users, Building2, ChevronRight } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
+import PageHero from '@/components/ui/page-hero';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import WhenVisible from '@/components/ui/when-visible';
 import { cn } from '@/lib/utils';
 
-export default function Projects() {
+interface Project {
+    id: number;
+    title_en: string;
+    title_ar: string;
+    location_en: string;
+    location_ar: string;
+    workers?: string;
+    category: string;
+    description_en?: string;
+    description_ar?: string;
+    image?: string;
+    client?: { id: number; name: string; abbr: string };
+    gallery_items?: unknown[];
+}
+
+interface HeroData {
+    title_en?: string;
+    title_ar?: string;
+    subtitle_en?: string;
+    subtitle_ar?: string;
+    background_image?: string;
+}
+
+interface ProjectsProps {
+    hero?: HeroData | null;
+    projects?: Project[];
+}
+
+const DEFAULT_PROJECTS: Project[] = [
+    { id: 1, title_en: 'NEOM Infrastructure Development', title_ar: 'تطوير البنية التحتية نيوم', location_en: 'Tabuk Region', location_ar: 'منطقة تبوك', workers: '2,500+', category: 'infrastructure', description_en: 'Comprehensive workforce supply for mega infrastructure project', description_ar: 'توريد شامل للقوى العاملة لمشروع البنية التحتية الضخم', image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?q=80&w=2070' },
+    { id: 2, title_en: 'Riyadh Metro Lines', title_ar: 'خطوط مترو الرياض', location_en: 'Riyadh', location_ar: 'الرياض', workers: '1,800+', category: 'infrastructure', description_en: 'Skilled technicians and laborers for metro construction', description_ar: 'فنيون وعمال مهرة لبناء المترو', image: 'https://images.unsplash.com/photo-1590650153855-d9e808231d41?q=80&w=2070' },
+];
+
+export default function Projects({ hero, projects = [] }: ProjectsProps) {
     const { t, language } = useLanguage();
     const [activeFilter, setActiveFilter] = useState('all');
     const [isFiltering, setIsFiltering] = useState(false);
@@ -19,62 +54,32 @@ export default function Projects() {
         { id: 'industrial', label: t('projects.filter.industrial') },
     ];
 
-    const projects = [
-        {
-            image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?q=80&w=2070',
-            title: language === 'en' ? 'NEOM Infrastructure Development' : 'تطوير البنية التحتية نيوم',
-            location: language === 'en' ? 'Tabuk Region' : 'منطقة تبوك',
-            workers: '2,500+',
-            category: 'infrastructure',
-            description:
-                language === 'en'
-                    ? 'Comprehensive workforce supply for mega infrastructure project'
-                    : 'توريد شامل للقوى العاملة لمشروع البنية التحتية الضخم',
-        },
-        {
-            image: 'https://images.unsplash.com/photo-1590650153855-d9e808231d41?q=80&w=2070',
-            title: language === 'en' ? 'Riyadh Metro Lines' : 'خطوط مترو الرياض',
-            location: language === 'en' ? 'Riyadh' : 'الرياض',
-            workers: '1,800+',
-            category: 'infrastructure',
-            description: language === 'en' ? 'Skilled technicians and laborers for metro construction' : 'فنيون وعمال مهرة لبناء المترو',
-        },
-        {
-            image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2070',
-            title: language === 'en' ? 'King Abdullah Financial District' : 'مركز الملك عبدالله المالي',
-            location: language === 'en' ? 'Riyadh' : 'الرياض',
-            workers: '3,200+',
-            category: 'commercial',
-            description: language === 'en' ? 'Full workforce solutions for commercial complex' : 'حلول كاملة للقوى العاملة للمجمع التجاري',
-        },
-        {
-            image: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=2070',
-            title: language === 'en' ? 'Jubail Industrial City Expansion' : 'توسعة مدينة الجبيل الصناعية',
-            location: language === 'en' ? 'Jubail' : 'الجبيل',
-            workers: '1,500+',
-            category: 'industrial',
-            description: language === 'en' ? 'Industrial construction workforce deployment' : 'نشر القوى العاملة للبناء الصناعي',
-        },
-        {
-            image: 'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?q=80&w=2070',
-            title: language === 'en' ? 'Jeddah Tower' : 'برج جدة',
-            location: language === 'en' ? 'Jeddah' : 'جدة',
-            workers: '2,800+',
-            category: 'construction',
-            description: language === 'en' ? 'High-rise construction workforce management' : 'إدارة القوى العاملة لبناء الأبراج الشاهقة',
-        },
-        {
-            image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2070',
-            title: language === 'en' ? 'Red Sea Project' : 'مشروع البحر الأحمر',
-            location: language === 'en' ? 'Red Sea Coast' : 'ساحل البحر الأحمر',
-            workers: '4,000+',
-            category: 'construction',
-            description:
-                language === 'en' ? 'Massive workforce supply for tourism megaproject' : 'توريد ضخم للقوى العاملة لمشروع السياحة الضخم',
-        },
-    ];
+    const displayProjects =
+        projects.length > 0
+            ? projects.map((p) => ({
+                  ...p,
+                  title: language === 'en' ? p.title_en : p.title_ar,
+                  location: language === 'en' ? p.location_en : p.location_ar,
+                  description: language === 'en' ? p.description_en : p.description_ar,
+                  image: p.image
+                      ? p.image.startsWith('http')
+                          ? p.image
+                          : p.image.startsWith('/')
+                            ? p.image
+                            : `/storage/${p.image}`
+                      : 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2070',
+                  client: p.client,
+                  gallery_items: p.gallery_items,
+              }))
+            : DEFAULT_PROJECTS.map((p) => ({
+                  ...p,
+                  title: language === 'en' ? p.title_en : p.title_ar,
+                  location: language === 'en' ? p.location_en : p.location_ar,
+                  description: language === 'en' ? p.description_en : p.description_ar,
+                  image: p.image ?? 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2070',
+              }));
 
-    const filteredProjects = activeFilter === 'all' ? projects : projects.filter((p) => p.category === activeFilter);
+    const filteredProjects = activeFilter === 'all' ? displayProjects : displayProjects.filter((p) => p.category === activeFilter);
 
     const handleFilterChange = (id: string) => {
         if (id === activeFilter) {
@@ -91,18 +96,12 @@ export default function Projects() {
 
     return (
         <Layout>
-            {/* Hero */}
-            <section className="relative overflow-hidden py-20 lg:py-32">
-                <div className="absolute inset-0 hero-gradient opacity-10" />
-                <div className="container-custom relative">
-                    <div className="mx-auto max-w-3xl text-center">
-                        <h1 className="mb-4 text-4xl font-bold text-foreground sm:text-5xl lg:text-6xl">
-                            {t('projects.page.title')}
-                        </h1>
-                        <p className="text-xl text-muted-foreground">{t('projects.page.subtitle')}</p>
-                    </div>
-                </div>
-            </section>
+            <PageHero
+                hero={hero}
+                fallbackTitle={t('projects.page.title')}
+                fallbackSubtitle={t('projects.page.subtitle')}
+                language={language}
+            />
 
             {/* Filters */}
             <section className=" top-16 z-40 border-b border-border bg-background py-8 lg:top-20">
@@ -134,37 +133,53 @@ export default function Projects() {
                     >
                         {filteredProjects.map((project, index) => (
                             <WhenVisible
-                                key={index}
-                                className="card-elevated overflow-hidden group"
+                                key={project.id ?? index}
                                 options={{ threshold: 0.1 }}
                                 style={{ transitionDelay: `${index * 40}ms` }}
                             >
-                                <div className="relative aspect-video overflow-hidden">
-                                    <img
-                                        src={project.image}
-                                        alt={project.title}
-                                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                    />
-                                    <div className="absolute left-4 top-4 rounded-full bg-primary/90 px-3 py-1 text-xs font-medium capitalize text-primary-foreground">
-                                        {filters.find((f) => f.id === project.category)?.label}
-                                    </div>
-                                </div>
-                                <div className="p-6">
-                                    <h3 className="mb-2 text-xl font-bold text-foreground">{project.title}</h3>
-                                    <p className="mb-4 text-sm text-muted-foreground">{project.description}</p>
-                                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                                        <div className="flex items-center gap-1">
-                                            <MapPin className="h-4 w-4 text-primary" />
-                                            <span>{project.location}</span>
+                                <Link
+                                    href={`/projects/${project.id}`}
+                                    className="card-elevated overflow-hidden group block hover:shadow-xl transition-shadow"
+                                >
+                                    <div className="relative aspect-video overflow-hidden">
+                                        <img
+                                            src={project.image}
+                                            alt={project.title}
+                                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                        />
+                                        <div className="absolute left-4 top-4 rounded-full bg-primary/90 px-3 py-1 text-xs font-medium capitalize text-primary-foreground">
+                                            {filters.find((f) => f.id === project.category)?.label}
                                         </div>
-                                        <div className="flex items-center gap-1">
-                                            <Users className="h-4 w-4 text-primary" />
-                                            <span>
-                                                {project.workers} {language === 'en' ? 'Workers' : 'عامل'}
-                                            </span>
+                                        <div className="absolute right-4 bottom-4 flex items-center gap-1 text-primary-foreground text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                                            {language === 'en' ? 'View' : 'عرض'}
+                                            <ChevronRight className="h-4 w-4" />
                                         </div>
                                     </div>
-                                </div>
+                                    <div className="p-6">
+                                        <h3 className="mb-2 text-xl font-bold text-foreground">{project.title}</h3>
+                                        {project.client && (
+                                            <div className="mb-2 flex items-center gap-2 text-sm text-primary">
+                                                <Building2 className="h-4 w-4 shrink-0" />
+                                                <span>{project.client.name}</span>
+                                            </div>
+                                        )}
+                                        <p className="mb-4 text-sm text-muted-foreground line-clamp-2">{project.description}</p>
+                                        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                                            <div className="flex items-center gap-1">
+                                                <MapPin className="h-4 w-4 text-primary" />
+                                                <span>{project.location}</span>
+                                            </div>
+                                            {project.workers && (
+                                                <div className="flex items-center gap-1">
+                                                    <Users className="h-4 w-4 text-primary" />
+                                                    <span>
+                                                        {project.workers} {language === 'en' ? 'Workers' : 'عامل'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </Link>
                             </WhenVisible>
                         ))}
                     </div>

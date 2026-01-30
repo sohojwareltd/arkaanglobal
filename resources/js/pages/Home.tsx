@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { Target, Eye, MapPin, Phone, Mail, Clock, MessageCircle } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/home/HeroSection';
@@ -11,7 +12,65 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 
-export default function Home() {
+interface StatItem {
+    id: number;
+    value: string;
+    label_en: string;
+    label_ar: string;
+}
+
+interface AboutContentItem {
+    id: number;
+    key: string;
+    content_en?: string;
+    content_ar?: string;
+}
+
+interface ClientItem {
+    id: number;
+    name: string;
+    abbr: string;
+    logo?: string;
+}
+
+interface ServiceItem {
+    id: number;
+    slug: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string;
+    description_ar?: string;
+}
+
+interface HomeProps {
+    hero?: {
+        title_en?: string;
+        title_ar?: string;
+        subtitle_en?: string;
+        subtitle_ar?: string;
+        description_en?: string;
+        description_ar?: string;
+        cta_primary_text_en?: string;
+        cta_primary_text_ar?: string;
+        cta_primary_link?: string;
+        cta_secondary_text_en?: string;
+        cta_secondary_text_ar?: string;
+        cta_secondary_link?: string;
+        background_image?: string;
+    } | null;
+    services?: ServiceItem[];
+    stats?: StatItem[];
+    aboutOverview?: AboutContentItem | null;
+    vision?: AboutContentItem | null;
+    mission?: AboutContentItem | null;
+    clients?: ClientItem[];
+}
+
+interface ContactInfoMap {
+    [key: string]: { value_en: string; value_ar: string };
+}
+
+export default function Home({ hero, services = [], stats = [], aboutOverview, vision, mission, clients = [] }: HomeProps) {
     const { t, language } = useLanguage();
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,16 +90,66 @@ export default function Home() {
         (e.target as HTMLFormElement).reset();
     };
 
-    const whatsappNumber = '0572914027';
-    const whatsappMessage = language === 'en' 
+    const { contactInfo = {} } = usePage().props as { contactInfo?: ContactInfoMap };
+    const phoneVal = contactInfo?.phone ? (language === 'en' ? contactInfo.phone.value_en : contactInfo.phone.value_ar) : '0572914027';
+    const whatsappVal = contactInfo?.whatsapp ? (language === 'en' ? contactInfo.whatsapp.value_en : contactInfo.whatsapp.value_ar) : '0572914027';
+    const whatsappNumber = (whatsappVal || phoneVal).replace(/\D/g, '');
+    const whatsappMessage = language === 'en'
         ? 'Hello, I would like to inquire about your services.'
         : 'مرحباً، أود الاستفسار عن خدماتكم.';
 
+    const getContactValue = (key: string): string => {
+        const item = contactInfo?.[key];
+        if (!item) return '';
+        return language === 'en' ? item.value_en : item.value_ar;
+    };
+
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+
     return (
-        <Layout>
-            <HeroSection />
+        <>
+            <Head>
+                <title>Home - Arkaan Global Contracting | Construction, MEP, Manpower & Cleaning Services</title>
+                <meta name="description" content="Arkaan Global Contracting - Leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. Strength in People, Precision in Work." />
+                <meta name="keywords" content="construction services, MEP services, manpower solutions, cleaning services, Saudi Arabia, contracting company" />
+                
+                <meta property="og:title" content="Home - Arkaan Global Contracting | Construction, MEP, Manpower & Cleaning Services" />
+                <meta property="og:description" content="Leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. Strength in People, Precision in Work." />
+                <meta property="og:url" content={currentUrl} />
+                <meta property="og:type" content="website" />
+                
+                <meta name="twitter:title" content="Home - Arkaan Global Contracting" />
+                <meta name="twitter:description" content="Leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia." />
+                
+                <link rel="canonical" href={currentUrl} />
+                
+                <script type="application/ld+json">
+                    {JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "Organization",
+                        "name": "Arkaan Global Contracting",
+                        "url": siteUrl,
+                        "logo": `${siteUrl}/logo-main.png`,
+                        "description": "Leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia",
+                        "address": {
+                            "@type": "PostalAddress",
+                            "addressLocality": "Jubail",
+                            "addressCountry": "SA"
+                        },
+                        "contactPoint": {
+                            "@type": "ContactPoint",
+                            "contactType": "Customer Service",
+                            "availableLanguage": ["English", "Arabic"]
+                        },
+                        "sameAs": []
+                    })}
+                </script>
+            </Head>
+            <Layout>
+                <HeroSection hero={hero} />
             <WhenVisible>
-                <ServicesSection />
+                <ServicesSection services={services} />
             </WhenVisible>
 
             {/* Stats Section */}
@@ -48,30 +157,35 @@ export default function Home() {
                 <section className="section-padding bg-primary text-primary-foreground">
                     <div className="container-custom">
                         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                            <div className="text-center">
-                                <div className="mb-2 text-4xl font-bold sm:text-5xl">15+</div>
-                                <div className="text-primary-foreground/80">
-                                    {language === 'en' ? 'Years Experience' : 'سنوات الخبرة'}
-                                </div>
-                            </div>
-                            <div className="text-center">
-                                <div className="mb-2 text-4xl font-bold sm:text-5xl">500+</div>
-                                <div className="text-primary-foreground/80">
-                                    {language === 'en' ? 'Projects Completed' : 'مشروع مكتمل'}
-                                </div>
-                            </div>
-                            <div className="text-center">
-                                <div className="mb-2 text-4xl font-bold sm:text-5xl">10,000+</div>
-                                <div className="text-primary-foreground/80">
-                                    {language === 'en' ? 'Workers Deployed' : 'عامل تم توظيفهم'}
-                                </div>
-                            </div>
-                            <div className="text-center">
-                                <div className="mb-2 text-4xl font-bold sm:text-5xl">100+</div>
-                                <div className="text-primary-foreground/80">
-                                    {language === 'en' ? 'Satisfied Clients' : 'عميل راضٍ'}
-                                </div>
-                            </div>
+                            {stats.length > 0 ? (
+                                stats.map((stat) => (
+                                    <div key={stat.id} className="text-center">
+                                        <div className="mb-2 text-4xl font-bold sm:text-5xl">{stat.value}</div>
+                                        <div className="text-primary-foreground/80">
+                                            {language === 'en' ? stat.label_en : stat.label_ar}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <>
+                                    <div className="text-center">
+                                        <div className="mb-2 text-4xl font-bold sm:text-5xl">15+</div>
+                                        <div className="text-primary-foreground/80">{language === 'en' ? 'Years Experience' : 'سنوات الخبرة'}</div>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="mb-2 text-4xl font-bold sm:text-5xl">500+</div>
+                                        <div className="text-primary-foreground/80">{language === 'en' ? 'Projects Completed' : 'مشروع مكتمل'}</div>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="mb-2 text-4xl font-bold sm:text-5xl">10,000+</div>
+                                        <div className="text-primary-foreground/80">{language === 'en' ? 'Workers Deployed' : 'عامل تم توظيفهم'}</div>
+                                    </div>
+                                    <div className="text-center">
+                                        <div className="mb-2 text-4xl font-bold sm:text-5xl">100+</div>
+                                        <div className="text-primary-foreground/80">{language === 'en' ? 'Satisfied Clients' : 'عميل راضٍ'}</div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </section>
@@ -89,9 +203,11 @@ export default function Home() {
                                         {language === 'en' ? 'About Arkaan Global' : 'عن أركان جلوبال'}
                                     </h2>
                                     <p className="text-lg text-muted-foreground leading-relaxed">
-                                        {language === 'en'
-                                            ? 'Arkaan Global Contracting is a leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. With a commitment to excellence and safety, we serve government, semi-government, industrial, and private sector clients across the Kingdom.'
-                                            : 'أركان جلوبال للمقاولات هي مزود رائد لخدمات البناء والميكانيكا والكهرباء والعمالة والتنظيف في المملكة العربية السعودية. مع التزام بالتميز والسلامة، نخدم عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة في جميع أنحاء المملكة.'}
+                                        {aboutOverview
+                                            ? (language === 'en' ? aboutOverview.content_en : aboutOverview.content_ar) || ''
+                                            : language === 'en'
+                                                ? 'Arkaan Global Contracting is a leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. With a commitment to excellence and safety, we serve government, semi-government, industrial, and private sector clients across the Kingdom.'
+                                                : 'أركان جلوبال للمقاولات هي مزود رائد لخدمات البناء والميكانيكا والكهرباء والعمالة والتنظيف في المملكة العربية السعودية. مع التزام بالتميز والسلامة، نخدم عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة في جميع أنحاء المملكة.'}
                                     </p>
                                 </div>
                                 <div className="order-1 lg:order-2">
@@ -116,7 +232,7 @@ export default function Home() {
                                         {t('about.vision.title')}
                                     </h3>
                                     <p className="text-lg leading-relaxed text-muted-foreground">
-                                        {t('about.vision.text')}
+                                        {vision ? (language === 'en' ? vision.content_en : vision.content_ar) || '' : t('about.vision.text')}
                                     </p>
                                 </div>
 
@@ -128,7 +244,7 @@ export default function Home() {
                                         {t('about.mission.title')}
                                     </h3>
                                     <p className="text-lg leading-relaxed text-muted-foreground">
-                                        {t('about.mission.text')}
+                                        {mission ? (language === 'en' ? mission.content_en : mission.content_ar) || '' : t('about.mission.text')}
                                     </p>
                                 </div>
                             </div>
@@ -152,13 +268,35 @@ export default function Home() {
                             </p>
                         </div>
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                            {[1, 2, 3, 4].map((i) => (
-                                <div key={i} className="card-elevated p-8 flex items-center justify-center h-32 bg-white">
-                                    <div className="text-center text-muted-foreground font-semibold">
-                                        {language === 'en' ? `Client ${i}` : `عميل ${i}`}
+                            {clients.length > 0 ? (
+                                clients.map((client) => (
+                                    <Link
+                                        key={client.id}
+                                        href="/clients"
+                                        className="card-elevated p-8 flex items-center justify-center h-32 bg-white hover:shadow-lg transition-shadow"
+                                    >
+                                        {client.logo ? (
+                                            <img
+                                                src={client.logo.startsWith('http') || client.logo.startsWith('/') ? client.logo : `/storage/${client.logo}`}
+                                                alt={language === 'en' ? client.name : client.name}
+                                                className="max-h-16 max-w-full object-contain"
+                                            />
+                                        ) : (
+                                            <span className="text-center text-muted-foreground font-semibold">
+                                                {client.abbr || client.name}
+                                            </span>
+                                        )}
+                                    </Link>
+                                ))
+                            ) : (
+                                [1, 2, 3, 4].map((i) => (
+                                    <div key={i} className="card-elevated p-8 flex items-center justify-center h-32 bg-white">
+                                        <span className="text-center text-muted-foreground font-semibold">
+                                            {language === 'en' ? `Client ${i}` : `عميل ${i}`}
+                                        </span>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
                     </div>
                 </section>
@@ -195,9 +333,7 @@ export default function Home() {
                                                         {language === 'en' ? 'Address' : 'العنوان'}
                                                     </p>
                                                     <p className="text-sm text-muted-foreground">
-                                                        {language === 'en' 
-                                                            ? 'Jubail, Eastern Province, Saudi Arabia'
-                                                            : 'الجبيل، المنطقة الشرقية، المملكة العربية السعودية'}
+                                                        {getContactValue('address') || (language === 'en' ? 'Jubail, Eastern Province, Saudi Arabia' : 'الجبيل، المنطقة الشرقية، المملكة العربية السعودية')}
                                                     </p>
                                                 </div>
                                             </div>
@@ -207,8 +343,8 @@ export default function Home() {
                                                     <p className="font-medium text-foreground">
                                                         {language === 'en' ? 'Phone' : 'الهاتف'}
                                                     </p>
-                                                    <a href="tel:+966501234567" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                                                        +966 50 123 4567
+                                                    <a href={`tel:${phoneVal.replace(/\D/g, '')}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                                                        {phoneVal}
                                                     </a>
                                                 </div>
                                             </div>
@@ -218,8 +354,8 @@ export default function Home() {
                                                     <p className="font-medium text-foreground">
                                                         {language === 'en' ? 'Email' : 'البريد الإلكتروني'}
                                                     </p>
-                                                    <a href="mailto:info@arkaanglobal.com" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                                                        info@arkaanglobal.com
+                                                    <a href={`mailto:${getContactValue('email') || 'info@arkaanglobal.com'}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                                                        {getContactValue('email') || 'info@arkaanglobal.com'}
                                                     </a>
                                                 </div>
                                             </div>
@@ -230,9 +366,7 @@ export default function Home() {
                                                         {language === 'en' ? 'Business Hours' : 'ساعات العمل'}
                                                     </p>
                                                     <p className="text-sm text-muted-foreground">
-                                                        {language === 'en' 
-                                                            ? 'Sun - Thu: 8:00 AM - 5:00 PM'
-                                                            : 'الأحد - الخميس: 8:00 صباحًا - 5:00 مساءً'}
+                                                        {getContactValue('hours') || (language === 'en' ? 'Sun - Thu: 8:00 AM - 5:00 PM' : 'الأحد - الخميس: 8:00 صباحًا - 5:00 مساءً')}
                                                     </p>
                                                 </div>
                                             </div>
@@ -298,5 +432,6 @@ export default function Home() {
                 </section>
             </WhenVisible>
         </Layout>
+        </>
     );
 }

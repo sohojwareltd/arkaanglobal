@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Head } from '@inertiajs/react';
 import { Target, Eye, Shield, Heart, Star, Clock, FileCheck, Award, X, Maximize2 } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -78,8 +79,27 @@ export default function About() {
         },
     ];
 
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+
     return (
-        <Layout>
+        <>
+            <Head>
+                <title>About Us - Arkaan Global Contracting | Your Trusted Construction Partner</title>
+                <meta name="description" content="Learn about Arkaan Global Contracting - Your trusted partner for construction, MEP, manpower, and cleaning services across Saudi Arabia since 2009." />
+                <meta name="keywords" content="about Arkaan Global, construction company Saudi Arabia, company history, vision mission, core values" />
+                
+                <meta property="og:title" content="About Us - Arkaan Global Contracting" />
+                <meta property="og:description" content="Your trusted partner for construction, MEP, manpower, and cleaning services across Saudi Arabia." />
+                <meta property="og:url" content={currentUrl} />
+                <meta property="og:type" content="website" />
+                
+                <meta name="twitter:title" content="About Us - Arkaan Global Contracting" />
+                <meta name="twitter:description" content="Your trusted partner for construction, MEP, manpower, and cleaning services across Saudi Arabia." />
+                
+                <link rel="canonical" href={currentUrl} />
+            </Head>
+            <Layout>
             {/* Hero */}
             <section className="relative overflow-hidden py-20 lg:py-32">
                 {/* Background Image */}
@@ -314,5 +334,6 @@ export default function About() {
                 </div>
             )}
         </Layout>
+        </>
     );
 }

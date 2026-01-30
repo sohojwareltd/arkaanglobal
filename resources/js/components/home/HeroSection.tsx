@@ -5,18 +5,49 @@ import { Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-export default function HeroSection(): JSX.Element {
-    const { t, direction } = useLanguage();
+interface HeroData {
+    title_en?: string;
+    title_ar?: string;
+    subtitle_en?: string;
+    subtitle_ar?: string;
+    description_en?: string;
+    description_ar?: string;
+    cta_primary_text_en?: string;
+    cta_primary_text_ar?: string;
+    cta_primary_link?: string;
+    cta_secondary_text_en?: string;
+    cta_secondary_text_ar?: string;
+    cta_secondary_link?: string;
+    background_image?: string;
+}
+
+interface HeroSectionProps {
+    hero?: HeroData | null;
+}
+
+const DEFAULT_BG = "url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2070')";
+
+export default function HeroSection({ hero }: HeroSectionProps): JSX.Element {
+    const { t, direction, language } = useLanguage();
+    const isAr = language === 'ar';
+
+    const title = hero ? (isAr ? hero.title_ar : hero.title_en) : t('hero.title');
+    const subtitle = hero ? (isAr ? hero.subtitle_ar : hero.subtitle_en) : t('hero.tagline');
+    const description = hero ? (isAr ? hero.description_ar : hero.description_en) : t('hero.description');
+    const ctaPrimary = hero ? (isAr ? hero.cta_primary_text_ar : hero.cta_primary_text_en) : t('hero.cta.primary');
+    const ctaSecondary = hero ? (isAr ? hero.cta_secondary_text_ar : hero.cta_secondary_text_en) : t('hero.cta.secondary');
+    const ctaPrimaryLink = hero?.cta_primary_link ?? '/hse-contact';
+    const ctaSecondaryLink = hero?.cta_secondary_link ?? '/company-profile.pdf';
+    const bgImage = hero?.background_image
+        ? `url('${hero.background_image.startsWith('http') ? hero.background_image : hero.background_image.startsWith('/') ? hero.background_image : `/storage/${hero.background_image}`}')`
+        : DEFAULT_BG;
 
     return (
         <section className="relative flex min-h-[90vh] items-center overflow-hidden">
             {/* Background */}
             <div
                 className="absolute inset-0 bg-cover bg-center"
-                style={{
-                    backgroundImage:
-                        "url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2070')",
-                }}
+                style={{ backgroundImage: bgImage }}
             />
             <div className="hero-overlay absolute inset-0" />
 
@@ -46,17 +77,17 @@ export default function HeroSection(): JSX.Element {
 
                     {/* Title */}
                     <h1 className="mb-4 text-4xl font-bold text-primary-foreground sm:text-5xl lg:text-6xl animate-fade-in-up">
-                        {t('hero.title')}
+                        {title}
                     </h1>
 
                     {/* Tagline */}
                     <p className="mb-6 text-xl font-semibold text-primary-foreground/90 sm:text-2xl animate-fade-in-up animation-delay-50">
-                        {t('hero.tagline')}
+                        {subtitle}
                     </p>
 
                     {/* Description */}
                     <p className="mb-8 max-w-2xl text-lg text-primary-foreground/80 sm:text-xl animate-fade-in-up animation-delay-100">
-                        {t('hero.description')}
+                        {description}
                     </p>
 
                     {/* CTAs */}
@@ -66,8 +97,8 @@ export default function HeroSection(): JSX.Element {
                             className="gold-gradient px-8 py-6 text-lg font-semibold text-accent-foreground transition-opacity hover:opacity-90"
                             asChild
                         >
-                            <Link href="/hse-contact" className="flex items-center gap-2">
-                                {t('hero.cta.primary')}
+                            <Link href={ctaPrimaryLink} className="flex items-center gap-2">
+                                {ctaPrimary}
                                 <ArrowRight
                                     className={`h-5 w-5 ${direction === 'rtl' ? 'rotate-180' : ''}`}
                                 />
@@ -79,9 +110,9 @@ export default function HeroSection(): JSX.Element {
                             className="bg-transparent px-8 py-6 text-lg text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground/10"
                             asChild
                         >
-                            <a href="/company-profile.pdf" download className="flex items-center gap-2">
+                            <a href={ctaSecondaryLink} download className="flex items-center gap-2">
                                 <Download className="h-5 w-5" />
-                                {t('hero.cta.secondary')}
+                                {ctaSecondary}
                             </a>
                         </Button>
                     </div>
