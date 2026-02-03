@@ -26,34 +26,57 @@ class QuoteRequestResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('company')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('contact_person')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('phone')
-                    ->tel()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('service_type')
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('preferred_start_date'),
-                Forms\Components\Textarea::make('requirement_details')
-                    ->rows(4),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'new' => 'New',
-                        'contacted' => 'Contacted',
-                        'quoted' => 'Quoted',
-                        'won' => 'Won',
-                        'lost' => 'Lost',
+                Forms\Components\Section::make('Request Details')
+                    ->schema([
+                        Forms\Components\TextInput::make('company')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('contact_person')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('phone')
+                            ->tel()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('service_type')
+                            ->label('Requested Service')
+                            ->maxLength(255)
+                            ->disabled()
+                            ->dehydrated(false),
+                        Forms\Components\DatePicker::make('preferred_start_date')
+                            ->label('Preferred Start Date')
+                            ->disabled()
+                            ->dehydrated(false),
+                        Forms\Components\Textarea::make('requirement_details')
+                            ->label('Requirement Details')
+                            ->rows(4)
+                            ->disabled()
+                            ->dehydrated(false),
                     ])
-                    ->default('new'),
+                    ->columns(2),
+                Forms\Components\Section::make('Admin Tracking')
+                    ->schema([
+                        Forms\Components\Select::make('status')
+                            ->options([
+                                'new' => 'New',
+                                'contacted' => 'Contacted',
+                                'quoted' => 'Quoted',
+                                'won' => 'Won',
+                                'lost' => 'Lost',
+                            ])
+                            ->default('new')
+                            ->required()
+                            ->helperText('Update the current stage of this request.'),
+                        Forms\Components\Textarea::make('admin_comments')
+                            ->label('Internal Comments / Progress Notes')
+                            ->rows(4)
+                            ->helperText('Add notes about calls, emails, and next steps. Visible only to admins.'),
+                    ])
+                    ->columns(1),
             ]);
     }
 
@@ -71,6 +94,7 @@ class QuoteRequestResource extends Resource
                     ->badge(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
+                    ->tooltip(fn (QuoteRequest $record): ?string => $record->admin_comments)
                     ->color(fn (string $state): string => match ($state) {
                         'new' => 'warning',
                         'contacted' => 'info',
@@ -79,6 +103,13 @@ class QuoteRequestResource extends Resource
                         'lost' => 'danger',
                         default => 'gray',
                     }),
+                Tables\Columns\IconColumn::make('read_at')
+                    ->label('Read')
+                    ->boolean()
+                    ->trueIcon('heroicon-m-check-circle')
+                    ->falseIcon('heroicon-m-envelope-open')
+                    ->trueColor('success')
+                    ->falseColor('warning'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
@@ -93,8 +124,25 @@ class QuoteRequestResource extends Resource
                         'won' => 'Won',
                         'lost' => 'Lost',
                     ]),
+                Tables\Filters\TernaryFilter::make('is_read')
+                    ->label('Read')
+                    ->trueLabel('Read')
+                    ->falseLabel('Unread')
+                    ->nullable()
+                    ->queries(
+                        true: fn ($query) => $query->whereNotNull('read_at'),
+                        false: fn ($query) => $query->whereNull('read_at'),
+                        blank: fn ($query) => $query,
+                    ),
             ])
             ->actions([
+                Tables\Actions\Action::make('markAsRead')
+                    ->label('Mark as read')
+                    ->icon('heroicon-m-eye')
+                    ->visible(fn (QuoteRequest $record): bool => $record->read_at === null)
+                    ->action(function (QuoteRequest $record): void {
+                        $record->update(['read_at' => now()]);
+                    }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
             ])

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Target, Eye, MapPin, Phone, Mail, Clock, MessageCircle } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/home/HeroSection';
@@ -75,22 +75,10 @@ export default function Home({ hero, services = [], stats = [], aboutOverview, v
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        toast({
-            title: language === 'en' ? 'Message Sent' : 'تم إرسال الرسالة',
-            description: language === 'en' ? 'We will get back to you shortly.' : 'سنتواصل معك قريبًا.',
-        });
-
-        setIsSubmitting(false);
-        (e.target as HTMLFormElement).reset();
+    const { contactInfo = {}, settings = {} } = usePage().props as {
+        contactInfo?: ContactInfoMap;
+        settings?: Record<string, string | null>;
     };
-
-    const { contactInfo = {} } = usePage().props as { contactInfo?: ContactInfoMap };
     const phoneVal = contactInfo?.phone ? (language === 'en' ? contactInfo.phone.value_en : contactInfo.phone.value_ar) : '0572914027';
     const whatsappVal = contactInfo?.whatsapp ? (language === 'en' ? contactInfo.whatsapp.value_en : contactInfo.whatsapp.value_ar) : '0572914027';
     const whatsappNumber = (whatsappVal || phoneVal).replace(/\D/g, '');
@@ -106,6 +94,45 @@ export default function Home({ hero, services = [], stats = [], aboutOverview, v
 
     const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
     const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+    const addressText =
+        getContactValue('address') ||
+        (language === 'en' ? 'Jubail, Eastern Province, Saudi Arabia' : 'الجبيل، المنطقة الشرقية، المملكة العربية السعودية');
+    const mapEmbedUrl = (settings['map_embed_url'] as string | undefined) ?? '';
+    const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addressText)}`;
+
+    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const form = e.target as HTMLFormElement;
+        const formData = new FormData(form);
+        setIsSubmitting(true);
+
+        router.post(
+            '/quote-request',
+            {
+                company: (formData.get('company') as string) || 'Website contact form',
+                contact_person: (formData.get('name') as string) || '',
+                email: (formData.get('email') as string) || '',
+                phone: (formData.get('phone') as string) || '',
+                service_type: null,
+                preferred_start_date: null,
+                requirement_details: (formData.get('message') as string) || null,
+            },
+            {
+                preserveScroll: true,
+                onFinish: () => setIsSubmitting(false),
+                onSuccess: () => {
+                    form.reset();
+                    toast({
+                        title: language === 'en' ? 'Message Sent' : 'تم إرسال الرسالة',
+                        description:
+                            language === 'en'
+                                ? 'We will get back to you shortly.'
+                                : 'سنتواصل معك قريبًا.',
+                    });
+                },
+            },
+        );
+    };
 
     return (
         <>
@@ -318,114 +345,80 @@ export default function Home({ hero, services = [], stats = [], aboutOverview, v
                                 </p>
                             </div>
 
-                            <div className="grid gap-12 lg:grid-cols-2">
-                                {/* Contact Information */}
-                                <div className="space-y-6">
-                                    <div className="card-elevated p-8">
+                            <div className="mx-auto flex max-w-6xl flex-col gap-10 lg:flex-row lg:items-start">
+                                {/* Contact Form */}
+                                <div className="w-full lg:w-1/2">
+                                    <div className="card-elevated p-8 h-full">
                                         <h3 className="mb-6 text-xl font-semibold text-foreground">
-                                            {language === 'en' ? 'Contact Information' : 'معلومات الاتصال'}
+                                            {language === 'en' ? 'Send Us a Message' : 'أرسل لنا رسالة'}
                                         </h3>
-                                        <div className="space-y-4">
-                                            <div className="flex items-start gap-4">
-                                                <MapPin className="h-5 w-5 shrink-0 text-primary mt-1" />
-                                                <div>
-                                                    <p className="font-medium text-foreground">
-                                                        {language === 'en' ? 'Address' : 'العنوان'}
-                                                    </p>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        {getContactValue('address') || (language === 'en' ? 'Jubail, Eastern Province, Saudi Arabia' : 'الجبيل، المنطقة الشرقية، المملكة العربية السعودية')}
-                                                    </p>
+                                        <form onSubmit={handleFormSubmit} className="space-y-6">
+                                            <div className="grid gap-4 sm:grid-cols-2">
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="name">{t('contact.form.name')}</Label>
+                                                    <Input id="name" name="name" required />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="company">{t('contact.form.company')}</Label>
+                                                    <Input id="company" name="company" />
                                                 </div>
                                             </div>
-                                            <div className="flex items-start gap-4">
-                                                <Phone className="h-5 w-5 shrink-0 text-primary mt-1" />
-                                                <div>
-                                                    <p className="font-medium text-foreground">
-                                                        {language === 'en' ? 'Phone' : 'الهاتف'}
-                                                    </p>
-                                                    <a href={`tel:${phoneVal.replace(/\D/g, '')}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                                                        {phoneVal}
-                                                    </a>
+                                            <div className="grid gap-4 sm:grid-cols-2">
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="email">{t('contact.form.email')}</Label>
+                                                    <Input id="email" name="email" type="email" required />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="phone">{t('contact.form.phone')}</Label>
+                                                    <Input id="phone" name="phone" type="tel" required />
                                                 </div>
                                             </div>
-                                            <div className="flex items-start gap-4">
-                                                <Mail className="h-5 w-5 shrink-0 text-primary mt-1" />
-                                                <div>
-                                                    <p className="font-medium text-foreground">
-                                                        {language === 'en' ? 'Email' : 'البريد الإلكتروني'}
-                                                    </p>
-                                                    <a href={`mailto:${getContactValue('email') || 'info@arkaanglobal.com'}`} className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                                                        {getContactValue('email') || 'info@arkaanglobal.com'}
-                                                    </a>
-                                                </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="message">{t('contact.form.message')}</Label>
+                                                <Textarea id="message" name="message" rows={4} required />
                                             </div>
-                                            <div className="flex items-start gap-4">
-                                                <Clock className="h-5 w-5 shrink-0 text-primary mt-1" />
-                                                <div>
-                                                    <p className="font-medium text-foreground">
-                                                        {language === 'en' ? 'Business Hours' : 'ساعات العمل'}
-                                                    </p>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        {getContactValue('hours') || (language === 'en' ? 'Sun - Thu: 8:00 AM - 5:00 PM' : 'الأحد - الخميس: 8:00 صباحًا - 5:00 مساءً')}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* WhatsApp Button */}
-                                        <div className="mt-6 pt-6 border-t border-border">
-                                            <a
-                                                href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-2 rounded-lg bg-[#25D366] px-6 py-3 text-white hover:bg-[#20BA5A] transition-colors"
-                                            >
-                                                <MessageCircle className="h-5 w-5" />
-                                                <span>{language === 'en' ? 'Chat on WhatsApp' : 'التواصل عبر واتساب'}</span>
-                                            </a>
-                                        </div>
+                                            <Button type="submit" disabled={isSubmitting} className="w-full">
+                                                {isSubmitting
+                                                    ? language === 'en'
+                                                        ? 'Sending...'
+                                                        : 'جاري الإرسال...'
+                                                    : t('contact.form.submit')}
+                                            </Button>
+                                        </form>
                                     </div>
                                 </div>
 
-                                {/* Contact Form */}
-                                <div className="card-elevated p-8">
-                                    <h3 className="mb-6 text-xl font-semibold text-foreground">
-                                        {language === 'en' ? 'Send Us a Message' : 'أرسل لنا رسالة'}
-                                    </h3>
-                                    <form onSubmit={handleFormSubmit} className="space-y-6">
-                                        <div className="grid gap-4 sm:grid-cols-2">
-                                            <div className="space-y-2">
-                                                <Label htmlFor="name">{t('contact.form.name')}</Label>
-                                                <Input id="name" name="name" required />
+                                {/* Map */}
+                                {mapEmbedUrl && (
+                                    <div className="w-full lg:w-1/2">
+                                        <div className="card-elevated overflow-hidden h-full flex flex-col">
+                                            <div className="aspect-video w-full">
+                                                <iframe
+                                                    src={mapEmbedUrl}
+                                                    className="h-full w-full border-0"
+                                                    loading="lazy"
+                                                    referrerPolicy="no-referrer-when-downgrade"
+                                                    allowFullScreen
+                                                />
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="company">{t('contact.form.company')}</Label>
-                                                <Input id="company" name="company" />
+                                            <div className="flex flex-col gap-3 border-t border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+                                                <p className="text-sm text-muted-foreground">
+                                                    {language === 'en' ? 'Our location on the map' : 'موقعنا على الخريطة'}
+                                                </p>
+                                                <a
+                                                    href={directionsUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    <Button size="sm" variant="outline" className="inline-flex items-center gap-2">
+                                                        <MapPin className="h-4 w-4" />
+                                                        <span>{language === 'en' ? 'Get Directions' : 'الحصول على الاتجاهات'}</span>
+                                                    </Button>
+                                                </a>
                                             </div>
                                         </div>
-                                        <div className="grid gap-4 sm:grid-cols-2">
-                                            <div className="space-y-2">
-                                                <Label htmlFor="email">{t('contact.form.email')}</Label>
-                                                <Input id="email" name="email" type="email" required />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="phone">{t('contact.form.phone')}</Label>
-                                                <Input id="phone" name="phone" type="tel" required />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="message">{t('contact.form.message')}</Label>
-                                            <Textarea id="message" name="message" rows={4} required />
-                                        </div>
-                                        <Button type="submit" disabled={isSubmitting} className="w-full">
-                                            {isSubmitting
-                                                ? language === 'en'
-                                                    ? 'Sending...'
-                                                    : 'جاري الإرسال...'
-                                                : t('contact.form.submit')}
-                                        </Button>
-                                    </form>
-                                </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

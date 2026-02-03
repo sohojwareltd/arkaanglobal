@@ -85,6 +85,7 @@ Route::get('/hse-contact', function () {
     $hsePolicyLink = HseContent::where('key', 'policy_link')->first();
     $clientCategories = ClientCategory::where('is_active', true)->orderBy('order')->get();
     $whyChooseUs = WhyChooseUs::where('is_active', true)->orderBy('order')->get();
+    $services = Service::where('is_active', true)->orderBy('order')->get();
 
     return Inertia::render('HSEContact', [
         'hero' => $hero,
@@ -92,6 +93,7 @@ Route::get('/hse-contact', function () {
         'hsePolicyLink' => $hsePolicyLink,
         'clientCategories' => $clientCategories,
         'whyChooseUs' => $whyChooseUs,
+        'services' => $services,
     ]);
 })->name('hse-contact');
 

@@ -15,5 +15,12 @@ class QuoteRequest extends Model
         'preferred_start_date',
         'requirement_details',
         'status',
+        'admin_comments',
+        'read_at',
+    ];
+
+    protected $casts = [
+        'preferred_start_date' => 'date',
+        'read_at' => 'datetime',
     ];
 }

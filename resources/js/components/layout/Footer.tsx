@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin, Phone, MessageCircle } from 'lucide-react';
 import { Link, usePage } from '@inertiajs/react';
 
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -10,7 +10,10 @@ interface ContactInfoMap {
 
 export default function Footer(): JSX.Element {
     const { t, language } = useLanguage();
-    const { contactInfo = {} } = usePage().props as { contactInfo?: ContactInfoMap };
+    const { contactInfo = {}, settings = {} } = usePage().props as {
+        contactInfo?: ContactInfoMap;
+        settings?: Record<string, string | null>;
+    };
 
     const getContactValue = (key: string): string => {
         const item = contactInfo?.[key];
@@ -21,6 +24,13 @@ export default function Footer(): JSX.Element {
     const addressVal = getContactValue('address') || t('footer.address');
     const phoneVal = getContactValue('phone') || '0572914027';
     const emailVal = getContactValue('email') || 'info@arkaanglobal.com';
+    const whatsappVal = getContactValue('whatsapp') || phoneVal;
+    const whatsappNumber = whatsappVal.replace(/\D/g, '');
+    const whatsappMessage = language === 'en'
+        ? 'Hello, I would like to inquire about your services.'
+        : 'مرحباً، أود الاستفسار عن خدماتكم.';
+    const crNumber = (settings['cr_number'] as string | undefined) ?? t('footer.cr.number');
+    const vatNumber = (settings['vat_number'] as string | undefined) ?? t('footer.vat.number');
 
     const quickLinks = [
         { path: '/', label: t('nav.home') },
@@ -67,6 +77,17 @@ export default function Footer(): JSX.Element {
                                 <Mail className="h-4 w-4 text-primary-foreground/80 shrink-0" />
                                 <a href={`mailto:${emailVal}`} className="hover:text-primary-foreground transition-colors">
                                     {emailVal}
+                                </a>
+                            </div>
+                            <div className="pt-3">
+                                <a
+                                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 rounded-lg bg-[#25D366] px-4 py-2 text-xs font-medium text-white hover:bg-[#20BA5A] transition-colors"
+                                >
+                                    <MessageCircle className="h-4 w-4" />
+                                    <span>{language === 'en' ? 'Chat on WhatsApp' : 'التواصل عبر واتساب'}</span>
                                 </a>
                             </div>
                         </div>
@@ -128,11 +149,11 @@ export default function Footer(): JSX.Element {
                     <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-primary-foreground/70">
                         <div>
                             <span className="font-semibold">{t('footer.cr.label')}: </span>
-                            <span>{t('footer.cr.number')}</span>
+                            <span>{crNumber}</span>
                         </div>
                         <div>
                             <span className="font-semibold">{t('footer.vat.label')}: </span>
-                            <span>{t('footer.vat.number')}</span>
+                            <span>{vatNumber}</span>
                         </div>
                         <div>
                             <a

@@ -536,6 +536,10 @@ class ContentSeeder extends Seeder
             ['key' => 'default_meta_title', 'value' => 'Arkaan Global Contracting', 'group' => 'seo'],
             ['key' => 'default_meta_description', 'value' => 'Your trusted partner for construction, MEP, manpower, and cleaning services across Saudi Arabia.', 'group' => 'seo'],
             ['key' => 'default_meta_keywords', 'value' => 'construction, MEP, manpower, cleaning, Saudi Arabia', 'group' => 'seo'],
+            ['key' => 'cr_number', 'value' => null, 'group' => 'legal'],
+            ['key' => 'vat_number', 'value' => null, 'group' => 'legal'],
+            ['key' => 'map_embed_url', 'value' => null, 'group' => 'map'],
+            ['key' => 'quote_request_email', 'value' => 'info@arkaanglobal.com', 'group' => 'notifications'],
         ];
 
         foreach ($settings as $setting) {

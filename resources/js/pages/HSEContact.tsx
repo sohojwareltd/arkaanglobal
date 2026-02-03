@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { Shield, Award, MapPin, Phone, Mail, Clock, CheckCircle2, Building2, Download, MessageCircle } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import PageHero from '@/components/ui/page-hero';
@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import WhenVisible from '@/components/ui/when-visible';
 import { useToast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface ClientCategory {
     id: number;
@@ -52,12 +53,20 @@ interface ContactInfoMap {
     [key: string]: { value_en: string; value_ar: string };
 }
 
+interface ServiceItem {
+    id: number;
+    slug: string;
+    title_en: string;
+    title_ar: string;
+}
+
 interface HSEContactProps {
     hero?: HeroData | null;
     hseCommitments?: HseContentItem[];
     hsePolicyLink?: HseContentItem | null;
     clientCategories?: ClientCategory[];
     whyChooseUs?: WhyChooseUsItem[];
+    services?: ServiceItem[];
 }
 
 export default function HSEContact({
@@ -66,6 +75,7 @@ export default function HSEContact({
     hsePolicyLink,
     clientCategories = [],
     whyChooseUs = [],
+    services = [],
 }: HSEContactProps) {
     const { t, language } = useLanguage();
     const { toast } = useToast();
@@ -81,28 +91,45 @@ export default function HSEContact({
     const phoneVal = getContactValue('phone') || '0572914027';
     const whatsappVal = getContactValue('whatsapp') || phoneVal;
     const whatsappNumber = (whatsappVal || phoneVal).replace(/\D/g, '');
-
-    const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        toast({
-            title: language === 'en' ? 'Message Sent' : 'تم إرسال الرسالة',
-            description: language === 'en' ? 'We will get back to you shortly.' : 'سنتواصل معك قريبًا.',
-        });
-
-        setIsSubmitting(false);
-        (e.target as HTMLFormElement).reset();
-    };
-
     const whatsappMessage = language === 'en' 
         ? 'Hello, I would like to inquire about your services.'
         : 'مرحباً، أود الاستفسار عن خدماتكم.';
 
     const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
     const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const form = e.target as HTMLFormElement;
+        const formData = new FormData(form);
+        setIsSubmitting(true);
+
+        router.post(
+            '/quote-request',
+            {
+                company: (formData.get('company') as string) || 'Website contact form',
+                contact_person: (formData.get('name') as string) || '',
+                email: (formData.get('email') as string) || '',
+                phone: (formData.get('phone') as string) || '',
+                service_type: (formData.get('serviceType') as string) || null,
+                preferred_start_date: (formData.get('startDate') as string) || null,
+                requirement_details: (formData.get('requirement') as string) || (formData.get('message') as string) || null,
+            },
+            {
+                preserveScroll: true,
+                onFinish: () => setIsSubmitting(false),
+                onSuccess: () => {
+                    form.reset();
+                    toast({
+                        title: language === 'en' ? 'Message Sent' : 'تم إرسال الرسالة',
+                        description:
+                            language === 'en'
+                                ? 'We will get back to you shortly.'
+                                : 'سنتواصل معك قريبًا.',
+                    });
+                },
+            },
+        );
+    };
     const pageTitle = hero ? (language === 'en' ? hero.meta_title_en : hero.meta_title_ar) || undefined : undefined;
     const metaDescription = hero ? (language === 'en' ? hero.meta_description_en : hero.meta_description_ar) || undefined : undefined;
     const metaKeywords = hero?.meta_keywords || undefined;
@@ -469,6 +496,38 @@ export default function HSEContact({
                                                 {language === 'en' ? 'Requirement' : 'المتطلب'}
                                             </Label>
                                             <Textarea id="requirement" name="requirement" rows={3} />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="serviceType">
+                                                {language === 'en' ? 'Service Type' : 'نوع الخدمة'}
+                                            </Label>
+                                            <Select name="serviceType" required>
+                                                <SelectTrigger id="serviceType">
+                                                    <SelectValue placeholder={language === 'en' ? 'Select service...' : 'اختر الخدمة...'} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {services.length > 0
+                                                        ? services.map((s) => (
+                                                              <SelectItem key={s.id} value={s.slug}>
+                                                                  {language === 'en' ? s.title_en : s.title_ar}
+                                                              </SelectItem>
+                                                          ))
+                                                        : [
+                                                              <SelectItem key="construction" value="construction">
+                                                                  {language === 'en' ? 'Construction' : 'البناء'}
+                                                              </SelectItem>,
+                                                              <SelectItem key="mep" value="mep">
+                                                                  {language === 'en' ? 'MEP Services' : 'خدمات الميكانيكا والكهرباء'}
+                                                              </SelectItem>,
+                                                              <SelectItem key="manpower" value="manpower">
+                                                                  {language === 'en' ? 'Manpower Solutions' : 'حلول القوى العاملة'}
+                                                              </SelectItem>,
+                                                              <SelectItem key="cleaning" value="cleaning">
+                                                                  {language === 'en' ? 'Cleaning Services' : 'خدمات التنظيف'}
+                                                              </SelectItem>,
+                                                          ]}
+                                                </SelectContent>
+                                            </Select>
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="startDate">

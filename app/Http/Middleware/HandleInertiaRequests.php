@@ -101,12 +101,24 @@ class HandleInertiaRequests extends Middleware
             $contactInfo = [];
         }
 
+        $settings = [];
+        try {
+            $settings = [
+                'cr_number' => \App\Models\SiteSetting::get('cr_number'),
+                'vat_number' => \App\Models\SiteSetting::get('vat_number'),
+                'map_embed_url' => \App\Models\SiteSetting::get('map_embed_url'),
+            ];
+        } catch (\Throwable) {
+            $settings = [];
+        }
+
         return [
             ...parent::share($request),
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
             ],
             'contactInfo' => $contactInfo,
+            'settings' => $settings,
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),

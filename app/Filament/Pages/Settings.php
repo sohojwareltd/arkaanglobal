@@ -33,6 +33,10 @@ class Settings extends Page implements HasForms
             'default_meta_description' => SiteSetting::get('default_meta_description', ''),
             'default_meta_keywords' => SiteSetting::get('default_meta_keywords', ''),
             'og_image' => $ogImage ? [$ogImage] : [],
+            'cr_number' => SiteSetting::get('cr_number', ''),
+            'vat_number' => SiteSetting::get('vat_number', ''),
+            'map_embed_url' => SiteSetting::get('map_embed_url', ''),
+            'quote_request_email' => SiteSetting::get('quote_request_email', ''),
         ]);
     }
 
@@ -62,6 +66,32 @@ class Settings extends Page implements HasForms
                             ->directory('seo')
                             ->visibility('public')
                             ->helperText('Image for social sharing (1200x630 recommended)'),
+                    ]),
+                Forms\Components\Section::make('Company Registration')
+                    ->description('Legal registration details shown in the website footer')
+                    ->schema([
+                        Forms\Components\TextInput::make('cr_number')
+                            ->label('Commercial Registration (CR) Number')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('vat_number')
+                            ->label('VAT Number')
+                            ->maxLength(255),
+                    ]),
+                Forms\Components\Section::make('Map & Location')
+                    ->description('Configure the Google Maps embed URL used on the homepage contact section')
+                    ->schema([
+                        Forms\Components\TextInput::make('map_embed_url')
+                            ->label('Map Embed URL')
+                            ->helperText('Paste the Google Maps "Embed map" URL (the src attribute).')
+                            ->maxLength(2048),
+                    ]),
+                Forms\Components\Section::make('Notifications')
+                    ->description('Configure email notifications for website quote and contact requests')
+                    ->schema([
+                        Forms\Components\TextInput::make('quote_request_email')
+                            ->label('Quote Request Notification Email(s)')
+                            ->helperText('Comma-separated list of email addresses to notify when a quote request is submitted.')
+                            ->maxLength(512),
                     ]),
                 Forms\Components\Section::make('Website Counts')
                     ->description('Edit website statistics (Years Experience, Projects Completed, Workers Deployed, Satisfied Clients) in Content Management → Stats')
