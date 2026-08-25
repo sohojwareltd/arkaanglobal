@@ -4,12 +4,13 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 interface StatItemProps {
     value: number;
+    prefix: string;
     suffix: string;
     label: string;
     delay: number;
 }
 
-function StatItem({ value, suffix, label, delay }: StatItemProps): JSX.Element {
+function StatItem({ value, prefix, suffix, label, delay }: StatItemProps): JSX.Element {
     const [count, setCount] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
     const ref = useRef<HTMLDivElement | null>(null);
@@ -35,8 +36,8 @@ function StatItem({ value, suffix, label, delay }: StatItemProps): JSX.Element {
         if (!isVisible) return;
 
         const timeout = setTimeout(() => {
-            const duration = 2000;
-            const steps = 60;
+            const duration = 1500;
+            const steps = Math.min(60, Math.max(value, 1));
             const increment = value / steps;
             let current = 0;
 
@@ -57,34 +58,68 @@ function StatItem({ value, suffix, label, delay }: StatItemProps): JSX.Element {
     }, [isVisible, value, delay]);
 
     return (
-        <div ref={ref} className="text-center">
-            <div className="mb-2 text-4xl font-bold text-primary sm:text-5xl lg:text-6xl">
+        <div ref={ref} className="border-l-2 border-accent/40 px-6 text-center first:border-l-0">
+            <div className="mb-2 text-4xl font-bold text-accent sm:text-5xl lg:text-6xl">
+                {prefix}
                 {count.toLocaleString()}
                 {suffix}
             </div>
-            <p className="font-medium text-muted-foreground">{label}</p>
+            <p className="font-medium text-primary-foreground/80">{label}</p>
         </div>
     );
 }
 
-export default function StatsSection(): JSX.Element {
-    const { t } = useLanguage();
+interface StatData {
+    id: number;
+    value: string;
+    label_en: string;
+    label_ar: string;
+}
 
-    const stats = [
-        { value: 15, suffix: '+', label: t('stats.years') },
-        { value: 10_000, suffix: '+', label: t('stats.workers') },
-        { value: 500, suffix: '+', label: t('stats.projects') },
-        { value: 150, suffix: '+', label: t('stats.clients') },
-    ];
+interface StatsSectionProps {
+    stats?: StatData[];
+}
+
+/** Splits a display value like "6+", "100%", or "4" into an animatable
+ * number plus its non-numeric prefix/suffix, so real (non-fabricated)
+ * stat strings from the DB can still count up smoothly. */
+function parseStatValue(raw: string): { value: number; prefix: string; suffix: string } {
+    const match = raw.match(/^([^\d]*)([\d,]+)(.*)$/);
+    if (!match) {
+        return { value: 0, prefix: '', suffix: raw };
+    }
+    const [, prefix, digits, suffix] = match;
+    return { value: parseInt(digits.replace(/,/g, ''), 10) || 0, prefix, suffix };
+}
+
+export default function StatsSection({ stats: propStats = [] }: StatsSectionProps): JSX.Element {
+    const { t, language } = useLanguage();
+
+    const stats = propStats.length > 0
+        ? propStats.map((stat) => ({
+            ...parseStatValue(stat.value),
+            label: language === 'en' ? stat.label_en : stat.label_ar,
+        }))
+        : [
+            { value: 4, prefix: '', suffix: '', label: t('stats.years') },
+            { value: 3, prefix: '', suffix: '', label: t('stats.workers') },
+        ];
 
     return (
-        <section className="section-padding bg-muted/50">
-            <div className="container-custom">
+        <section className="section-padding relative overflow-hidden bg-primary">
+            <div className="animate-kenburns absolute inset-0 opacity-10">
+                <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1541976590-713941681591?q=80&w=1600')" }}
+                />
+            </div>
+            <div className="container-custom relative">
                 <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
                     {stats.map((stat, index) => (
                         <StatItem
                             key={stat.label}
                             value={stat.value}
+                            prefix={stat.prefix}
                             suffix={stat.suffix}
                             label={stat.label}
                             delay={index * 100}
@@ -95,4 +130,3 @@ export default function StatsSection(): JSX.Element {
         </section>
     );
 }
-

@@ -1,25 +1,38 @@
 import React from 'react';
+import { Link } from '@inertiajs/react';
+import { Building2, Landmark, Briefcase, Factory, LucideIcon } from 'lucide-react';
 
 import { useLanguage } from '@/contexts/LanguageContext';
 
-export default function ClientsSection(): JSX.Element {
-    const { t, language } = useLanguage();
+const iconMap: Record<string, LucideIcon> = {
+    building: Building2,
+    landmark: Landmark,
+    briefcase: Briefcase,
+    factory: Factory,
+};
 
-    const clients = [
-        { name: 'Saudi Binladin Group', abbr: 'SBG' },
-        { name: 'Al Rajhi Construction', abbr: 'ARC' },
-        { name: 'Nesma & Partners', abbr: 'N&P' },
-        { name: 'El Seif Engineering', abbr: 'ESE' },
-        { name: 'Saudi Oger', abbr: 'SOG' },
-        { name: 'Al Bawani Company', abbr: 'ABC' },
-    ];
+interface ClientCategoryItem {
+    id: number;
+    name_en: string;
+    name_ar: string;
+    description_en?: string;
+    description_ar?: string;
+    icon?: string;
+}
+
+interface ClientsSectionProps {
+    clientCategories?: ClientCategoryItem[];
+}
+
+export default function ClientsSection({ clientCategories: categories = [] }: ClientsSectionProps): JSX.Element {
+    const { t, language } = useLanguage();
 
     return (
         <section className="section-padding bg-muted/30">
             <div className="container-custom">
                 {/* Header */}
                 <div className="mx-auto mb-12 max-w-2xl text-center">
-                    <span className="text-sm font-semibold uppercase tracking-wider text-primary">
+                    <span className="eyebrow">
                         {t('clients.title')}
                     </span>
                     <h2 className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">
@@ -27,33 +40,34 @@ export default function ClientsSection(): JSX.Element {
                     </h2>
                 </div>
 
-                {/* Clients Grid */}
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-                    {clients.map((client) => (
-                        <div
-                            key={client.abbr}
-                            className="flex min-h-[100px] items-center justify-center rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/50"
-                        >
-                            <div className="text-center">
-                                <div className="mb-1 text-2xl font-bold text-primary">
-                                    {client.abbr}
+                {/* Sector Categories */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    {categories.map((category) => {
+                        const Icon = iconMap[category.icon || ''] || Building2;
+                        return (
+                            <Link
+                                key={category.id}
+                                href="/clients"
+                                className="card-elevated flex flex-col items-center gap-3 p-6 text-center hover:border-primary/50"
+                            >
+                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sm hero-gradient border-b-2 border-accent">
+                                    <Icon className="h-6 w-6 text-primary-foreground" />
                                 </div>
-                                <div className="text-xs text-muted-foreground">
-                                    {client.name}
+                                <div className="text-sm font-semibold text-foreground">
+                                    {language === 'en' ? category.name_en : category.name_ar}
                                 </div>
-                            </div>
-                        </div>
-                    ))}
+                            </Link>
+                        );
+                    })}
                 </div>
 
                 {/* Trust Text */}
                 <p className="mt-8 text-center text-muted-foreground">
                     {language === 'en'
-                        ? 'Trusted by major construction companies and developers across Saudi Arabia'
-                        : 'موثوق من قبل شركات البناء والمطورين الكبار في جميع أنحاء المملكة العربية السعودية'}
+                        ? 'Serving government, semi-government, industrial, and private sector clients across the Kingdom of Saudi Arabia'
+                        : 'نخدم عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة في جميع أنحاء المملكة العربية السعودية'}
                 </p>
             </div>
         </section>
     );
 }
-

@@ -9,7 +9,7 @@ import { LanguageProvider } from './contexts/LanguageContext';
 import { TooltipProvider } from './components/ui/tooltip';
 import { Toaster } from './components/ui/toaster';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Arkaan Construction Company';
 
 // Analytics tracking functions
 const trackPageView = (url: string, title: string) => {
@@ -30,7 +30,11 @@ const trackPageView = (url: string, title: string) => {
 const pages = import.meta.glob('./pages/**/*.tsx');
 
 createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    // Every page already composes its own complete <title> (e.g. "Civil &
+    // Construction - Arkaan Construction Company"), so this must not append
+    // the app name again — that produced a stray "... - Laravel" suffix
+    // (from APP_NAME=Laravel) on every single page.
+    title: (title) => title || appName,
     resolve: (name) =>
         resolvePageComponent(`./pages/${name}.tsx`, pages).then((module) => {
             const PageComponent = module.default;

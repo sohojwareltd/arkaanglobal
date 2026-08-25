@@ -13,6 +13,9 @@ interface PageHeroProps {
     fallbackTitle: string;
     fallbackSubtitle?: string;
     language?: 'en' | 'ar';
+    /** Optional muted/looping background video (direct mp4 url). When set,
+     * the background image is used as the poster/fallback layer. */
+    videoUrl?: string;
 }
 
 const DEFAULT_BG =
@@ -23,6 +26,7 @@ export default function PageHero({
     fallbackTitle,
     fallbackSubtitle = '',
     language = 'en',
+    videoUrl,
 }: PageHeroProps): JSX.Element {
     const isAr = language === 'ar';
 
@@ -45,9 +49,21 @@ export default function PageHero({
     return (
         <section className="relative overflow-hidden py-20 lg:py-32">
             <div
-                className="absolute inset-0 bg-cover bg-center"
+                className="animate-kenburns absolute inset-0 bg-cover bg-center"
                 style={{ backgroundImage: bgImage }}
             />
+            {videoUrl && (
+                <video
+                    className="hero-bg-video absolute inset-0 h-full w-full object-cover"
+                    src={videoUrl}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    aria-hidden="true"
+                />
+            )}
             <div className="hero-overlay absolute inset-0" />
             <div className="container-custom relative z-10">
                 <div className="mx-auto max-w-3xl text-center">

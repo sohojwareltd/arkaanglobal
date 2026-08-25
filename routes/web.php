@@ -5,7 +5,6 @@ use App\Http\Controllers\QuoteRequestController;
 use App\Models\AboutContent;
 use App\Models\Certificate;
 use App\Models\CleaningServiceScope;
-use App\Models\Client;
 use App\Models\ClientCategory;
 use App\Models\CoreValue;
 use App\Models\HeroSection;
@@ -14,7 +13,6 @@ use App\Models\ManpowerCategory;
 use App\Models\Project;
 use App\Models\Service;
 use App\Models\Stat;
-use App\Models\Testimonial;
 use App\Models\WhyChooseUs;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,7 +24,7 @@ Route::get('/', function () {
     $aboutOverview = AboutContent::where('key', 'overview')->first();
     $vision = AboutContent::where('key', 'vision')->first();
     $mission = AboutContent::where('key', 'mission')->first();
-    $clients = Client::where('is_active', true)->orderBy('order')->get();
+    $clientCategories = ClientCategory::where('is_active', true)->orderBy('order')->get();
 
     return Inertia::render('Home', [
         'hero' => $hero,
@@ -35,7 +33,7 @@ Route::get('/', function () {
         'aboutOverview' => $aboutOverview,
         'vision' => $vision,
         'mission' => $mission,
-        'clients' => $clients,
+        'clientCategories' => $clientCategories,
     ]);
 })->name('home');
 
@@ -59,23 +57,44 @@ Route::get('/about', function () {
 
 Route::get('/services', function () {
     $hero = HeroSection::where('page', 'services')->where('is_active', true)->first();
+    // Only the summary is needed here — full item lists, the manpower
+    // deployment table, and the cleaning scope matrix live on each
+    // service's own detail page (see /services/{service:slug} below).
     $services = Service::where('is_active', true)->orderBy('order')->with('items')->get();
-    $manpowerCategories = ManpowerCategory::where('is_active', true)->orderBy('order')->get();
-    $cleaningScopes = CleaningServiceScope::where('is_active', true)->orderBy('order')->with('items')->get();
-    $manpowerCategoriesTitle = HseContent::where('key', 'services_manpower_categories_title')->first();
-    $cleaningMatrixTitle = HseContent::where('key', 'services_cleaning_matrix_title')->first();
-    $manpowerFormLink = HseContent::where('key', 'manpower_form_link')->first();
 
     return Inertia::render('Services', [
         'hero' => $hero,
         'services' => $services,
+    ]);
+})->name('services');
+
+Route::get('/services/{service:slug}', function (Service $service) {
+    if (! $service->is_active) {
+        abort(404);
+    }
+
+    $service->load('items');
+    $allServices = Service::where('is_active', true)->orderBy('order')->get();
+    $manpowerCategories = $service->slug === 'manpower'
+        ? ManpowerCategory::where('is_active', true)->orderBy('order')->get()
+        : collect();
+    $cleaningScopes = $service->slug === 'cleaning'
+        ? CleaningServiceScope::where('is_active', true)->orderBy('order')->with('items')->get()
+        : collect();
+    $manpowerCategoriesTitle = HseContent::where('key', 'services_manpower_categories_title')->first();
+    $cleaningMatrixTitle = HseContent::where('key', 'services_cleaning_matrix_title')->first();
+    $manpowerFormLink = HseContent::where('key', 'manpower_form_link')->first();
+
+    return Inertia::render('ServiceDetail', [
+        'service' => $service,
+        'allServices' => $allServices,
         'manpowerCategories' => $manpowerCategories,
         'cleaningScopes' => $cleaningScopes,
         'manpowerCategoriesTitle' => $manpowerCategoriesTitle,
         'cleaningMatrixTitle' => $cleaningMatrixTitle,
         'manpowerFormLink' => $manpowerFormLink,
     ]);
-})->name('services');
+})->name('services.show');
 
 Route::post('/quote-request', [QuoteRequestController::class, 'store'])->name('quote-request.store');
 
@@ -99,18 +118,21 @@ Route::get('/hse-contact', function () {
 
 Route::get('/clients', function () {
     $hero = HeroSection::where('page', 'clients')->where('is_active', true)->first();
-    $clients = Client::where('is_active', true)->orderBy('order')->get();
-    $testimonials = Testimonial::where('is_active', true)->orderBy('order')->with('client')->get();
+    // The profile names sector categories, not specific client companies, so
+    // this page presents the real categories instead of fabricated logos.
+    $clientCategories = ClientCategory::where('is_active', true)->orderBy('order')->get();
 
     return Inertia::render('Clients', [
         'hero' => $hero,
-        'clients' => $clients,
-        'testimonials' => $testimonials,
+        'clientCategories' => $clientCategories,
     ]);
 })->name('clients');
 
 Route::get('/projects', function () {
     $hero = HeroSection::where('page', 'projects')->where('is_active', true)->first();
+    // No named case-study projects exist yet — until real ones are added,
+    // this page presents deployment-capability & compliance content instead
+    // (distinct from the service catalog on /services).
     $projects = Project::where('is_active', true)
         ->orderBy('order')
         ->with(['client', 'galleryItems'])

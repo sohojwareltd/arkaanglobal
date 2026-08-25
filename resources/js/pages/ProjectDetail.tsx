@@ -130,7 +130,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
 
                         <div className="grid gap-12 lg:grid-cols-3">
                             <div className="lg:col-span-2 space-y-8">
-                                <div className="relative rounded-2xl overflow-hidden shadow-xl aspect-video">
+                                <div className="relative rounded-sm overflow-hidden shadow-xl aspect-video">
                                     <img
                                         src={mainImage}
                                         alt={title}
@@ -142,7 +142,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                                 </div>
 
                                 {galleryItems.length > 0 && (
-                                    <WhenVisible className="scroll-mt-24">
+                                    <WhenVisible className="scroll-mt-28 lg:scroll-mt-40">
                                         <section>
                                             <h2 className="mb-6 text-2xl font-bold text-foreground">
                                                 {language === 'en' ? 'Gallery' : 'المعرض'}
@@ -230,7 +230,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                                     <div className="space-y-4">
                                         {project.client && (
                                             <div className="flex items-center gap-3">
-                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-primary/10 border-b-2 border-accent/60">
                                                     <Building2 className="h-5 w-5 text-primary" />
                                                 </div>
                                                 <div>

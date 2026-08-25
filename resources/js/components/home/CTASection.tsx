@@ -1,17 +1,23 @@
 import React from 'react';
-import { ArrowRight, Phone } from 'lucide-react';
-import { Link } from '@inertiajs/react';
+import { ArrowRight, Mail } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
 
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+interface ContactInfoMap {
+    [key: string]: { value_en: string; value_ar: string };
+}
+
 export default function CTASection(): JSX.Element {
     const { t, direction } = useLanguage();
+    const { contactInfo = {} } = usePage().props as { contactInfo?: ContactInfoMap };
+    const email = contactInfo?.email?.value_en || 'info@arkaanconstruction.com';
 
     return (
         <section className="section-padding">
             <div className="container-custom">
-                <div className="relative overflow-hidden rounded-3xl">
+                <div className="relative overflow-hidden rounded-sm border-b-4 border-accent">
                     {/* Background */}
                     <div className="hero-gradient absolute inset-0" />
                     <div className="absolute inset-0 opacity-20">
@@ -39,7 +45,7 @@ export default function CTASection(): JSX.Element {
                                     className="gold-gradient px-8 py-6 text-lg font-semibold text-accent-foreground transition-opacity hover:opacity-90"
                                     asChild
                                 >
-                                    <Link href="/contact" className="flex items-center gap-2">
+                                    <Link href="/hse-contact" className="flex items-center gap-2">
                                         {t('cta.button')}
                                         <ArrowRight
                                             className={`h-5 w-5 ${
@@ -54,9 +60,9 @@ export default function CTASection(): JSX.Element {
                                     className="border-primary-foreground/30 bg-transparent px-8 py-6 text-lg text-primary-foreground hover:bg-primary-foreground/10"
                                     asChild
                                 >
-                                    <a href="tel:+966111234567" className="flex items-center gap-2">
-                                        <Phone className="h-5 w-5" />
-                                        <span dir="ltr">+966 11 123 4567</span>
+                                    <a href={`mailto:${email}`} className="flex items-center gap-2">
+                                        <Mail className="h-5 w-5" />
+                                        <span>{email}</span>
                                     </a>
                                 </Button>
                             </div>

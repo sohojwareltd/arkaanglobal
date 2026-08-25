@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title inertia>{{ config('app.name', 'Arkaan Global Contracting') }}</title>
+        <title inertia>{{ config('app.name', 'Arkaan Construction Company') }}</title>
 
         <!-- Favicon -->
         <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico">
@@ -13,12 +13,12 @@
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
         <link rel="manifest" href="/favicon/site.webmanifest">
-        <meta name="theme-color" content="#0d4554">
+        <meta name="theme-color" content="#0B3A4A">
 
         <!-- Default SEO Meta Tags -->
-        <meta name="description" content="Arkaan Global Contracting - Leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. Strength in People, Precision in Work.">
+        <meta name="description" content="Arkaan Construction Company - Trusted partner for civil construction, MEP, manpower supply, and dedicated cleaning services across Saudi Arabia.">
         <meta name="keywords" content="construction, MEP services, manpower solutions, cleaning services, Saudi Arabia, contracting, civil works">
-        <meta name="author" content="Arkaan Global Contracting">
+        <meta name="author" content="Arkaan Construction Company">
         <meta name="robots" content="index, follow">
         <meta name="language" content="English, Arabic">
         <meta name="revisit-after" content="7 days">
@@ -26,18 +26,18 @@
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website">
         <meta property="og:url" content="{{ url()->current() }}">
-        <meta property="og:title" content="Arkaan Global Contracting - Construction, MEP, Manpower & Cleaning Services">
-        <meta property="og:description" content="Leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. Strength in People, Precision in Work.">
+        <meta property="og:title" content="Arkaan Construction Company - Civil Construction, MEP, Manpower & Cleaning Services">
+        <meta property="og:description" content="Trusted partner for civil construction, MEP, manpower supply, and dedicated cleaning services across Saudi Arabia.">
         <meta property="og:image" content="{{ url('/logo-main.png') }}">
-        <meta property="og:site_name" content="Arkaan Global Contracting">
+        <meta property="og:site_name" content="Arkaan Construction Company">
         <meta property="og:locale" content="en_US">
         <meta property="og:locale:alternate" content="ar_SA">
 
         <!-- Twitter -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:url" content="{{ url()->current() }}">
-        <meta name="twitter:title" content="Arkaan Global Contracting - Construction, MEP, Manpower & Cleaning Services">
-        <meta name="twitter:description" content="Leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia.">
+        <meta name="twitter:title" content="Arkaan Construction Company - Civil Construction, MEP, Manpower & Cleaning Services">
+        <meta name="twitter:description" content="Trusted partner for civil construction, MEP, manpower supply, and dedicated cleaning services across Saudi Arabia.">
         <meta name="twitter:image" content="{{ url('/logo-main.png') }}">
 
         <!-- Canonical URL -->

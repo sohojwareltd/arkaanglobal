@@ -2,11 +2,29 @@ import React, { useState } from 'react';
 import { Head } from '@inertiajs/react';
 import { Target, Eye, Shield, Heart, Star, Clock, FileCheck, Award, X, Maximize2 } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
+import PageHero from '@/components/ui/page-hero';
 import { useLanguage } from '@/contexts/LanguageContext';
 import WhenVisible from '@/components/ui/when-visible';
 import { cn } from '@/lib/utils';
 
-export default function About() {
+// Builders working at a construction site — Mixkit (free, no attribution required).
+const ABOUT_HERO_VIDEO = 'https://assets.mixkit.co/videos/31473/31473-720.mp4';
+// Pointing to blueprints — fits the "planning / how we work" section below.
+const BLUEPRINT_VIDEO = 'https://assets.mixkit.co/videos/1439/1439-720.mp4';
+
+interface HeroData {
+    title_en?: string;
+    title_ar?: string;
+    subtitle_en?: string;
+    subtitle_ar?: string;
+    background_image?: string;
+}
+
+interface AboutProps {
+    hero?: HeroData | null;
+}
+
+export default function About({ hero }: AboutProps) {
     const { t, language } = useLanguage();
     const [selectedCertificate, setSelectedCertificate] = useState<number | null>(null);
 
@@ -39,45 +57,49 @@ export default function About() {
             icon: Heart,
             title: language === 'en' ? 'Integrity' : 'النزاهة',
             description: language === 'en'
-                ? 'Honest and transparent business practices in all our dealings.'
-                : 'ممارسات تجارية صادقة وشفافة في جميع تعاملاتنا.',
+                ? 'Honest, transparent, and ethical practices, building long-term relationships based on trust and accountability.'
+                : 'ممارسات صادقة وشفافة وأخلاقية، تبني علاقات طويلة الأمد قائمة على الثقة والمساءلة.',
         },
         {
             icon: Star,
             title: language === 'en' ? 'Quality' : 'الجودة',
             description: language === 'en'
-                ? 'Providing highly skilled and trained workers for all project needs.'
-                : 'توفير عمال مهرة ومدربين لجميع احتياجات المشروع.',
+                ? 'Superior workmanship and services that consistently meet or exceed client expectations.'
+                : 'حرفية وخدمات متميزة تلبي أو تتجاوز توقعات العملاء باستمرار.',
         },
         {
             icon: Shield,
             title: language === 'en' ? 'Safety' : 'السلامة',
             description: language === 'en'
-                ? 'Zero compromise on worker safety and compliance with all regulations.'
-                : 'لا تنازل عن سلامة العمال والامتثال لجميع اللوائح.',
+                ? 'Our highest priority — a strong Health, Safety, and Environmental (HSE) culture across every site.'
+                : 'أولويتنا القصوى — ثقافة قوية للصحة والسلامة والبيئة في كل موقع.',
         },
         {
             icon: Clock,
             title: language === 'en' ? 'Reliability' : 'الموثوقية',
             description: language === 'en'
-                ? 'Consistent delivery on all commitments with proven track record.'
-                : 'التسليم المستمر لجميع الالتزامات مع سجل حافل مثبت.',
+                ? 'Dependable services, skilled resources, and timely project execution with consistency.'
+                : 'خدمات موثوقة وموارد ماهرة وتنفيذ للمشاريع في وقتها بثبات.',
         },
         {
             icon: Award,
-            title: language === 'en' ? 'Professionalism' : 'المهنية',
+            title: language === 'en' ? 'Professionalism' : 'الاحترافية',
             description: language === 'en'
-                ? 'Maintaining the highest standards of professional conduct and service.'
-                : 'الحفاظ على أعلى معايير السلوك المهني والخدمة.',
+                ? 'The highest standards of competence, discipline, and respect across management and supervision.'
+                : 'أعلى معايير الكفاءة والانضباط والاحترام في الإدارة والإشراف.',
         },
         {
             icon: FileCheck,
             title: language === 'en' ? 'Compliance' : 'الامتثال',
             description: language === 'en'
-                ? 'Full adherence to Saudi labor laws and industry standards.'
-                : 'الالتزام الكامل بقوانين العمل السعودية ومعايير الصناعة.',
+                ? 'Strict adherence to Saudi laws, client specifications, and contractual obligations.'
+                : 'الالتزام الصارم بأنظمة المملكة ومواصفات العملاء والالتزامات التعاقدية.',
         },
     ];
+
+    const ceoMessage = language === 'en'
+        ? "At ARKAAN, we are driven by a commitment to excellence, integrity, and innovation. Every successful project is built on trust, collaboration, and a clear understanding of our clients' objectives — and we remain committed to the highest standards of Health, Safety, Quality, and Environmental (HSQE) practice as we grow."
+        : 'في أركان، ينبع التزامنا من السعي للتميز والنزاهة والابتكار. يُبنى كل مشروع ناجح على الثقة والتعاون وفهم واضح لأهداف عملائنا — ونظل ملتزمين بأعلى معايير الصحة والسلامة والجودة والبيئة مع استمرار نمونا.';
 
     const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
     const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
@@ -85,58 +107,33 @@ export default function About() {
     return (
         <>
             <Head>
-                <title>About Us - Arkaan Global Contracting | Your Trusted Construction Partner</title>
-                <meta name="description" content="Learn about Arkaan Global Contracting - Your trusted partner for construction, MEP, manpower, and cleaning services across Saudi Arabia since 2009." />
-                <meta name="keywords" content="about Arkaan Global, construction company Saudi Arabia, company history, vision mission, core values" />
-                
-                <meta property="og:title" content="About Us - Arkaan Global Contracting" />
-                <meta property="og:description" content="Your trusted partner for construction, MEP, manpower, and cleaning services across Saudi Arabia." />
+                <title>About Us - Arkaan Construction Company | Your Trusted Construction Partner</title>
+                <meta name="description" content="Learn about Arkaan Construction Company - a leading civil construction, MEP, and manpower solutions provider across the Kingdom of Saudi Arabia." />
+                <meta name="keywords" content="about Arkaan Construction Company, construction company Saudi Arabia, vision mission, core values" />
+
+                <meta property="og:title" content="About Us - Arkaan Construction Company" />
+                <meta property="og:description" content="A leading civil construction, MEP, and manpower solutions provider across the Kingdom of Saudi Arabia." />
                 <meta property="og:url" content={currentUrl} />
                 <meta property="og:type" content="website" />
-                
-                <meta name="twitter:title" content="About Us - Arkaan Global Contracting" />
-                <meta name="twitter:description" content="Your trusted partner for construction, MEP, manpower, and cleaning services across Saudi Arabia." />
+
+                <meta name="twitter:title" content="About Us - Arkaan Construction Company" />
+                <meta name="twitter:description" content="A leading civil construction, MEP, and manpower solutions provider across the Kingdom of Saudi Arabia." />
                 
                 <link rel="canonical" href={currentUrl} />
             </Head>
             <Layout>
-            {/* Hero */}
-            <section className="relative overflow-hidden py-20 lg:py-32">
-                {/* Background Image */}
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{
-                        backgroundImage:
-                            "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070')",
-                    }}
-                />
-                <div className="hero-overlay absolute inset-0" />
-                
-                {/* Pattern Overlay */}
-                <div className="absolute inset-0 opacity-10">
-                    <div
-                        className="absolute inset-0"
-                        style={{
-                            backgroundImage:
-                                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-                        }}
-                    />
-                </div>
-
-                <div className="container-custom relative z-10">
-                    <div className="mx-auto max-w-3xl text-center">
-                        <h1 className="mb-4 text-4xl font-bold text-primary-foreground sm:text-5xl lg:text-6xl">
-                            {t('about.page.title')}
-                        </h1>
-                        <p className="text-xl text-primary-foreground/90">{t('about.page.subtitle')}</p>
-                    </div>
-                </div>
-            </section>
+            <PageHero
+                hero={hero}
+                fallbackTitle={t('about.page.title')}
+                fallbackSubtitle={t('about.page.subtitle')}
+                language={language}
+                videoUrl={ABOUT_HERO_VIDEO}
+            />
 
             <div className="section-padding">
                 <div className="container-custom space-y-20">
                     {/* Company Overview */}
-                    <WhenVisible className="scroll-mt-24">
+                    <WhenVisible className="scroll-mt-28 lg:scroll-mt-40">
                         <section>
                             <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
                                 <div>
@@ -146,79 +143,111 @@ export default function About() {
                                     <div className="space-y-4">
                                         <p className="text-lg leading-relaxed text-muted-foreground">
                                             {language === 'en'
-                                                ? 'Arkaan Global Contracting is a leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. With a commitment to excellence and safety, we serve government, semi-government, industrial, and private sector clients across the Kingdom.'
-                                                : 'أركان جلوبال للمقاولات هي مزود رائد لخدمات البناء والميكانيكا والكهرباء والعمالة والتنظيف في المملكة العربية السعودية. مع التزام بالتميز والسلامة، نخدم عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة في جميع أنحاء المملكة.'}
+                                                ? 'ARKAAN CONSTRUCTION COMPANY is a leading construction and manpower solutions provider delivering high-quality engineering, construction, and workforce services across the Kingdom of Saudi Arabia, serving the oil & gas, petrochemical, power, infrastructure, manufacturing, and commercial sectors.'
+                                                : 'شركة أركان للمقاولات هي مزود رائد لحلول البناء والقوى العاملة، تقدّم خدمات هندسية وإنشائية وقوى عاملة عالية الجودة في جميع أنحاء المملكة العربية السعودية، وتخدم قطاعات النفط والغاز والبتروكيماويات والطاقة والبنية التحتية والتصنيع والقطاع التجاري.'}
                                         </p>
                                         <p className="text-lg leading-relaxed text-muted-foreground">
                                             {language === 'en'
-                                                ? 'Our comprehensive service portfolio, combined with our experienced team and commitment to quality, makes us the preferred partner for major construction projects and ongoing maintenance needs throughout Saudi Arabia.'
-                                                : 'محفظة خدماتنا الشاملة، جنباً إلى جنب مع فريقنا ذو الخبرة والتزامنا بالجودة، يجعلنا الشريك المفضل للمشاريع الإنشائية الكبرى واحتياجات الصيانة المستمرة في جميع أنحاء المملكة العربية السعودية.'}
+                                                ? 'Our construction capabilities span civil, structural, architectural, mechanical, and industrial works, while our manpower division supplies qualified engineers, technicians, supervisors, and administrative professionals — giving clients a single, dependable partner for both construction execution and workforce support.'
+                                                : 'تشمل قدراتنا الإنشائية الأعمال المدنية والإنشائية والمعمارية والميكانيكية والصناعية، بينما يوفر قسم القوى العاملة لدينا مهندسين وفنيين ومشرفين وموظفين إداريين مؤهلين — ليحصل عملاؤنا على شريك واحد موثوق لتنفيذ الإنشاءات ودعم القوى العاملة معاً.'}
                                         </p>
                                     </div>
                                 </div>
                                 <div className="relative">
                                     <div className="grid grid-cols-2 gap-4">
-                                        <img
-                                            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800"
-                                            alt="Construction site"
-                                            className="rounded-xl h-48 w-full object-cover shadow-lg"
+                                        <video
+                                            src={BLUEPRINT_VIDEO}
+                                            autoPlay
+                                            muted
+                                            loop
+                                            playsInline
+                                            preload="metadata"
+                                            aria-hidden="true"
+                                            className="hero-bg-video rounded-sm h-48 w-full object-cover shadow-lg border-b-2 border-accent"
                                         />
                                         <img
-                                            src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800"
-                                            alt="Safety equipment"
-                                            className="rounded-xl h-48 w-full object-cover shadow-lg mt-8"
+                                            src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=800"
+                                            alt={language === 'en' ? 'MEP ductwork installation' : 'تركيب أعمال التكييف'}
+                                            className="rounded-sm h-48 w-full object-cover shadow-lg mt-8 transition-transform duration-500 hover:scale-105"
                                         />
                                         <img
                                             src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800"
-                                            alt="Team work"
-                                            className="rounded-xl h-48 w-full object-cover shadow-lg -mt-8"
+                                            alt={language === 'en' ? 'Team on site' : 'الفريق في الموقع'}
+                                            className="rounded-sm h-48 w-full object-cover shadow-lg -mt-8 transition-transform duration-500 hover:scale-105"
                                         />
                                         <img
-                                            src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=800"
-                                            alt="Modern building"
-                                            className="rounded-xl h-48 w-full object-cover shadow-lg"
+                                            src="https://images.unsplash.com/photo-1587293852726-70cdb56c2866?q=80&w=800"
+                                            alt={language === 'en' ? 'Skilled workforce' : 'قوى عاملة ماهرة'}
+                                            className="rounded-sm h-48 w-full object-cover shadow-lg transition-transform duration-500 hover:scale-105"
                                         />
                                     </div>
+                                </div>
+                            </div>
+                        </section>
+                    </WhenVisible>
+
+                    {/* Message from the CEO */}
+                    <WhenVisible className="scroll-mt-28 lg:scroll-mt-40">
+                        <section>
+                            <div className="hero-gradient relative overflow-hidden rounded-sm border-b-4 border-accent px-6 py-12 sm:px-12 lg:py-16">
+                                <div className="relative mx-auto max-w-3xl text-center">
+                                    <span className="text-6xl font-serif text-primary-foreground/30" aria-hidden="true">&ldquo;</span>
+                                    <p className="-mt-6 text-xl leading-relaxed text-primary-foreground/95 sm:text-2xl">
+                                        {ceoMessage}
+                                    </p>
+                                    <p className="mt-6 eyebrow-foreground/70">
+                                        {language === 'en'
+                                            ? '— Chief Executive Officer, Arkaan Construction Company'
+                                            : '— الرئيس التنفيذي، شركة أركان للمقاولات'}
+                                    </p>
                                 </div>
                             </div>
                         </section>
                     </WhenVisible>
 
                     {/* Vision & Mission */}
-                    <WhenVisible className="scroll-mt-24">
+                    <WhenVisible className="scroll-mt-28 lg:scroll-mt-40">
                         <section>
                             <div className="grid gap-8 lg:grid-cols-2">
                                 {/* Vision */}
-                                <div className="card-elevated p-8">
-                                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
-                                        <Eye className="h-8 w-8 text-primary-foreground" />
+                                <div className="relative overflow-hidden border-t-4 border-accent bg-primary p-8 lg:p-10">
+                                    <Eye className="absolute -right-6 -top-6 h-40 w-40 text-primary-foreground/5" aria-hidden="true" />
+                                    <div className="relative">
+                                        <span className="eyebrow text-accent">01 — {language === 'en' ? 'Vision' : 'الرؤية'}</span>
+                                        <div className="my-5 flex h-14 w-14 shrink-0 items-center justify-center rounded-sm bg-primary-foreground/10 border-b-2 border-accent">
+                                            <Eye className="h-7 w-7 text-accent" />
+                                        </div>
+                                        <h3 className="mb-4 text-2xl font-bold text-primary-foreground">
+                                            {t('about.vision.title')}
+                                        </h3>
+                                        <p className="text-lg leading-relaxed text-primary-foreground/80">
+                                            {t('about.vision.text')}
+                                        </p>
                                     </div>
-                                    <h3 className="mb-4 text-2xl font-bold text-foreground">
-                                        {t('about.vision.title')}
-                                    </h3>
-                                    <p className="text-lg leading-relaxed text-muted-foreground">
-                                        {t('about.vision.text')}
-                                    </p>
                                 </div>
 
                                 {/* Mission */}
-                                <div className="card-elevated p-8">
-                                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
-                                        <Target className="h-8 w-8 text-primary-foreground" />
+                                <div className="relative overflow-hidden border-t-4 border-accent bg-card p-8 lg:p-10">
+                                    <Target className="absolute -right-6 -top-6 h-40 w-40 text-primary/5" aria-hidden="true" />
+                                    <div className="relative">
+                                        <span className="eyebrow">02 — {language === 'en' ? 'Mission' : 'الرسالة'}</span>
+                                        <div className="my-5 flex h-14 w-14 shrink-0 items-center justify-center rounded-sm hero-gradient border-b-2 border-accent">
+                                            <Target className="h-7 w-7 text-primary-foreground" />
+                                        </div>
+                                        <h3 className="mb-4 text-2xl font-bold text-foreground">
+                                            {t('about.mission.title')}
+                                        </h3>
+                                        <p className="text-lg leading-relaxed text-muted-foreground">
+                                            {t('about.mission.text')}
+                                        </p>
                                     </div>
-                                    <h3 className="mb-4 text-2xl font-bold text-foreground">
-                                        {t('about.mission.title')}
-                                    </h3>
-                                    <p className="text-lg leading-relaxed text-muted-foreground">
-                                        {t('about.mission.text')}
-                                    </p>
                                 </div>
                             </div>
                         </section>
                     </WhenVisible>
 
                     {/* Core Values */}
-                    <WhenVisible className="scroll-mt-24">
+                    <WhenVisible className="scroll-mt-28 lg:scroll-mt-40">
                         <section>
                             <h2 className="mb-4 text-3xl font-bold text-foreground text-center">{t('about.values.title')}</h2>
                             <p className="mb-8 text-center text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -241,7 +270,7 @@ export default function About() {
                     </WhenVisible>
 
                     {/* Registration & Certificates */}
-                    <WhenVisible className="scroll-mt-24">
+                    <WhenVisible className="scroll-mt-28 lg:scroll-mt-40">
                         <section>
                             <h2 className="mb-8 text-3xl font-bold text-foreground">
                                 {language === 'en' ? 'Registration & Certificates' : 'التسجيل والشهادات'}

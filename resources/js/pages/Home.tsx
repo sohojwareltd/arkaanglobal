@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Target, Eye, MapPin, Phone, Mail, Clock, MessageCircle } from 'lucide-react';
+import { Target, Eye, MapPin } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/home/HeroSection';
 import ServicesSection from '@/components/home/ServicesSection';
+import StatsSection from '@/components/home/StatsSection';
+import ProjectsSection from '@/components/home/ProjectsSection';
+import ClientsSection from '@/components/home/ClientsSection';
+import CTASection from '@/components/home/CTASection';
 import WhenVisible from '@/components/ui/when-visible';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -26,11 +30,13 @@ interface AboutContentItem {
     content_ar?: string;
 }
 
-interface ClientItem {
+interface ClientCategoryItem {
     id: number;
-    name: string;
-    abbr: string;
-    logo?: string;
+    name_en: string;
+    name_ar: string;
+    description_en?: string;
+    description_ar?: string;
+    icon?: string;
 }
 
 interface ServiceItem {
@@ -63,14 +69,14 @@ interface HomeProps {
     aboutOverview?: AboutContentItem | null;
     vision?: AboutContentItem | null;
     mission?: AboutContentItem | null;
-    clients?: ClientItem[];
+    clientCategories?: ClientCategoryItem[];
 }
 
 interface ContactInfoMap {
     [key: string]: { value_en: string; value_ar: string };
 }
 
-export default function Home({ hero, services = [], stats = [], aboutOverview, vision, mission, clients = [] }: HomeProps) {
+export default function Home({ hero, services = [], stats = [], aboutOverview, vision, mission, clientCategories = [] }: HomeProps) {
     const { t, language } = useLanguage();
     const { toast } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -79,13 +85,6 @@ export default function Home({ hero, services = [], stats = [], aboutOverview, v
         contactInfo?: ContactInfoMap;
         settings?: Record<string, string | null>;
     };
-    const phoneVal = contactInfo?.phone ? (language === 'en' ? contactInfo.phone.value_en : contactInfo.phone.value_ar) : '0572914027';
-    const whatsappVal = contactInfo?.whatsapp ? (language === 'en' ? contactInfo.whatsapp.value_en : contactInfo.whatsapp.value_ar) : '0572914027';
-    const whatsappNumber = (whatsappVal || phoneVal).replace(/\D/g, '');
-    const whatsappMessage = language === 'en'
-        ? 'Hello, I would like to inquire about your services.'
-        : 'مرحباً، أود الاستفسار عن خدماتكم.';
-
     const getContactValue = (key: string): string => {
         const item = contactInfo?.[key];
         if (!item) return '';
@@ -96,7 +95,7 @@ export default function Home({ hero, services = [], stats = [], aboutOverview, v
     const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
     const addressText =
         getContactValue('address') ||
-        (language === 'en' ? 'Jubail, Eastern Province, Saudi Arabia' : 'الجبيل، المنطقة الشرقية، المملكة العربية السعودية');
+        (language === 'en' ? 'AL Jubail, Kingdom of Saudi Arabia' : 'الجبيل، المملكة العربية السعودية');
     const mapEmbedUrl = (settings['map_embed_url'] as string | undefined) ?? '';
     const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addressText)}`;
 
@@ -137,35 +136,36 @@ export default function Home({ hero, services = [], stats = [], aboutOverview, v
     return (
         <>
             <Head>
-                <title>Home - Arkaan Global Contracting | Construction, MEP, Manpower & Cleaning Services</title>
-                <meta name="description" content="Arkaan Global Contracting - Leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. Strength in People, Precision in Work." />
-                <meta name="keywords" content="construction services, MEP services, manpower solutions, cleaning services, Saudi Arabia, contracting company" />
-                
-                <meta property="og:title" content="Home - Arkaan Global Contracting | Construction, MEP, Manpower & Cleaning Services" />
-                <meta property="og:description" content="Leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. Strength in People, Precision in Work." />
+                <title>Arkaan Construction Company | Civil Construction, MEP, Manpower & Cleaning</title>
+                <meta name="description" content="Arkaan Construction Company — trusted partner for civil construction, MEP, manpower supply, and dedicated cleaning services across the Kingdom of Saudi Arabia." />
+                <meta name="keywords" content="civil construction, MEP services, manpower supply, dedicated cleaning services, Saudi Arabia, Jubail, Dammam, Riyadh" />
+
+                <meta property="og:title" content="Arkaan Construction Company | Civil Construction, MEP, Manpower & Cleaning" />
+                <meta property="og:description" content="Trusted partner for civil construction, MEP, manpower supply, and dedicated cleaning services across the Kingdom of Saudi Arabia." />
                 <meta property="og:url" content={currentUrl} />
                 <meta property="og:type" content="website" />
-                
-                <meta name="twitter:title" content="Home - Arkaan Global Contracting" />
-                <meta name="twitter:description" content="Leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia." />
-                
+
+                <meta name="twitter:title" content="Arkaan Construction Company" />
+                <meta name="twitter:description" content="Trusted partner for civil construction, MEP, manpower supply, and dedicated cleaning services across the Kingdom of Saudi Arabia." />
+
                 <link rel="canonical" href={currentUrl} />
-                
+
                 <script type="application/ld+json">
                     {JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "Organization",
-                        "name": "Arkaan Global Contracting",
+                        "name": "Arkaan Construction Company",
                         "url": siteUrl,
                         "logo": `${siteUrl}/logo-main.png`,
-                        "description": "Leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia",
+                        "description": "Civil construction, MEP, manpower supply, and dedicated cleaning services across the Kingdom of Saudi Arabia",
                         "address": {
                             "@type": "PostalAddress",
-                            "addressLocality": "Jubail",
+                            "addressLocality": "Al Jubail",
                             "addressCountry": "SA"
                         },
                         "contactPoint": {
                             "@type": "ContactPoint",
+                            "email": "info@arkaanconstruction.com",
                             "contactType": "Customer Service",
                             "availableLanguage": ["English", "Arabic"]
                         },
@@ -181,41 +181,7 @@ export default function Home({ hero, services = [], stats = [], aboutOverview, v
 
             {/* Stats Section */}
             <WhenVisible>
-                <section className="section-padding bg-primary text-primary-foreground">
-                    <div className="container-custom">
-                        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                            {stats.length > 0 ? (
-                                stats.map((stat) => (
-                                    <div key={stat.id} className="text-center">
-                                        <div className="mb-2 text-4xl font-bold sm:text-5xl">{stat.value}</div>
-                                        <div className="text-primary-foreground/80">
-                                            {language === 'en' ? stat.label_en : stat.label_ar}
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <>
-                                    <div className="text-center">
-                                        <div className="mb-2 text-4xl font-bold sm:text-5xl">15+</div>
-                                        <div className="text-primary-foreground/80">{language === 'en' ? 'Years Experience' : 'سنوات الخبرة'}</div>
-                                    </div>
-                                    <div className="text-center">
-                                        <div className="mb-2 text-4xl font-bold sm:text-5xl">500+</div>
-                                        <div className="text-primary-foreground/80">{language === 'en' ? 'Projects Completed' : 'مشروع مكتمل'}</div>
-                                    </div>
-                                    <div className="text-center">
-                                        <div className="mb-2 text-4xl font-bold sm:text-5xl">10,000+</div>
-                                        <div className="text-primary-foreground/80">{language === 'en' ? 'Workers Deployed' : 'عامل تم توظيفهم'}</div>
-                                    </div>
-                                    <div className="text-center">
-                                        <div className="mb-2 text-4xl font-bold sm:text-5xl">100+</div>
-                                        <div className="text-primary-foreground/80">{language === 'en' ? 'Satisfied Clients' : 'عميل راضٍ'}</div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </section>
+                <StatsSection stats={stats} />
             </WhenVisible>
 
             {/* About Section */}
@@ -227,22 +193,22 @@ export default function Home({ hero, services = [], stats = [], aboutOverview, v
                             <div className="mb-12 grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
                                 <div className="order-2 lg:order-1">
                                     <h2 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
-                                        {language === 'en' ? 'About Arkaan Global' : 'عن أركان جلوبال'}
+                                        {language === 'en' ? 'About Arkaan Construction Company' : 'عن شركة أركان للمقاولات'}
                                     </h2>
                                     <p className="text-lg text-muted-foreground leading-relaxed">
                                         {aboutOverview
                                             ? (language === 'en' ? aboutOverview.content_en : aboutOverview.content_ar) || ''
                                             : language === 'en'
-                                                ? 'Arkaan Global Contracting is a leading provider of construction, MEP, manpower, and cleaning services in Saudi Arabia. With a commitment to excellence and safety, we serve government, semi-government, industrial, and private sector clients across the Kingdom.'
-                                                : 'أركان جلوبال للمقاولات هي مزود رائد لخدمات البناء والميكانيكا والكهرباء والعمالة والتنظيف في المملكة العربية السعودية. مع التزام بالتميز والسلامة، نخدم عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة في جميع أنحاء المملكة.'}
+                                                ? 'ARKAAN CONSTRUCTION COMPANY is a leading construction and manpower solutions provider delivering high-quality engineering, construction, and workforce services across the Kingdom of Saudi Arabia, serving the oil & gas, petrochemical, power, infrastructure, manufacturing, and commercial sectors.'
+                                                : 'شركة أركان للمقاولات هي مزود رائد لحلول البناء والقوى العاملة، تقدّم خدمات هندسية وإنشائية وقوى عاملة عالية الجودة في جميع أنحاء المملكة العربية السعودية، وتخدم قطاعات النفط والغاز والبتروكيماويات والطاقة والبنية التحتية والتصنيع والقطاع التجاري.'}
                                     </p>
                                 </div>
                                 <div className="order-1 lg:order-2">
-                                    <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                                    <div className="group relative rounded-sm overflow-hidden shadow-2xl">
                                         <img
                                             src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070"
-                                            alt="Construction team"
-                                            className="w-full h-[400px] object-cover"
+                                            alt={language === 'en' ? 'Arkaan construction team on site' : 'فريق أركان في الموقع'}
+                                            className="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-105"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent" />
                                     </div>
@@ -251,28 +217,36 @@ export default function Home({ hero, services = [], stats = [], aboutOverview, v
 
                             {/* Vision & Mission */}
                             <div className="grid gap-8 lg:grid-cols-2">
-                                <div className="card-elevated p-8">
-                                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
-                                        <Eye className="h-8 w-8 text-primary-foreground" />
+                                <div className="relative overflow-hidden border-t-4 border-accent bg-primary p-8 lg:p-10">
+                                    <Eye className="absolute -right-6 -top-6 h-40 w-40 text-primary-foreground/5" aria-hidden="true" />
+                                    <div className="relative">
+                                        <span className="eyebrow text-accent">01 — {language === 'en' ? 'Vision' : 'الرؤية'}</span>
+                                        <div className="my-5 flex h-14 w-14 shrink-0 items-center justify-center rounded-sm bg-primary-foreground/10 border-b-2 border-accent">
+                                            <Eye className="h-7 w-7 text-accent" />
+                                        </div>
+                                        <h3 className="mb-4 text-2xl font-bold text-primary-foreground">
+                                            {t('about.vision.title')}
+                                        </h3>
+                                        <p className="text-lg leading-relaxed text-primary-foreground/80">
+                                            {vision ? (language === 'en' ? vision.content_en : vision.content_ar) || '' : t('about.vision.text')}
+                                        </p>
                                     </div>
-                                    <h3 className="mb-4 text-2xl font-bold text-foreground">
-                                        {t('about.vision.title')}
-                                    </h3>
-                                    <p className="text-lg leading-relaxed text-muted-foreground">
-                                        {vision ? (language === 'en' ? vision.content_en : vision.content_ar) || '' : t('about.vision.text')}
-                                    </p>
                                 </div>
 
-                                <div className="card-elevated p-8">
-                                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl hero-gradient">
-                                        <Target className="h-8 w-8 text-primary-foreground" />
+                                <div className="relative overflow-hidden border-t-4 border-accent bg-card p-8 lg:p-10">
+                                    <Target className="absolute -right-6 -top-6 h-40 w-40 text-primary/5" aria-hidden="true" />
+                                    <div className="relative">
+                                        <span className="eyebrow">02 — {language === 'en' ? 'Mission' : 'الرسالة'}</span>
+                                        <div className="my-5 flex h-14 w-14 shrink-0 items-center justify-center rounded-sm hero-gradient border-b-2 border-accent">
+                                            <Target className="h-7 w-7 text-primary-foreground" />
+                                        </div>
+                                        <h3 className="mb-4 text-2xl font-bold text-foreground">
+                                            {t('about.mission.title')}
+                                        </h3>
+                                        <p className="text-lg leading-relaxed text-muted-foreground">
+                                            {mission ? (language === 'en' ? mission.content_en : mission.content_ar) || '' : t('about.mission.text')}
+                                        </p>
                                     </div>
-                                    <h3 className="mb-4 text-2xl font-bold text-foreground">
-                                        {t('about.mission.title')}
-                                    </h3>
-                                    <p className="text-lg leading-relaxed text-muted-foreground">
-                                        {mission ? (language === 'en' ? mission.content_en : mission.content_ar) || '' : t('about.mission.text')}
-                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -280,53 +254,19 @@ export default function Home({ hero, services = [], stats = [], aboutOverview, v
                 </section>
             </WhenVisible>
 
-            {/* Trusted By Section */}
+            {/* Capabilities Section */}
             <WhenVisible>
-                <section className="section-padding bg-muted/30">
-                    <div className="container-custom">
-                        <div className="text-center mb-12">
-                            <h2 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl">
-                                {language === 'en' ? 'Trusted By Leading Organizations' : 'موثوق به من قبل المنظمات الرائدة'}
-                            </h2>
-                            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-                                {language === 'en'
-                                    ? 'Serving government, semi-government, industrial, and private sector clients across Saudi Arabia'
-                                    : 'خدمة عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة في جميع أنحاء المملكة العربية السعودية'}
-                            </p>
-                        </div>
-                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                            {clients.length > 0 ? (
-                                clients.map((client) => (
-                                    <Link
-                                        key={client.id}
-                                        href="/clients"
-                                        className="card-elevated p-8 flex items-center justify-center h-32 bg-white hover:shadow-lg transition-shadow"
-                                    >
-                                        {client.logo ? (
-                                            <img
-                                                src={client.logo.startsWith('http') || client.logo.startsWith('/') ? client.logo : `/storage/${client.logo}`}
-                                                alt={language === 'en' ? client.name : client.name}
-                                                className="max-h-16 max-w-full object-contain"
-                                            />
-                                        ) : (
-                                            <span className="text-center text-muted-foreground font-semibold">
-                                                {client.abbr || client.name}
-                                            </span>
-                                        )}
-                                    </Link>
-                                ))
-                            ) : (
-                                [1, 2, 3, 4].map((i) => (
-                                    <div key={i} className="card-elevated p-8 flex items-center justify-center h-32 bg-white">
-                                        <span className="text-center text-muted-foreground font-semibold">
-                                            {language === 'en' ? `Client ${i}` : `عميل ${i}`}
-                                        </span>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </div>
-                </section>
+                <ProjectsSection services={services} />
+            </WhenVisible>
+
+            {/* Trusted By / Client Sectors Section */}
+            <WhenVisible>
+                <ClientsSection clientCategories={clientCategories} />
+            </WhenVisible>
+
+            {/* CTA Banner */}
+            <WhenVisible>
+                <CTASection />
             </WhenVisible>
 
             {/* Contact Section */}

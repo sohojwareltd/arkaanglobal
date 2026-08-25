@@ -3,41 +3,47 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Oswald:wght@400;500;600;700&family=Tajawal:wght@500;700;800&display=swap');
 
 @theme {
     --font-sans: 'Inter', 'Noto Sans Arabic', system-ui, sans-serif;
+    /* Display face for headings — condensed/bold, reads as construction &
+       engineering rather than a soft SaaS grotesque. Tajawal is its Arabic
+       counterpart (Oswald has no Arabic glyphs). */
+    --font-display: 'Oswald', 'Inter', system-ui, sans-serif;
+    --font-display-ar: 'Tajawal', 'Noto Sans Arabic', system-ui, sans-serif;
 
     /* Colors – use Tailwind v4 color tokens so utilities like text-foreground, border-border work */
-    --color-background: #F5F6F8;
-    --color-foreground: #1A1D2E;
+    /* Retuned to match the new Arkaan logo: deep teal badge + gold "A", on a warm ivory ground */
+    --color-background: #F8F5EC;
+    --color-foreground: #16262B;
 
     --color-card: #FFFFFF;
-    --color-card-foreground: #1A1D2E;
+    --color-card-foreground: #16262B;
 
     --color-popover: #FFFFFF;
-    --color-popover-foreground: #1A1D2E;
+    --color-popover-foreground: #16262B;
 
-    --color-primary: #0d4554;
+    --color-primary: #0B3A4A;
     --color-primary-foreground: #FFFFFF;
 
-    --color-secondary: #2D2F3A;
+    --color-secondary: #16262B;
     --color-secondary-foreground: #FFFFFF;
 
-    --color-muted: #E8EAED;
-    --color-muted-foreground: #6B6D7A;
+    --color-muted: #EFEAD9;
+    --color-muted-foreground: #6B6558;
 
-    --color-accent: #F5A623;
-    --color-accent-foreground: #1A1D2E;
+    --color-accent: #D9A62B;
+    --color-accent-foreground: #16262B;
 
     --color-destructive: #F44336;
     --color-destructive-foreground: #FFFFFF;
 
-    --color-border: #DEE0E6;
-    --color-input: #DEE0E6;
-    --color-ring: #0d4554;
+    --color-border: #E3DCC8;
+    --color-input: #E3DCC8;
+    --color-ring: #0B3A4A;
 
-    --radius: 0.5rem;
+    --radius: 0.125rem;
 }
 
 @layer base {
@@ -60,7 +66,33 @@
     }
 
     h1, h2, h3, h4, h5, h6 {
-        @apply font-bold tracking-tight;
+        @apply font-bold;
+        font-family: var(--font-display);
+        letter-spacing: -0.01em;
+        line-height: 1.12;
+    }
+
+    [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6 {
+        font-family: var(--font-display-ar);
+        letter-spacing: 0;
+        line-height: 1.35;
+    }
+
+    /* Small uppercase "eyebrow" labels used above section headings */
+    .eyebrow {
+        @apply text-xs font-bold uppercase text-primary;
+        font-family: var(--font-display);
+        letter-spacing: 0.16em;
+    }
+
+    [dir="rtl"] .eyebrow {
+        font-family: var(--font-display-ar);
+        letter-spacing: 0.02em;
+    }
+
+    /* Tabular figures for stat counters / numbers so digits don't jitter */
+    .tabular-figures {
+        font-variant-numeric: tabular-nums;
     }
 }
 
@@ -75,11 +107,11 @@
     }
 
     .hero-gradient {
-        background: linear-gradient(135deg, hsl(194 73% 19%) 0%, hsl(194 65% 25%) 50%, hsl(194 60% 30%) 100%);
+        background: linear-gradient(135deg, #0B3A4A 0%, #124B5F 50%, #1A5D74 100%);
         position: relative;
         overflow: hidden;
     }
-    
+
     .hero-gradient::after {
         content: '';
         position: absolute;
@@ -88,63 +120,61 @@
         opacity: 0;
         transition: opacity 0.4s ease;
     }
-    
+
     .hero-gradient:hover::after {
         opacity: 1;
     }
 
     .hero-overlay {
-        background: linear-gradient(to right, hsl(220 20% 10% / 0.85), hsl(220 20% 10% / 0.6));
+        background: linear-gradient(to right, rgba(9, 26, 32, 0.88), rgba(9, 26, 32, 0.55));
     }
 
     .gold-gradient {
-        background: linear-gradient(135deg, hsl(40 85% 50%) 0%, hsl(35 90% 55%) 100%);
-        box-shadow: 0 4px 15px hsl(40 85% 50% / 0.3);
+        background: linear-gradient(135deg, #D9A62B 0%, #F0C550 100%);
+        box-shadow: 0 4px 15px rgba(217, 166, 43, 0.3);
         transition: all 0.3s ease;
     }
-    
+
     .gold-gradient:hover {
-        box-shadow: 0 6px 25px hsl(40 85% 50% / 0.5);
+        box-shadow: 0 6px 25px rgba(217, 166, 43, 0.5);
         transform: translateY(-2px);
     }
 
+    /* Flat, bordered, square-edged card with a gold top accent — reads as
+       industrial/corporate rather than the soft rounded-shine SaaS style. */
     .card-elevated {
-        @apply bg-card rounded-xl border border-border;
-        box-shadow: 0 4px 20px -4px hsl(220 20% 10% / 0.08);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        @apply bg-card rounded-sm border border-border;
+        border-top: 3px solid transparent;
+        box-shadow: 0 2px 10px -2px rgba(9, 26, 32, 0.08);
+        transition:
+            border-top-color 0.25s ease,
+            box-shadow 0.25s ease,
+            transform 0.25s ease;
         position: relative;
-        overflow: hidden;
-    }
-
-    .card-elevated::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-        transition: left 0.5s ease;
-    }
-
-    .card-elevated:hover::before {
-        left: 100%;
     }
 
     .card-elevated:hover {
-        box-shadow: 0 20px 60px -12px hsl(220 20% 10% / 0.2);
-        transform: translateY(-4px);
-        border-color: hsl(194 73% 19% / 0.3);
+        border-top-color: #D9A62B;
+        box-shadow: 0 12px 28px -8px rgba(9, 26, 32, 0.18);
+        transform: translateY(-2px);
+    }
+
+    /* Square, flat icon badge used for section/feature markers — replaces
+       the soft rounded gradient "blob" icon treatment. */
+    .icon-badge {
+        @apply flex items-center justify-center bg-primary text-primary-foreground;
+        border-radius: 0.125rem;
+        border-bottom: 3px solid #D9A62B;
     }
 
     .text-gradient-primary {
         @apply bg-clip-text text-transparent;
-        background-image: linear-gradient(135deg, hsl(194 73% 19%) 0%, hsl(194 65% 25%) 50%, hsl(194 60% 30%) 100%);
+        background-image: linear-gradient(135deg, #0B3A4A 0%, #124B5F 50%, #1A5D74 100%);
     }
 
     .text-gradient-gold {
         @apply bg-clip-text text-transparent;
-        background-image: linear-gradient(135deg, hsl(40 85% 50%) 0%, hsl(35 90% 55%) 100%);
+        background-image: linear-gradient(135deg, #D9A62B 0%, #F0C550 100%);
     }
 }
 
@@ -155,6 +185,10 @@
 
     .animate-fade-in-up {
         animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .animation-delay-50 {
+        animation-delay: 50ms;
     }
 
     .animation-delay-100 {
@@ -222,4 +256,32 @@
 
 .animate-float {
     animation: float 3s ease-in-out infinite;
+}
+
+/* Slow "Ken Burns" zoom for hero/page-hero background media */
+@keyframes kenburns {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.12);
+    }
+}
+
+.animate-kenburns {
+    animation: kenburns 20s ease-out forwards;
+}
+
+/* Respect reduced-motion preferences: freeze decorative animation/video */
+@media (prefers-reduced-motion: reduce) {
+    .animate-kenburns,
+    .animate-fade-in,
+    .animate-fade-in-up,
+    .animate-float {
+        animation: none !important;
+    }
+
+    video.hero-bg-video {
+        display: none !important;
+    }
 }

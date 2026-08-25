@@ -29,7 +29,7 @@ export default function AboutSection(): JSX.Element {
                 <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
                     {/* Image */}
                     <div className={direction === 'rtl' ? 'relative lg:order-2' : 'relative'}>
-                        <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+                        <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
                             <img
                                 src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070"
                                 alt="Construction workers at a project site"
@@ -55,7 +55,7 @@ export default function AboutSection(): JSX.Element {
 
                     {/* Content */}
                     <div className={direction === 'rtl' ? 'lg:order-1' : ''}>
-                        <span className="text-sm font-semibold uppercase tracking-wider text-primary">
+                        <span className="eyebrow">
                             {language === 'en' ? 'About Us' : 'من نحن'}
                         </span>
                         <h2 className="mt-2 mb-4 text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">

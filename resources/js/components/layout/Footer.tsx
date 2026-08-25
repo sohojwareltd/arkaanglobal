@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, MapPin, Phone, MessageCircle } from 'lucide-react';
+import { Mail, MapPin } from 'lucide-react';
 import { Link, usePage } from '@inertiajs/react';
 
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -22,15 +22,13 @@ export default function Footer(): JSX.Element {
     };
 
     const addressVal = getContactValue('address') || t('footer.address');
-    const phoneVal = getContactValue('phone') || '0572914027';
-    const emailVal = getContactValue('email') || 'info@arkaanglobal.com';
-    const whatsappVal = getContactValue('whatsapp') || phoneVal;
-    const whatsappNumber = whatsappVal.replace(/\D/g, '');
-    const whatsappMessage = language === 'en'
-        ? 'Hello, I would like to inquire about your services.'
-        : 'مرحباً، أود الاستفسار عن خدماتكم.';
-    const crNumber = (settings['cr_number'] as string | undefined) ?? t('footer.cr.number');
-    const vatNumber = (settings['vat_number'] as string | undefined) ?? t('footer.vat.number');
+    const emailVal = getContactValue('email') || 'info@arkaanconstruction.com';
+    // The company profile doesn't publish CR/VAT numbers yet — only show
+    // this strip once real values are set in site settings, rather than a
+    // "to be added" placeholder.
+    const crNumber = settings['cr_number'] as string | undefined;
+    const vatNumber = settings['vat_number'] as string | undefined;
+    const hasRegistrationInfo = Boolean(crNumber || vatNumber);
 
     const quickLinks = [
         { path: '/', label: t('nav.home') },
@@ -40,10 +38,10 @@ export default function Footer(): JSX.Element {
     ];
 
     const services = [
-        { path: '/services#construction', label: t('services.construction.title') },
-        { path: '/services#mep', label: t('services.mep.title') },
-        { path: '/services#manpower', label: t('services.manpower.title') },
-        { path: '/services#cleaning', label: t('services.cleaning.title') },
+        { path: '/services/construction', label: t('services.construction.title') },
+        { path: '/services/mep', label: t('services.mep.title') },
+        { path: '/services/manpower', label: t('services.manpower.title') },
+        { path: '/services/cleaning', label: t('services.cleaning.title') },
     ];
 
     return (
@@ -53,9 +51,9 @@ export default function Footer(): JSX.Element {
                     {/* Company Info */}
                     <div>
                         <div className="mb-4">
-                            <img 
-                                src="/logo-main.png" 
-                                alt={language === 'en' ? 'Arkaan Global Contracting' : 'أركان جلوبال للمقاولات'}
+                            <img
+                                src="/logo-main.png"
+                                alt={language === 'en' ? 'Arkaan Construction Company' : 'شركة أركان للمقاولات'}
                                 className="h-16 w-auto"
                             />
                         </div>
@@ -68,26 +66,9 @@ export default function Footer(): JSX.Element {
                                 <span>{addressVal}</span>
                             </div>
                             <div className="flex items-center gap-3">
-                                <Phone className="h-4 w-4 text-primary-foreground/80 shrink-0" />
-                                <a href={`tel:${phoneVal.replace(/\D/g, '')}`} dir="ltr" className="hover:text-primary-foreground transition-colors">
-                                    {phoneVal}
-                                </a>
-                            </div>
-                            <div className="flex items-center gap-3">
                                 <Mail className="h-4 w-4 text-primary-foreground/80 shrink-0" />
                                 <a href={`mailto:${emailVal}`} className="hover:text-primary-foreground transition-colors">
                                     {emailVal}
-                                </a>
-                            </div>
-                            <div className="pt-3">
-                                <a
-                                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 rounded-lg bg-[#25D366] px-4 py-2 text-xs font-medium text-white hover:bg-[#20BA5A] transition-colors"
-                                >
-                                    <MessageCircle className="h-4 w-4" />
-                                    <span>{language === 'en' ? 'Chat on WhatsApp' : 'التواصل عبر واتساب'}</span>
                                 </a>
                             </div>
                         </div>
@@ -144,17 +125,21 @@ export default function Footer(): JSX.Element {
                     </div>
                 </div>
 
-                {/* Registration Info Strip */}
+                {/* Registration Info Strip — only shown once real CR/VAT numbers are set */}
                 <div className="mt-12 border-t border-primary-foreground/20 pt-6">
                     <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-primary-foreground/70">
-                        <div>
-                            <span className="font-semibold">{t('footer.cr.label')}: </span>
-                            <span>{crNumber}</span>
-                        </div>
-                        <div>
-                            <span className="font-semibold">{t('footer.vat.label')}: </span>
-                            <span>{vatNumber}</span>
-                        </div>
+                        {hasRegistrationInfo && crNumber && (
+                            <div>
+                                <span className="font-semibold">{t('footer.cr.label')}: </span>
+                                <span>{crNumber}</span>
+                            </div>
+                        )}
+                        {hasRegistrationInfo && vatNumber && (
+                            <div>
+                                <span className="font-semibold">{t('footer.vat.label')}: </span>
+                                <span>{vatNumber}</span>
+                            </div>
+                        )}
                         <div>
                             <a
                                 href="/company-profile.pdf"
@@ -171,7 +156,7 @@ export default function Footer(): JSX.Element {
                 <div className="mt-8 border-t border-primary-foreground/20 pt-8">
                     <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
                         <p className="text-sm text-primary-foreground/60">
-                            © {new Date().getFullYear()} Arkaan Global Contracting. {t('footer.rights')}
+                            © {new Date().getFullYear()} Arkaan Construction Company. {t('footer.rights')}
                         </p>
                         <div className="flex items-center gap-4">
                             <Link

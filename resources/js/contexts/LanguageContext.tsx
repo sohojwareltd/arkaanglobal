@@ -29,13 +29,13 @@ const translations: Record<Language, Record<string, string>> = {
         'nav.hseContact': 'HSE & Contact',
 
         // Hero
-        'hero.title': 'Strength in People, Precision in Work',
-        'hero.subtitle': 'Arkaan Global Contracting',
+        'hero.title': 'Your Trusted Partner in Construction and Workforce Solutions',
+        'hero.subtitle': 'Arkaan Construction Company',
         'hero.description':
-            'Your trusted partner for construction, MEP, manpower, and cleaning services across Saudi Arabia.',
-        'hero.cta.primary': 'Get Quote',
-        'hero.cta.secondary': 'Download Profile',
-        'hero.tagline': 'Strength in People, Precision in Work',
+            'Delivering reliable civil construction, MEP, manpower supply, and dedicated cleaning services to clients across the Kingdom of Saudi Arabia.',
+        'hero.cta.primary': 'Get a Quote',
+        'hero.cta.secondary': 'Download Company Profile',
+        'hero.tagline': 'Your Trusted Partner in Construction and Workforce Solutions',
 
         // Stats
         'stats.years': 'Years Experience',
@@ -47,23 +47,23 @@ const translations: Record<Language, Record<string, string>> = {
         'about.title': "Building Saudi Arabia's Future",
         'about.subtitle': 'Together',
         'about.description':
-            'We are a leading manpower supply company specializing in the construction sector, providing comprehensive workforce solutions to major contractors and developers across the Kingdom.',
+            'ARKAAN CONSTRUCTION COMPANY is a leading construction and manpower solutions provider delivering high-quality engineering, construction, and workforce services across the Kingdom of Saudi Arabia.',
         'about.cta': 'Learn More About Us',
 
         // Services
         'services.title': 'Our Services',
-        'services.subtitle': 'Comprehensive Solutions',
-        'services.summary.manpower': 'Manpower Solutions',
-        'services.summary.construction': 'Construction & MEP',
-        'services.summary.cleaning': 'Post-construction Cleaning',
-        'services.construction.title': 'General Construction & Civil Works',
-        'services.construction.description': 'Complete construction and civil engineering services.',
-        'services.mep.title': 'MEP Services',
-        'services.mep.description': 'Mechanical, Electrical, and Plumbing solutions.',
-        'services.manpower.title': 'Manpower Solutions',
-        'services.manpower.description': 'Comprehensive workforce deployment services.',
+        'services.subtitle': 'Civil Construction, MEP, Manpower & Cleaning',
+        'services.summary.manpower': 'Manpower Supply',
+        'services.summary.construction': 'Civil & Construction',
+        'services.summary.cleaning': 'Dedicated Cleaning Services',
+        'services.construction.title': 'Civil & Construction',
+        'services.construction.description': 'Complete general construction and civil engineering services, from planning to handover.',
+        'services.mep.title': 'MEP (Mechanical, Electrical & Plumbing)',
+        'services.mep.description': 'Electrical, plumbing, HVAC, and testing & commissioning solutions.',
+        'services.manpower.title': 'Manpower Supply',
+        'services.manpower.description': 'Skilled, semi-skilled, and general workforce deployment.',
         'services.cleaning.title': 'Dedicated Cleaning Services',
-        'services.cleaning.description': 'Professional cleaning and maintenance solutions.',
+        'services.cleaning.description': 'Professional cleaning for offices, industrial sites, and post-construction handover.',
 
         // Projects
         'projects.title': 'Our Projects',
@@ -75,18 +75,18 @@ const translations: Record<Language, Record<string, string>> = {
         'clients.subtitle': 'Building Long-term Partnerships',
 
         // CTA Section
-        'cta.title': 'Ready to Scale Your Workforce?',
+        'cta.title': 'Ready to Start Your Project?',
         'cta.description':
-            'Get in touch with our team to discuss your manpower requirements. We provide customized solutions for projects of any size.',
+            'Get in touch with our team to discuss your construction or manpower requirements. We provide customized solutions for projects of any size.',
         'cta.button': 'Contact Us Today',
 
         // Footer
-        'footer.description': 'Your trusted partner for construction manpower solutions in Saudi Arabia.',
+        'footer.description': 'Your trusted partner for civil construction, MEP, manpower supply, and dedicated cleaning services across the Kingdom of Saudi Arabia.',
         'footer.quickLinks': 'Quick Links',
         'footer.services': 'Services',
         'footer.contact': 'Contact Us',
         'footer.rights': 'All rights reserved.',
-        'footer.address': 'Jubail, Saudi Arabia',
+        'footer.address': 'AL Jubail, Kingdom of Saudi Arabia',
         'footer.cr.label': 'CR No.',
         'footer.cr.number': 'To be added from PDF',
         'footer.vat.label': 'VAT No.',
@@ -94,37 +94,37 @@ const translations: Record<Language, Record<string, string>> = {
         'footer.downloadProfile': 'Download Company Profile',
 
         // About Page
-        'about.page.title': 'About Our Company',
-        'about.page.subtitle': 'Your trusted partner for construction, MEP, manpower, and cleaning services across Saudi Arabia.',
+        'about.page.title': 'About Arkaan Construction Company',
+        'about.page.subtitle': 'A leading construction and manpower solutions provider across the Kingdom of Saudi Arabia.',
         'about.mission.title': 'Our Mission',
         'about.mission.text':
-            'To provide reliable, skilled, and compliant workforce solutions that empower construction companies to deliver their projects on time and within budget.',
+            'To deliver high-quality, reliable construction and manpower solutions through technical excellence, operational efficiency, and unwavering integrity — completing every project safely, on time, and within budget.',
         'about.vision.title': 'Our Vision',
         'about.vision.text':
-            "To be the most trusted manpower partner in Saudi Arabia's construction industry, known for quality, safety, and reliability.",
+            "To be a recognized leader and preferred partner in Saudi Arabia's construction and manpower sectors, aligned with Saudi Vision 2030, known for excellence, reliability, and value.",
         'about.values.title': 'Our Core Values',
-        'about.values.safety': 'Safety First',
-        'about.values.safety.desc': 'Zero compromise on worker safety and compliance.',
+        'about.values.safety': 'Safety',
+        'about.values.safety.desc': 'Safety is our highest priority, backed by a strong Health, Safety, and Environmental (HSE) culture.',
         'about.values.integrity': 'Integrity',
-        'about.values.integrity.desc': 'Honest and transparent business practices.',
+        'about.values.integrity.desc': 'Honest, transparent, and ethical business practices in everything we do.',
         'about.values.quality': 'Quality',
-        'about.values.quality.desc': 'Providing highly skilled and trained workers.',
+        'about.values.quality.desc': 'Superior workmanship that consistently meets or exceeds client expectations.',
         'about.values.reliability': 'Reliability',
-        'about.values.reliability.desc': 'Consistent delivery on all commitments.',
+        'about.values.reliability.desc': 'Dependable services and timely project execution with consistency.',
         'about.values.compliance': 'Compliance',
-        'about.values.compliance.desc': 'Full adherence to Saudi labor laws.',
+        'about.values.compliance.desc': 'Full adherence to Saudi laws, regulations, and client specifications.',
 
         // About Leaders
-        'about.leaders.title': 'Our Leaders',
-        'about.leaders.subtitle': 'Experienced leadership guiding Arkaan Global Contracting forward.',
+        'about.leaders.title': 'Leadership',
+        'about.leaders.subtitle': 'Experienced leadership guiding Arkaan Construction Company forward.',
 
         // Services Page
         'services.page.title': 'Our Services',
-        'services.page.subtitle': 'Comprehensive Workforce Solutions',
+        'services.page.subtitle': 'Civil Construction, MEP, Manpower Supply & Dedicated Cleaning',
 
-        // Projects Page
-        'projects.page.title': 'Our Projects',
-        'projects.page.subtitle': 'Delivering Excellence Across the Kingdom',
+        // Capabilities (Projects) Page
+        'projects.page.title': 'Deployment Capability & Compliance',
+        'projects.page.subtitle': 'How we mobilize, manage, and ensure compliant workforce delivery',
         'projects.filter.all': 'All',
         'projects.filter.construction': 'Construction',
         'projects.filter.infrastructure': 'Infrastructure',
@@ -132,8 +132,8 @@ const translations: Record<Language, Record<string, string>> = {
         'projects.filter.industrial': 'Industrial',
 
         // Clients Page
-        'clients.page.title': 'Our Clients',
-        'clients.page.subtitle': 'Trusted Partnerships Across Industries',
+        'clients.page.title': 'Our Clients & Industry Footprint',
+        'clients.page.subtitle': 'Serving government, semi-government, industrial, and private sector clients',
 
         // Careers Page
         'careers.title': 'Join Our Team',
@@ -179,13 +179,13 @@ const translations: Record<Language, Record<string, string>> = {
         'nav.hseContact': 'السلامة والاتصال',
 
         // Hero
-        'hero.title': 'القوة في الناس، الدقة في العمل',
-        'hero.subtitle': 'أركان جلوبال للمقاولات',
+        'hero.title': 'شريككم الموثوق في حلول البناء والقوى العاملة',
+        'hero.subtitle': 'شركة أركان للمقاولات',
         'hero.description':
-            'شريككم الموثوق لخدمات البناء والميكانيكا والكهرباء والعمالة والتنظيف في جميع أنحاء المملكة العربية السعودية.',
+            'نقدّم خدمات موثوقة في البناء المدني والأعمال الكهروميكانيكية وتوريد القوى العاملة والتنظيف المخصص لعملائنا في جميع أنحاء المملكة العربية السعودية.',
         'hero.cta.primary': 'احصل على عرض سعر',
         'hero.cta.secondary': 'تحميل الملف التعريفي',
-        'hero.tagline': 'القوة في الناس، الدقة في العمل',
+        'hero.tagline': 'شريككم الموثوق في حلول البناء والقوى العاملة',
 
         // Stats
         'stats.years': 'سنوات الخبرة',
@@ -197,23 +197,23 @@ const translations: Record<Language, Record<string, string>> = {
         'about.title': 'نبني مستقبل المملكة العربية السعودية',
         'about.subtitle': 'معًا',
         'about.description':
-            'نحن شركة رائدة في توريد القوى العاملة متخصصة في قطاع البناء، نقدم حلول شاملة للقوى العاملة لكبار المقاولين والمطورين في جميع أنحاء المملكة.',
+            'شركة أركان للمقاولات هي مزود رائد لحلول البناء والقوى العاملة، تقدّم خدمات هندسية وإنشائية وقوى عاملة عالية الجودة في جميع أنحاء المملكة العربية السعودية.',
         'about.cta': 'اعرف المزيد عنا',
 
         // Services
         'services.title': 'خدماتنا',
-        'services.subtitle': 'حلول شاملة',
-        'services.summary.manpower': 'حلول القوى العاملة',
-        'services.summary.construction': 'البناء والميكانيكا والكهرباء',
-        'services.summary.cleaning': 'التنظيف بعد البناء',
-        'services.construction.title': 'البناء العام والأعمال المدنية',
-        'services.construction.description': 'خدمات البناء والهندسة المدنية الكاملة.',
-        'services.mep.title': 'خدمات الميكانيكا والكهرباء',
-        'services.mep.description': 'حلول الميكانيكا والكهرباء والسباكة.',
-        'services.manpower.title': 'حلول القوى العاملة',
-        'services.manpower.description': 'خدمات توفير القوى العاملة الشاملة.',
+        'services.subtitle': 'البناء المدني والأعمال الكهروميكانيكية والقوى العاملة والتنظيف',
+        'services.summary.manpower': 'توريد القوى العاملة',
+        'services.summary.construction': 'الأعمال المدنية والبناء',
+        'services.summary.cleaning': 'خدمات التنظيف المخصصة',
+        'services.construction.title': 'الأعمال المدنية والبناء',
+        'services.construction.description': 'خدمات بناء عام وهندسة مدنية متكاملة، من التخطيط وحتى التسليم.',
+        'services.mep.title': 'الأعمال الكهروميكانيكية (ميكانيكا وكهرباء وسباكة)',
+        'services.mep.description': 'حلول كهربائية وسباكة وتكييف وفحص وتشغيل.',
+        'services.manpower.title': 'توريد القوى العاملة',
+        'services.manpower.description': 'نشر قوى عاملة ماهرة وشبه ماهرة وعامة.',
         'services.cleaning.title': 'خدمات التنظيف المخصصة',
-        'services.cleaning.description': 'حلول التنظيف والصيانة المهنية.',
+        'services.cleaning.description': 'تنظيف احترافي للمكاتب والمواقع الصناعية وتسليم ما بعد البناء.',
 
         // Projects
         'projects.title': 'مشاريعنا',
@@ -225,13 +225,13 @@ const translations: Record<Language, Record<string, string>> = {
         'clients.subtitle': 'بناء شراكات طويلة الأمد',
 
         // CTA Section
-        'cta.title': 'هل أنت مستعد لتوسيع قوتك العاملة؟',
+        'cta.title': 'هل أنت مستعد لبدء مشروعك؟',
         'cta.description':
-            'تواصل مع فريقنا لمناقشة متطلباتك من القوى العاملة. نحن نقدم حلولاً مخصصة للمشاريع من أي حجم.',
+            'تواصل مع فريقنا لمناقشة متطلبات مشروعك الإنشائي أو احتياجاتك من القوى العاملة. نقدم حلولاً مخصصة للمشاريع من أي حجم.',
         'cta.button': 'تواصل معنا اليوم',
 
         // Footer
-        'footer.description': 'شريككم الموثوق لحلول القوى العاملة في البناء في المملكة العربية السعودية.',
+        'footer.description': 'شريككم الموثوق لخدمات البناء المدني والأعمال الكهروميكانيكية وتوريد القوى العاملة والتنظيف المخصص في المملكة العربية السعودية.',
         'footer.quickLinks': 'روابط سريعة',
         'footer.services': 'الخدمات',
         'footer.contact': 'اتصل بنا',
@@ -244,37 +244,37 @@ const translations: Record<Language, Record<string, string>> = {
         'footer.downloadProfile': 'تحميل الملف التعريفي للشركة',
 
         // About Page
-        'about.page.title': 'عن شركتنا',
-        'about.page.subtitle': 'شريككم الموثوق لخدمات البناء والميكانيكا والكهرباء والعمالة والتنظيف في جميع أنحاء المملكة العربية السعودية.',
+        'about.page.title': 'عن شركة أركان للمقاولات',
+        'about.page.subtitle': 'مزود رائد لحلول البناء والقوى العاملة في جميع أنحاء المملكة العربية السعودية.',
         'about.mission.title': 'مهمتنا',
         'about.mission.text':
-            'توفير حلول قوى عاملة موثوقة وماهرة ومتوافقة تمكّن شركات البناء من تسليم مشاريعها في الوقت المحدد وضمن الميزانية.',
+            'تقديم حلول بناء وقوى عاملة موثوقة وعالية الجودة من خلال التميز الفني والكفاءة التشغيلية والنزاهة الثابتة — لإتمام كل مشروع بأمان وفي الوقت المحدد وضمن الميزانية.',
         'about.vision.title': 'رؤيتنا',
         'about.vision.text':
-            'أن نكون الشريك الأكثر موثوقية للقوى العاملة في صناعة البناء في المملكة العربية السعودية، والمعروف بالجودة والسلامة والموثوقية.',
+            'أن نكون رائدين معترفاً بنا وشريكاً مفضلاً في قطاعي البناء والقوى العاملة في المملكة العربية السعودية، منسجمين مع رؤية السعودية 2030، ومعروفين بالتميز والموثوقية والقيمة.',
         'about.values.title': 'قيمنا الأساسية',
-        'about.values.safety': 'السلامة أولاً',
-        'about.values.safety.desc': 'لا تنازل عن سلامة العمال والامتثال.',
+        'about.values.safety': 'السلامة',
+        'about.values.safety.desc': 'السلامة هي أولويتنا القصوى، بدعم من ثقافة قوية للصحة والسلامة والبيئة.',
         'about.values.integrity': 'النزاهة',
-        'about.values.integrity.desc': 'ممارسات تجارية صادقة وشفافة.',
+        'about.values.integrity.desc': 'ممارسات تجارية صادقة وشفافة وأخلاقية في كل ما نقوم به.',
         'about.values.quality': 'الجودة',
-        'about.values.quality.desc': 'توفير عمال مهرة ومدربين.',
+        'about.values.quality.desc': 'حرفية متميزة تلبي أو تتجاوز توقعات العملاء باستمرار.',
         'about.values.reliability': 'الموثوقية',
-        'about.values.reliability.desc': 'التسليم المستمر لجميع الالتزامات.',
+        'about.values.reliability.desc': 'خدمات موثوقة وتنفيذ للمشاريع في وقتها بثبات.',
         'about.values.compliance': 'الامتثال',
-        'about.values.compliance.desc': 'الالتزام الكامل بقوانين العمل السعودية.',
+        'about.values.compliance.desc': 'الالتزام الكامل بأنظمة المملكة ومواصفات العملاء.',
 
         // About Leaders
-        'about.leaders.title': 'قيادتنا',
-        'about.leaders.subtitle': 'قيادة ذات خبرة تقود شركة أركان جلوبال للمقاولات نحو المستقبل.',
+        'about.leaders.title': 'القيادة',
+        'about.leaders.subtitle': 'قيادة ذات خبرة تقود شركة أركان للمقاولات نحو المستقبل.',
 
         // Services Page
         'services.page.title': 'خدماتنا',
-        'services.page.subtitle': 'حلول شاملة للقوى العاملة',
+        'services.page.subtitle': 'البناء المدني والأعمال الكهروميكانيكية وتوريد القوى العاملة والتنظيف المخصص',
 
-        // Projects Page
-        'projects.page.title': 'مشاريعنا',
-        'projects.page.subtitle': 'تقديم التميز في جميع أنحاء المملكة',
+        // Capabilities (Projects) Page
+        'projects.page.title': 'قدرة النشر والامتثال',
+        'projects.page.subtitle': 'كيف نعبئ وندير القوى العاملة ونضمن الامتثال في تسليمها',
         'projects.filter.all': 'الكل',
         'projects.filter.construction': 'البناء',
         'projects.filter.infrastructure': 'البنية التحتية',
@@ -282,8 +282,8 @@ const translations: Record<Language, Record<string, string>> = {
         'projects.filter.industrial': 'صناعي',
 
         // Clients Page
-        'clients.page.title': 'عملاؤنا',
-        'clients.page.subtitle': 'شراكات موثوقة عبر الصناعات',
+        'clients.page.title': 'عملاؤنا وحضورنا في الصناعة',
+        'clients.page.subtitle': 'نخدم عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة',
 
         // Careers Page
         'careers.title': 'انضم إلى فريقنا',

@@ -36,13 +36,13 @@ export default function ServicesSection({ services: propServices = [] }: Service
                 icon: IconComponent,
                 title: language === 'en' ? s.title_en : s.title_ar,
                 description: language === 'en' ? (s.description_en || '') : (s.description_ar || ''),
-                link: `/services#${s.slug}`,
+                link: `/services/${s.slug}`,
             };
         })
         : [
-            { icon: Users, title: t('services.summary.manpower'), description: 'Comprehensive workforce deployment solutions', link: '/services#manpower' },
-            { icon: HardHat, title: t('services.summary.construction'), description: 'General construction, civil works, and MEP services', link: '/services#construction' },
-            { icon: Wrench, title: t('services.summary.cleaning'), description: 'Professional post-construction cleaning services', link: '/services#cleaning' },
+            { icon: Users, title: t('services.summary.manpower'), description: 'Comprehensive workforce deployment solutions', link: '/services/manpower' },
+            { icon: HardHat, title: t('services.summary.construction'), description: 'General construction, civil works, and MEP services', link: '/services/construction' },
+            { icon: Wrench, title: t('services.summary.cleaning'), description: 'Professional post-construction cleaning services', link: '/services/cleaning' },
         ];
 
     return (
@@ -50,7 +50,7 @@ export default function ServicesSection({ services: propServices = [] }: Service
             <div className="container-custom">
                 {/* Header */}
                 <div className="mx-auto mb-12 max-w-2xl text-center">
-                    <span className="text-sm font-semibold uppercase tracking-wider text-primary">
+                    <span className="eyebrow">
                         {t('services.title')}
                     </span>
                     <h2 className="mt-2 text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
@@ -68,7 +68,7 @@ export default function ServicesSection({ services: propServices = [] }: Service
                             href={service.link}
                             className="card-elevated group p-6"
                         >
-                            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl hero-gradient transition-transform group-hover:scale-110">
+                            <div className="mb-4 flex h-14 w-14 shrink-0 items-center justify-center rounded-sm hero-gradient border-b-2 border-accent transition-transform group-hover:scale-110">
                                 <IconComponent className="h-7 w-7 text-primary-foreground" />
                             </div>
                             <h3 className="mb-2 text-xl font-semibold text-foreground">
