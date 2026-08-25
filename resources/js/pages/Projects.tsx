@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import {
     MapPin, Users, Building2, ChevronRight, ArrowRight,
@@ -99,13 +99,23 @@ export default function Projects({ hero, projects = [] }: ProjectsProps) {
     const [activeFilter, setActiveFilter] = useState('all');
     const [isFiltering, setIsFiltering] = useState(false);
 
-    const filters = [
-        { id: 'all', label: t('projects.filter.all') },
+    const allFilters = [
         { id: 'construction', label: t('projects.filter.construction') },
         { id: 'infrastructure', label: t('projects.filter.infrastructure') },
         { id: 'commercial', label: t('projects.filter.commercial') },
         { id: 'industrial', label: t('projects.filter.industrial') },
     ];
+
+    // Only offer a filter for categories that actually have at least one
+    // active project — an empty filter button would just lead to a blank grid.
+    const filters = useMemo(() => {
+        const categoriesWithProjects = new Set(projects.map((p) => p.category));
+        const availableFilters = allFilters.filter((f) => categoriesWithProjects.has(f.id));
+
+        return availableFilters.length > 1
+            ? [{ id: 'all', label: t('projects.filter.all') }, ...availableFilters]
+            : availableFilters;
+    }, [projects, t]);
 
     const displayProjects = projects.map((p) => ({
         ...p,
@@ -165,23 +175,25 @@ export default function Projects({ hero, projects = [] }: ProjectsProps) {
                 {displayProjects.length > 0 && (
                     <>
                         {/* Filters */}
-                        <section className="top-16 z-40 border-b border-border bg-background py-8 lg:top-20">
-                            <div className="container-custom">
-                                <div className="flex flex-wrap justify-center gap-2">
-                                    {filters.map((filter) => (
-                                        <Button
-                                            key={filter.id}
-                                            variant={activeFilter === filter.id ? 'default' : 'outline'}
-                                            size="sm"
-                                            onClick={() => handleFilterChange(filter.id)}
-                                            className={cn(activeFilter === filter.id && 'hero-gradient border-0')}
-                                        >
-                                            {filter.label}
-                                        </Button>
-                                    ))}
+                        {filters.length > 1 && (
+                            <section className="top-16 z-40 border-b border-border bg-background py-8 lg:top-20">
+                                <div className="container-custom">
+                                    <div className="flex flex-wrap justify-center gap-2">
+                                        {filters.map((filter) => (
+                                            <Button
+                                                key={filter.id}
+                                                variant={activeFilter === filter.id ? 'default' : 'outline'}
+                                                size="sm"
+                                                onClick={() => handleFilterChange(filter.id)}
+                                                className={cn(activeFilter === filter.id && 'hero-gradient border-0')}
+                                            >
+                                                {filter.label}
+                                            </Button>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        </section>
+                            </section>
+                        )}
 
                         {/* Projects Grid */}
                         <section className="section-padding pb-0">
