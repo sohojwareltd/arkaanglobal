@@ -3,14 +3,13 @@
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Oswald:wght@400;500;600;700&family=Tajawal:wght@500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Montserrat:wght@500;600;700;800&family=Tajawal:wght@500;700;800&display=swap');
 
 @theme {
     --font-sans: 'Inter', 'Noto Sans Arabic', system-ui, sans-serif;
-    /* Display face for headings — condensed/bold, reads as construction &
-       engineering rather than a soft SaaS grotesque. Tajawal is its Arabic
-       counterpart (Oswald has no Arabic glyphs). */
-    --font-display: 'Oswald', 'Inter', system-ui, sans-serif;
+    /* Display face for headings — clean corporate geometric sans. Tajawal is
+       its Arabic counterpart (Montserrat has no Arabic glyphs). */
+    --font-display: 'Montserrat', 'Inter', system-ui, sans-serif;
     --font-display-ar: 'Tajawal', 'Noto Sans Arabic', system-ui, sans-serif;
 
     /* Colors – use Tailwind v4 color tokens so utilities like text-foreground, border-border work */
@@ -69,7 +68,7 @@
         @apply font-bold;
         font-family: var(--font-display);
         letter-spacing: -0.01em;
-        line-height: 1.12;
+        line-height: 1.2;
     }
 
     [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6 {

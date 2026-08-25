@@ -5,6 +5,7 @@ use App\Http\Controllers\QuoteRequestController;
 use App\Models\AboutContent;
 use App\Models\Certificate;
 use App\Models\CleaningServiceScope;
+use App\Models\Client;
 use App\Models\ClientCategory;
 use App\Models\CoreValue;
 use App\Models\HeroSection;
@@ -119,12 +120,15 @@ Route::get('/hse-contact', function () {
 Route::get('/clients', function () {
     $hero = HeroSection::where('page', 'clients')->where('is_active', true)->first();
     // The profile names sector categories, not specific client companies, so
-    // this page presents the real categories instead of fabricated logos.
+    // categories cover the sector breakdown; the clients table (managed in
+    // the admin) supplies the actual named companies shown alongside them.
     $clientCategories = ClientCategory::where('is_active', true)->orderBy('order')->get();
+    $clients = Client::where('is_active', true)->orderBy('order')->get();
 
     return Inertia::render('Clients', [
         'hero' => $hero,
         'clientCategories' => $clientCategories,
+        'clients' => $clients,
     ]);
 })->name('clients');
 

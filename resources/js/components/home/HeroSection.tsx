@@ -82,7 +82,7 @@ export default function HeroSection({ hero }: HeroSectionProps): JSX.Element {
                     
 
                     {/* Title */}
-                    <h1 className="mb-3 text-[2rem] leading-[1.1] font-bold text-primary-foreground sm:mb-4 sm:text-5xl sm:leading-tight lg:text-6xl animate-fade-in-up">
+                    <h1 className="mb-3 text-[2rem] leading-[1.15] font-bold text-primary-foreground sm:mb-4 sm:text-5xl sm:leading-tight lg:text-6xl animate-fade-in-up">
                         {title}
                     </h1>
 

@@ -30,6 +30,15 @@ interface ClientCategoryItem {
     icon?: string;
 }
 
+interface ClientItem {
+    id: number;
+    name: string;
+    abbr: string;
+    sector_en: string;
+    sector_ar: string;
+    logo?: string;
+}
+
 interface HeroData {
     title_en?: string;
     title_ar?: string;
@@ -41,6 +50,12 @@ interface HeroData {
 interface ClientsProps {
     hero?: HeroData | null;
     clientCategories?: ClientCategoryItem[];
+    clients?: ClientItem[];
+}
+
+function resolveLogo(logo?: string): string | null {
+    if (!logo) return null;
+    return logo.startsWith('http') || logo.startsWith('/') ? logo : `/storage/${logo}`;
 }
 
 const DEFAULT_CATEGORIES: ClientCategoryItem[] = [
@@ -50,7 +65,7 @@ const DEFAULT_CATEGORIES: ClientCategoryItem[] = [
     { id: 4, name_en: 'Industrial', name_ar: 'صناعي', icon: 'factory', description_en: 'Oil & gas, petrochemical, manufacturing, logistics, and commercial facilities.', description_ar: 'النفط والغاز والبتروكيماويات والتصنيع والخدمات اللوجستية والمنشآت التجارية.' },
 ];
 
-export default function Clients({ hero, clientCategories = [] }: ClientsProps) {
+export default function Clients({ hero, clientCategories = [], clients = [] }: ClientsProps) {
     const { t, language } = useLanguage();
 
     const categories = clientCategories.length > 0 ? clientCategories : DEFAULT_CATEGORIES;
@@ -134,6 +149,53 @@ export default function Clients({ hero, clientCategories = [] }: ClientsProps) {
                         </div>
                     </div>
                 </section>
+
+                {/* Named Clients */}
+                {clients.length > 0 && (
+                    <section className="section-padding pt-0">
+                        <div className="container-custom">
+                            <div className="mx-auto mb-10 max-w-2xl text-center">
+                                <span className="eyebrow">{language === 'en' ? 'Trusted By' : 'موثوق به من قبل'}</span>
+                                <h2 className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">
+                                    {language === 'en' ? 'Some of Our Clients' : 'بعض عملائنا'}
+                                </h2>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+                                {clients.map((client, index) => {
+                                    const logo = resolveLogo(client.logo);
+                                    return (
+                                        <WhenVisible
+                                            key={client.id}
+                                            className="card-elevated flex flex-col items-center justify-center gap-3 p-6 text-center"
+                                            options={{ threshold: 0.1 }}
+                                            style={{ transitionDelay: `${index * 40}ms` }}
+                                        >
+                                            <div className="flex h-16 w-full items-center justify-center">
+                                                {logo ? (
+                                                    <img
+                                                        src={logo}
+                                                        alt={client.name}
+                                                        className="max-h-16 max-w-full object-contain"
+                                                        loading="lazy"
+                                                    />
+                                                ) : (
+                                                    <span className="text-2xl font-bold text-primary">{client.abbr}</span>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-foreground">{client.name}</p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {language === 'en' ? client.sector_en : client.sector_ar}
+                                                </p>
+                                            </div>
+                                        </WhenVisible>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </section>
+                )}
             </Layout>
         </>
     );
