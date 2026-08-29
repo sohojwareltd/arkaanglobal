@@ -54,6 +54,27 @@ class JobApplicationResource extends Resource
                             ->dehydrated(false),
                     ])
                     ->columns(2),
+                Forms\Components\Section::make('Additional Documents')
+                    ->schema([
+                        Forms\Components\Repeater::make('attachments')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\TextInput::make('label')
+                                    ->label('Document Type')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('original_name')
+                                    ->label('File Name')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                            ])
+                            ->columns(2)
+                            ->addable(false)
+                            ->deletable(false)
+                            ->reorderable(false)
+                            ->defaultItems(0),
+                    ])
+                    ->visible(fn (?JobApplication $record): bool => $record?->attachments()->exists() ?? false),
                 Forms\Components\Section::make('Admin Tracking')
                     ->schema([
                         Forms\Components\Select::make('status')
@@ -88,6 +109,10 @@ class JobApplicationResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->copyable(),
+                Tables\Columns\TextColumn::make('attachments_count')
+                    ->counts('attachments')
+                    ->label('Docs')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {

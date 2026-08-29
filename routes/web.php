@@ -107,7 +107,7 @@ Route::get('/careers', function () {
     $jobs = JobPosting::query()
         ->where('is_active', true)
         ->orderBy('order')
-        ->get()
+        ->get(['id', 'title_en', 'title_ar', 'description_en', 'description_ar', 'location_en', 'location_ar', 'employment_type', 'application_deadline', 'is_active'])
         ->filter(fn (JobPosting $job): bool => $job->isAcceptingApplications())
         ->values();
 
@@ -116,6 +116,26 @@ Route::get('/careers', function () {
         'jobs' => $jobs,
     ]);
 })->name('careers');
+
+Route::get('/careers/{jobPosting}', function (JobPosting $jobPosting) {
+    if (! $jobPosting->is_active || ! $jobPosting->isAcceptingApplications()) {
+        abort(404);
+    }
+
+    return Inertia::render('CareerJobDetail', [
+        'job' => $jobPosting,
+    ]);
+})->whereNumber('jobPosting')->name('careers.show');
+
+Route::get('/careers/{jobPosting}/apply', function (JobPosting $jobPosting) {
+    if (! $jobPosting->is_active || ! $jobPosting->isAcceptingApplications()) {
+        abort(404);
+    }
+
+    return Inertia::render('CareerApply', [
+        'job' => $jobPosting,
+    ]);
+})->whereNumber('jobPosting')->name('careers.apply');
 
 Route::get('/hse-contact', function () {
     $hero = HeroSection::where('page', 'hse-contact')->where('is_active', true)->first();

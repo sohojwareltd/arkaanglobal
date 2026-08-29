@@ -25,6 +25,10 @@ class StoreJobApplicationRequest extends FormRequest
             'name' => ['required', 'string', 'min:2', 'max:255', 'regex:/^[\p{L}\s\'.-]+$/u'],
             'email' => ['required', 'email:rfc,filter', 'max:255'],
             'cv' => ['required', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
+            'attachments' => ['nullable', 'array', 'max:5'],
+            'attachments.*' => ['file', 'mimes:pdf,jpg,jpeg,png,doc,docx', 'max:5120'],
+            'attachment_labels' => ['nullable', 'array'],
+            'attachment_labels.*' => ['nullable', 'string', 'max:100'],
             'website' => ['nullable', 'max:0'],
         ];
     }
@@ -44,6 +48,9 @@ class StoreJobApplicationRequest extends FormRequest
             'cv.required' => 'Please upload your CV.',
             'cv.mimes' => 'CV must be a PDF, DOC, or DOCX file.',
             'cv.max' => 'CV must not exceed 5 MB.',
+            'attachments.max' => 'You may upload up to 5 additional documents.',
+            'attachments.*.mimes' => 'Additional documents must be PDF, JPG, PNG, DOC, or DOCX.',
+            'attachments.*.max' => 'Each additional document must not exceed 5 MB.',
             'website.max' => 'Unable to submit application.',
         ];
     }
