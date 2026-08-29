@@ -29,6 +29,7 @@ class HeroSectionResource extends Resource
                         'home' => 'Home',
                         'about' => 'About',
                         'services' => 'Services',
+                        'careers' => 'Careers',
                         'hse-contact' => 'HSE',
                     ])
                     ->required()
@@ -147,6 +148,7 @@ class HeroSectionResource extends Resource
                         'home' => 'Home',
                         'about' => 'About',
                         'services' => 'Services',
+                        'careers' => 'Careers',
                         'hse-contact' => 'HSE',
                     ]),
                 Tables\Filters\TernaryFilter::make('is_active'),

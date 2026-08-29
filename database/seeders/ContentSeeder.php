@@ -60,7 +60,8 @@ class ContentSeeder extends Seeder
             ['path' => '/services', 'label_en' => 'Services', 'label_ar' => 'خدماتنا', 'order' => 3],
             ['path' => '/projects', 'label_en' => 'Capabilities', 'label_ar' => 'إمكانياتنا', 'order' => 4],
             ['path' => '/clients', 'label_en' => 'Clients', 'label_ar' => 'عملاؤنا', 'order' => 5],
-            ['path' => '/hse-contact', 'label_en' => 'HSE', 'label_ar' => 'السلامة والاتصال', 'order' => 6],
+            ['path' => '/careers', 'label_en' => 'Careers', 'label_ar' => 'الوظائف', 'order' => 6],
+            ['path' => '/hse-contact', 'label_en' => 'HSE', 'label_ar' => 'السلامة والاتصال', 'order' => 7],
         ];
 
         foreach ($items as $item) {
@@ -115,6 +116,17 @@ class ContentSeeder extends Seeder
                 'meta_title_ar' => 'خدماتنا | شركة أركان للمقاولات',
                 'meta_description_en' => 'Civil & construction, MEP, manpower supply, and dedicated cleaning services delivered across the Kingdom of Saudi Arabia by Arkaan Construction Company.',
                 'meta_description_ar' => 'خدمات البناء المدني والأعمال الكهروميكانيكية وتوريد القوى العاملة والتنظيف المخصص التي تقدمها شركة أركان للمقاولات في جميع أنحاء المملكة العربية السعودية.',
+            ],
+            [
+                'page' => 'careers',
+                'title_en' => 'Join Our Team',
+                'title_ar' => 'انضم إلى فريقنا',
+                'subtitle_en' => 'Build your career with Arkaan Construction Company',
+                'subtitle_ar' => 'ابنِ مسيرتك المهنية مع شركة أركان للمقاولات',
+                'meta_title_en' => 'Careers | Arkaan Construction Company',
+                'meta_title_ar' => 'الوظائف | شركة أركان للمقاولات',
+                'meta_description_en' => 'Explore open positions at Arkaan Construction Company and apply online with your CV.',
+                'meta_description_ar' => 'استكشف الوظائف المتاحة في شركة أركان للمقاولات وقدّم طلبك عبر الإنترنت مع سيرتك الذاتية.',
             ],
             [
                 'page' => 'hse-contact',

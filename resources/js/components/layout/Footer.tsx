@@ -31,6 +31,7 @@ export default function Footer(): JSX.Element {
         { path: '/about', label: t('nav.about') },
         { path: '/services', label: t('nav.services') },
         { path: '/projects', label: language === 'en' ? 'Projects' : 'المشاريع' },
+        { path: '/careers', label: language === 'en' ? 'Careers' : 'الوظائف' },
         { path: '/hse-contact', label: t('nav.hseContact') },
     ];
 

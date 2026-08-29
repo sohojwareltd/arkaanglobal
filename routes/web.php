@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\QuoteRequestController;
 use App\Models\AboutContent;
@@ -10,6 +11,7 @@ use App\Models\ClientCategory;
 use App\Models\CoreValue;
 use App\Models\HeroSection;
 use App\Models\HseContent;
+use App\Models\JobPosting;
 use App\Models\ManpowerCategory;
 use App\Models\Project;
 use App\Models\Service;
@@ -95,6 +97,25 @@ Route::get('/services/{service:slug}', function (Service $service) {
 })->name('services.show');
 
 Route::post('/quote-request', [QuoteRequestController::class, 'store'])->name('quote-request.store');
+
+Route::post('/job-applications', [JobApplicationController::class, 'store'])
+    ->middleware('throttle:5,10')
+    ->name('job-applications.store');
+
+Route::get('/careers', function () {
+    $hero = HeroSection::where('page', 'careers')->where('is_active', true)->first();
+    $jobs = JobPosting::query()
+        ->where('is_active', true)
+        ->orderBy('order')
+        ->get()
+        ->filter(fn (JobPosting $job): bool => $job->isAcceptingApplications())
+        ->values();
+
+    return Inertia::render('Careers', [
+        'hero' => $hero,
+        'jobs' => $jobs,
+    ]);
+})->name('careers');
 
 Route::get('/hse-contact', function () {
     $hero = HeroSection::where('page', 'hse-contact')->where('is_active', true)->first();
