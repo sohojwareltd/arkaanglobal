@@ -82,7 +82,7 @@ const translations: Record<Language, Record<string, string>> = {
         'cta.button': 'Contact Us Today',
 
         // Footer
-        'footer.description': 'Your trusted partner for civil construction, MEP, manpower supply, and dedicated cleaning services across the Kingdom of Saudi Arabia.',
+        'footer.description': 'Your trusted partner for construction, contracting, MEP, manpower, and cleaning services across Saudi Arabia.',
         'footer.quickLinks': 'Quick Links',
         'footer.services': 'Services',
         'footer.contact': 'Contact Us',
@@ -235,7 +235,7 @@ const translations: Record<Language, Record<string, string>> = {
         'cta.button': 'تواصل معنا اليوم',
 
         // Footer
-        'footer.description': 'شريككم الموثوق لخدمات البناء المدني والأعمال الكهروميكانيكية وتوريد القوى العاملة والتنظيف المخصص في المملكة العربية السعودية.',
+        'footer.description': 'شريككم الموثوق في البناء والمقاولات والأعمال الكهروميكانيكية والقوى العاملة وخدمات التنظيف في جميع أنحاء المملكة العربية السعودية.',
         'footer.quickLinks': 'روابط سريعة',
         'footer.services': 'الخدمات',
         'footer.contact': 'اتصل بنا',

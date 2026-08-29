@@ -594,7 +594,7 @@ class ContentSeeder extends Seeder
         $settings = [
             ['key' => 'site_name', 'value' => 'Arkaan Construction Company', 'group' => 'seo'],
             ['key' => 'default_meta_title', 'value' => 'Arkaan Construction Company', 'group' => 'seo'],
-            ['key' => 'default_meta_description', 'value' => 'Your trusted partner for civil construction, MEP, manpower supply, and dedicated cleaning services across the Kingdom of Saudi Arabia.', 'group' => 'seo'],
+            ['key' => 'default_meta_description', 'value' => 'Your trusted partner for construction, contracting, MEP, manpower, and cleaning services across Saudi Arabia.', 'group' => 'seo'],
             ['key' => 'default_meta_keywords', 'value' => 'construction, MEP, manpower supply, dedicated cleaning, Saudi Arabia, Jubail, Dammam, Riyadh', 'group' => 'seo'],
             ['key' => 'cr_number', 'value' => null, 'group' => 'legal'],
             ['key' => 'vat_number', 'value' => null, 'group' => 'legal'],
