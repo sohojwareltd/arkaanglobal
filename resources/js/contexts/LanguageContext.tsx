@@ -126,9 +126,11 @@ const translations: Record<Language, Record<string, string>> = {
         'projects.page.title': 'Deployment Capability & Compliance',
         'projects.page.subtitle': 'How we mobilize, manage, and ensure compliant workforce delivery',
         'projects.filter.all': 'All',
+        'projects.filter.allProjects': 'All Projects',
         'projects.filter.construction': 'Construction',
         'projects.filter.infrastructure': 'Infrastructure',
         'projects.filter.commercial': 'Commercial',
+        'projects.filter.residential': 'Residential',
         'projects.filter.industrial': 'Industrial',
 
         // Clients Page
@@ -276,9 +278,11 @@ const translations: Record<Language, Record<string, string>> = {
         'projects.page.title': 'قدرة النشر والامتثال',
         'projects.page.subtitle': 'كيف نعبئ وندير القوى العاملة ونضمن الامتثال في تسليمها',
         'projects.filter.all': 'الكل',
+        'projects.filter.allProjects': 'جميع المشاريع',
         'projects.filter.construction': 'البناء',
         'projects.filter.infrastructure': 'البنية التحتية',
         'projects.filter.commercial': 'تجاري',
+        'projects.filter.residential': 'سكني',
         'projects.filter.industrial': 'صناعي',
 
         // Clients Page

@@ -1,15 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import {
-    MapPin, Users, Building2, ChevronRight, ArrowRight,
-    Clock, Zap, RefreshCw, ShieldCheck, TrendingUp, CheckCircle2, LucideIcon,
-} from 'lucide-react';
+
 import Layout from '@/components/layout/Layout';
-import PageHero from '@/components/ui/page-hero';
+import ProjectCardFull from '@/components/projects/ProjectCardFull';
+import ProjectsFilterBar, { SearchResult } from '@/components/projects/ProjectsFilterBar';
+import ProjectsPageHero from '@/components/projects/ProjectsPageHero';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Button } from '@/components/ui/button';
-import WhenVisible from '@/components/ui/when-visible';
-import { cn } from '@/lib/utils';
 
 interface Project {
     id: number;
@@ -22,8 +18,18 @@ interface Project {
     description_en?: string;
     description_ar?: string;
     image?: string;
+    created_at?: string;
     client?: { id: number; name: string; abbr: string };
-    gallery_items?: unknown[];
+}
+
+interface ServiceItem {
+    id: number;
+    slug: string;
+    title_en: string;
+    title_ar: string;
+    description_en?: string;
+    description_ar?: string;
+    image?: string;
 }
 
 interface HeroData {
@@ -37,116 +43,223 @@ interface HeroData {
 interface ProjectsProps {
     hero?: HeroData | null;
     projects?: Project[];
+    services?: ServiceItem[];
+}
+
+interface DisplayProject {
+    id: string | number;
+    title_en: string;
+    title_ar: string;
+    category: string;
+    location_en: string;
+    location_ar: string;
+    workers?: string;
+    image: string;
+    href: string;
+    year: string;
+    clientName?: string;
 }
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1400';
+const INITIAL_VISIBLE = 6;
+const LOAD_MORE_STEP = 6;
 
-// Real content from the ARKAAN company profile ("Deployment Capability", p.21) —
-// distinct from the service catalog on /services, this page covers *how* we
-// mobilize and manage workforce, not *what* services we offer.
-const DEPLOYMENT_CAPABILITIES: { icon: LucideIcon; title_en: string; title_ar: string; desc_en: string; desc_ar: string }[] = [
-    {
-        icon: Clock,
-        title_en: 'Short-Term & Long-Term Deployment',
-        title_ar: 'نشر قصير وطويل الأجل',
-        desc_en: 'Provision of qualified personnel for temporary assignments, long-term contracts, maintenance activities, and ongoing operational support.',
-        desc_ar: 'توفير كوادر مؤهلة للمهام المؤقتة والعقود طويلة الأجل وأنشطة الصيانة والدعم التشغيلي المستمر.',
-    },
-    {
-        icon: Zap,
-        title_en: 'Project-Based Mobilization',
-        title_ar: 'التعبئة القائمة على المشاريع',
-        desc_en: 'Rapid mobilization of skilled, semi-skilled, and professional manpower for construction projects, industrial shutdowns, plant turnarounds, and peak workload requirements.',
-        desc_ar: 'تعبئة سريعة للقوى العاملة الماهرة وشبه الماهرة والمهنية لمشاريع البناء وعمليات إيقاف المصانع ومتطلبات ذروة العمل.',
-    },
-    {
-        icon: RefreshCw,
-        title_en: 'Replacement & Attendance Management',
-        title_ar: 'إدارة الاستبدال والحضور',
-        desc_en: 'Efficient workforce management including employee replacement, attendance monitoring, leave coordination, and continuous manpower availability.',
-        desc_ar: 'إدارة فعالة للقوى العاملة تشمل استبدال الموظفين ومراقبة الحضور وتنسيق الإجازات وضمان التوفر المستمر للعمالة.',
-    },
-    {
-        icon: ShieldCheck,
-        title_en: 'Compliance & Workforce Administration',
-        title_ar: 'الامتثال وإدارة شؤون القوى العاملة',
-        desc_en: 'Full compliance with Saudi labor laws, MHRSD regulations, and GOSI requirements — every deployed employee holds valid documentation, certifications, and medical fitness.',
-        desc_ar: 'امتثال كامل لأنظمة العمل السعودية ولوائح وزارة الموارد البشرية ومتطلبات التأمينات الاجتماعية — يحمل كل موظف موثقاً وشهادات ولياقة طبية سارية.',
-    },
-    {
-        icon: TrendingUp,
-        title_en: 'Scalable Workforce Solutions',
-        title_ar: 'حلول قوى عاملة قابلة للتوسع',
-        desc_en: 'Flexible manpower deployment tailored to project size, duration, and operational requirements, enabling clients to scale efficiently.',
-        desc_ar: 'نشر مرن للقوى العاملة مصمم وفق حجم المشروع ومدته ومتطلباته التشغيلية، بما يتيح للعملاء التوسع بكفاءة.',
-    },
-];
+const IMAGE_BY_SLUG: Record<string, string> = {
+    construction: 'https://images.unsplash.com/photo-1541976590-713941681591?q=80&w=1400',
+    mep: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1400',
+    manpower: 'https://images.unsplash.com/photo-1587293852726-70cdb56c2866?q=80&w=1400',
+    cleaning: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=1400',
+};
 
-// Real content from the profile's "Manpower Compliance" page (p.22).
-const COMPLIANCE_STANDARDS: { en: string; ar: string }[] = [
-    { en: 'Full compliance with the Kingdom of Saudi Arabia Labor Law and MHRSD regulations', ar: 'الامتثال الكامل لنظام العمل في المملكة العربية السعودية ولوائح وزارة الموارد البشرية' },
-    { en: 'Adherence to client-specific HSE policies, site regulations, and project requirements', ar: 'الالتزام بسياسات السلامة الخاصة بالعملاء ولوائح الموقع ومتطلبات المشروع' },
-    { en: 'Compliance with Saudi Aramco, Royal Commission for Jubail & Yanbu (RCJY), and other industrial standards', ar: 'الامتثال لمعايير أرامكو السعودية والهيئة الملكية للجبيل وينبع والمعايير الصناعية الأخرى' },
-    { en: 'Verification of employee qualifications, trade certifications, and competency before deployment', ar: 'التحقق من مؤهلات الموظفين وشهاداتهم المهنية وكفاءتهم قبل النشر' },
-    { en: 'Mandatory medical fitness, safety induction, and job-specific training for all personnel', ar: 'اللياقة الطبية الإلزامية والتوجيه على السلامة والتدريب الخاص بالوظيفة لجميع الموظفين' },
-    { en: 'Valid work permits, residency documentation (Iqama), and statutory compliance', ar: 'تصاريح عمل سارية ووثائق إقامة نظامية والامتثال القانوني' },
-    { en: 'Continuous supervision, attendance monitoring, and workforce performance management', ar: 'الإشراف المستمر ومراقبة الحضور وإدارة أداء القوى العاملة' },
-    { en: 'Commitment to ethical employment practices, worker welfare, and a safe working environment', ar: 'الالتزام بممارسات التوظيف الأخلاقية ورعاية العمال وبيئة عمل آمنة' },
-];
+const CATEGORY_BY_SLUG: Record<string, string> = {
+    construction: 'commercial',
+    mep: 'industrial',
+    manpower: 'industrial',
+    cleaning: 'commercial',
+};
 
-export default function Projects({ hero, projects = [] }: ProjectsProps) {
-    const { t, language } = useLanguage();
-    const [activeFilter, setActiveFilter] = useState('all');
-    const [isFiltering, setIsFiltering] = useState(false);
+const FILTER_DEFINITIONS = [
+    { id: 'all', labelKey: 'projects.filter.allProjects' },
+    { id: 'commercial', labelKey: 'projects.filter.commercial' },
+    { id: 'residential', labelKey: 'projects.filter.residential' },
+    { id: 'industrial', labelKey: 'projects.filter.industrial' },
+] as const;
 
-    const allFilters = [
-        { id: 'construction', label: t('projects.filter.construction') },
-        { id: 'infrastructure', label: t('projects.filter.infrastructure') },
-        { id: 'commercial', label: t('projects.filter.commercial') },
-        { id: 'industrial', label: t('projects.filter.industrial') },
-    ];
-
-    // Only offer a filter for categories that actually have at least one
-    // active project — an empty filter button would just lead to a blank grid.
-    const filters = useMemo(() => {
-        const categoriesWithProjects = new Set(projects.map((p) => p.category));
-        const availableFilters = allFilters.filter((f) => categoriesWithProjects.has(f.id));
-
-        return availableFilters.length > 1
-            ? [{ id: 'all', label: t('projects.filter.all') }, ...availableFilters]
-            : availableFilters;
-    }, [projects, t]);
-
-    const displayProjects = projects.map((p) => ({
-        ...p,
-        title: language === 'en' ? p.title_en : p.title_ar,
-        location: language === 'en' ? p.location_en : p.location_ar,
-        description: language === 'en' ? p.description_en : p.description_ar,
-        image: p.image
-            ? p.image.startsWith('http')
-                ? p.image
-                : p.image.startsWith('/')
-                    ? p.image
-                    : `/storage/${p.image}`
-            : FALLBACK_IMAGE,
-        client: p.client,
-        gallery_items: p.gallery_items,
-    }));
-
-    const filteredProjects = activeFilter === 'all' ? displayProjects : displayProjects.filter((p) => p.category === activeFilter);
-
-    const handleFilterChange = (id: string) => {
-        if (id === activeFilter) {
-            return;
+function resolveImage(image?: string, slug?: string): string {
+    if (image) {
+        if (image.startsWith('http')) {
+            return image;
         }
 
-        setIsFiltering(true);
+        return image.startsWith('/') ? image : `/storage/${image}`;
+    }
 
-        setTimeout(() => {
-            setActiveFilter(id);
-            setIsFiltering(false);
-        }, 180);
+    if (slug && IMAGE_BY_SLUG[slug]) {
+        return IMAGE_BY_SLUG[slug];
+    }
+
+    return FALLBACK_IMAGE;
+}
+
+function resolveYear(createdAt?: string): string {
+    if (createdAt) {
+        const year = new Date(createdAt).getFullYear();
+
+        if (! Number.isNaN(year)) {
+            return String(year);
+        }
+    }
+
+    return String(new Date().getFullYear());
+}
+
+function formatCategoryLabel(category: string, language: 'en' | 'ar', t: (key: string) => string): string {
+    const key = category.toLowerCase();
+    const map: Record<string, string> = {
+        commercial: t('projects.filter.commercial'),
+        residential: t('projects.filter.residential'),
+        industrial: t('projects.filter.industrial'),
+        construction: t('projects.filter.construction'),
+        infrastructure: t('projects.filter.infrastructure'),
     };
+
+    return map[key] ?? category;
+}
+
+function readCategoryFromUrl(): string {
+    if (typeof window === 'undefined') {
+        return 'all';
+    }
+
+    return new URLSearchParams(window.location.search).get('category') ?? 'all';
+}
+
+function updateCategoryInUrl(category: string): void {
+    const url = category === 'all' ? '/projects' : `/projects?category=${encodeURIComponent(category)}`;
+    window.history.replaceState({}, '', url);
+}
+
+function buildFromProjects(projects: Project[]): DisplayProject[] {
+    return projects.map((project) => ({
+        id: project.id,
+        title_en: project.title_en,
+        title_ar: project.title_ar,
+        category: project.category.toLowerCase(),
+        location_en: project.location_en,
+        location_ar: project.location_ar,
+        workers: project.workers,
+        image: resolveImage(project.image),
+        href: `/projects/${project.id}`,
+        year: resolveYear(project.created_at),
+        clientName: project.client?.name,
+    }));
+}
+
+function buildFromServices(services: ServiceItem[]): DisplayProject[] {
+    return services.map((service) => ({
+        id: `service-${service.id}`,
+        title_en: service.title_en,
+        title_ar: service.title_ar,
+        category: CATEGORY_BY_SLUG[service.slug] ?? 'commercial',
+        location_en: 'Kingdom of Saudi Arabia',
+        location_ar: 'المملكة العربية السعودية',
+        image: resolveImage(service.image, service.slug),
+        href: `/services/${service.slug}`,
+        year: resolveYear(),
+    }));
+}
+
+export default function Projects({ hero, projects = [], services = [] }: ProjectsProps) {
+    const { t, language } = useLanguage();
+    const [activeFilter, setActiveFilter] = useState(() => readCategoryFromUrl());
+    const [searchQuery, setSearchQuery] = useState('');
+    const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
+
+    const usingCapabilities = projects.length === 0;
+    const allItems = useMemo(
+        () => (usingCapabilities ? buildFromServices(services) : buildFromProjects(projects)),
+        [usingCapabilities, services, projects],
+    );
+
+    useEffect(() => {
+        setActiveFilter(readCategoryFromUrl());
+    }, []);
+
+    const filters = useMemo(() => {
+        const categoriesWithItems = new Set(allItems.map((item) => item.category.toLowerCase()));
+        const available = FILTER_DEFINITIONS.filter(
+            (filter) => filter.id === 'all' || categoriesWithItems.has(filter.id),
+        );
+
+        return available.map((filter) => ({
+            id: filter.id,
+            label: t(filter.labelKey),
+        }));
+    }, [allItems, t]);
+
+    const filteredItems = useMemo(() => {
+        let items = allItems;
+
+        if (activeFilter !== 'all') {
+            items = items.filter((item) => item.category.toLowerCase() === activeFilter);
+        }
+
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+
+            items = items.filter((item) => {
+                const title = language === 'en' ? item.title_en : item.title_ar;
+                const location = language === 'en' ? item.location_en : item.location_ar;
+
+                return (
+                    title.toLowerCase().includes(query) ||
+                    location.toLowerCase().includes(query) ||
+                    item.category.toLowerCase().includes(query) ||
+                    (item.clientName?.toLowerCase().includes(query) ?? false)
+                );
+            });
+        }
+
+        return items;
+    }, [allItems, activeFilter, searchQuery, language]);
+
+    const visibleItems = filteredItems.slice(0, visibleCount);
+    const hasMore = visibleCount < filteredItems.length;
+
+    const searchResults: SearchResult[] = useMemo(() => {
+        if (!searchQuery.trim()) {
+            return [];
+        }
+
+        const query = searchQuery.toLowerCase();
+
+        return allItems
+            .filter((item) => {
+                const title = language === 'en' ? item.title_en : item.title_ar;
+
+                return title.toLowerCase().includes(query);
+            })
+            .slice(0, 6)
+            .map((item) => ({
+                id: item.id,
+                title: language === 'en' ? item.title_en : item.title_ar,
+                category: formatCategoryLabel(item.category, language, t),
+                image: item.image,
+                href: item.href,
+            }));
+    }, [allItems, searchQuery, language, t]);
+
+    const handleFilterChange = useCallback((category: string) => {
+        setActiveFilter(category);
+        setVisibleCount(INITIAL_VISIBLE);
+        updateCategoryInUrl(category);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
+    const handleSearchChange = useCallback((query: string) => {
+        setSearchQuery(query);
+        setVisibleCount(INITIAL_VISIBLE);
+    }, []);
 
     const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
     const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
@@ -154,202 +267,114 @@ export default function Projects({ hero, projects = [] }: ProjectsProps) {
     return (
         <>
             <Head>
-                <title>Deployment Capability & Compliance - Arkaan Construction Company</title>
+                <title>
+                    {language === 'en' ? 'Our Projects' : 'مشاريعنا'} - Arkaan Construction Company
+                </title>
                 <meta
                     name="description"
-                    content="How Arkaan Construction Company mobilizes, manages, and ensures compliant workforce deployment across the Kingdom of Saudi Arabia."
+                    content={
+                        language === 'en'
+                            ? 'Explore Arkaan Construction Company projects across commercial, residential, and industrial sectors in Saudi Arabia.'
+                            : 'استكشف مشاريع شركة أركان للإنشاءات في القطاعات التجارية والسكنية والصناعية في المملكة العربية السعودية.'
+                    }
                 />
-                <meta property="og:title" content="Deployment Capability & Compliance - Arkaan Construction Company" />
+                <meta property="og:title" content="Our Projects - Arkaan Construction Company" />
                 <meta property="og:url" content={currentUrl} />
                 <meta property="og:type" content="website" />
                 <link rel="canonical" href={currentUrl} />
             </Head>
+
             <Layout>
-                <PageHero
+                <ProjectsPageHero
                     hero={hero}
-                    fallbackTitle={t('projects.page.title')}
-                    fallbackSubtitle={t('projects.page.subtitle')}
+                    activeCategory={activeFilter}
+                    language={language}
+                    projectCount={allItems.length}
+                />
+
+                <ProjectsFilterBar
+                    filters={filters}
+                    activeFilter={activeFilter}
+                    onFilterChange={handleFilterChange}
+                    searchQuery={searchQuery}
+                    onSearchChange={handleSearchChange}
+                    searchResults={searchResults}
+                    resultCount={filteredItems.length}
                     language={language}
                 />
 
-                {displayProjects.length > 0 && (
-                    <>
-                        {/* Filters */}
-                        {filters.length > 1 && (
-                            <section className="top-16 z-40 border-b border-border bg-background py-8 lg:top-20">
-                                <div className="container-custom">
-                                    <div className="flex flex-wrap justify-center gap-2">
-                                        {filters.map((filter) => (
-                                            <Button
-                                                key={filter.id}
-                                                variant={activeFilter === filter.id ? 'default' : 'outline'}
-                                                size="sm"
-                                                onClick={() => handleFilterChange(filter.id)}
-                                                className={cn(activeFilter === filter.id && 'hero-gradient border-0')}
-                                            >
-                                                {filter.label}
-                                            </Button>
-                                        ))}
+                <section className="projects-grid">
+                    <div className="projects-grid__inner">
+                        {filteredItems.length === 0 ? (
+                            <div className="projects-grid__layout">
+                                <div className="projects-grid__empty">
+                                    <div className="projects-grid__empty-icon">
+                                        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                            <path d="M9 22V12h6v10" />
+                                        </svg>
                                     </div>
-                                </div>
-                            </section>
-                        )}
-
-                        {/* Projects Grid */}
-                        <section className="section-padding pb-0">
-                            <div className="container-custom">
-                                <div
-                                    className={cn(
-                                        'grid gap-6 md:grid-cols-2 lg:grid-cols-3 transition-all duration-500',
-                                        isFiltering ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0',
-                                    )}
-                                >
-                                    {filteredProjects.map((project, index) => (
-                                        <WhenVisible
-                                            key={project.id ?? index}
-                                            options={{ threshold: 0.1 }}
-                                            style={{ transitionDelay: `${index * 40}ms` }}
-                                        >
-                                            <Link
-                                                href={`/projects/${project.id}`}
-                                                className="card-elevated overflow-hidden group block hover:shadow-xl transition-shadow"
-                                            >
-                                                <div className="relative aspect-video overflow-hidden">
-                                                    <img
-                                                        src={project.image}
-                                                        alt={project.title}
-                                                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                                    />
-                                                    <div className="absolute left-4 top-4 rounded-full bg-primary/90 px-3 py-1 text-xs font-medium capitalize text-primary-foreground">
-                                                        {filters.find((f) => f.id === project.category)?.label}
-                                                    </div>
-                                                    <div className="absolute right-4 bottom-4 flex items-center gap-1 text-primary-foreground text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        {language === 'en' ? 'View' : 'عرض'}
-                                                        <ChevronRight className="h-4 w-4" />
-                                                    </div>
-                                                </div>
-                                                <div className="p-6">
-                                                    <h3 className="mb-2 text-xl font-bold text-foreground">{project.title}</h3>
-                                                    {project.client && (
-                                                        <div className="mb-2 flex items-center gap-2 text-sm text-primary">
-                                                            <Building2 className="h-4 w-4 shrink-0" />
-                                                            <span>{project.client.name}</span>
-                                                        </div>
-                                                    )}
-                                                    <p className="mb-4 text-sm text-muted-foreground line-clamp-2">{project.description}</p>
-                                                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                                                        <div className="flex items-center gap-1">
-                                                            <MapPin className="h-4 w-4 text-primary" />
-                                                            <span>{project.location}</span>
-                                                        </div>
-                                                        {project.workers && (
-                                                            <div className="flex items-center gap-1">
-                                                                <Users className="h-4 w-4 text-primary" />
-                                                                <span>
-                                                                    {project.workers} {language === 'en' ? 'Workers' : 'عامل'}
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </Link>
-                                        </WhenVisible>
-                                    ))}
+                                    <h2 className="projects-grid__empty-title">
+                                        {language === 'en' ? 'No projects found' : 'لم يتم العثور على مشاريع'}
+                                    </h2>
+                                    <p className="projects-grid__empty-text">
+                                        {searchQuery
+                                            ? language === 'en'
+                                                ? `No results match "${searchQuery}". Try a different search term.`
+                                                : `لا توجد نتائج لـ "${searchQuery}". جرّب مصطلح بحث مختلف.`
+                                            : language === 'en'
+                                              ? 'Try selecting a different category or check back soon.'
+                                              : 'جرّب اختيار فئة مختلفة أو عد لاحقاً.'}
+                                    </p>
                                 </div>
                             </div>
-                        </section>
-                    </>
-                )}
-
-                {/* Deployment Capability */}
-                <div className="section-padding">
-                    <div className="container-custom space-y-16">
-                        <WhenVisible>
-                            <section>
-                                <div className="mx-auto mb-12 max-w-2xl text-center">
-                                    <span className="eyebrow">{language === 'en' ? 'How We Mobilize' : 'كيف نعبئ القوى العاملة'}</span>
-                                    <h2 className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">
-                                        {language === 'en' ? 'Deployment Capability' : 'قدرة النشر والتعبئة'}
-                                    </h2>
-                                    <p className="mt-4 text-lg text-muted-foreground">
-                                        {language === 'en'
-                                            ? 'A structured mobilization process that ensures qualified personnel are deployed promptly while maintaining full compliance with Saudi labor regulations and client requirements.'
-                                            : 'عملية تعبئة منظمة تضمن نشر الكوادر المؤهلة بسرعة، مع الحفاظ على الامتثال الكامل لأنظمة العمل السعودية ومتطلبات العملاء.'}
-                                    </p>
-                                </div>
-
-                                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                                    {DEPLOYMENT_CAPABILITIES.map((cap, index) => (
-                                        <WhenVisible
-                                            key={cap.title_en}
-                                            className="card-elevated p-6"
-                                            options={{ threshold: 0.1 }}
-                                            style={{ transitionDelay: `${index * 60}ms` }}
-                                        >
-                                            <div className="mb-4 flex h-14 w-14 shrink-0 items-center justify-center rounded-sm hero-gradient border-b-2 border-accent">
-                                                <cap.icon className="h-7 w-7 text-primary-foreground" />
-                                            </div>
-                                            <h3 className="mb-2 text-lg font-semibold text-foreground">
-                                                {language === 'en' ? cap.title_en : cap.title_ar}
-                                            </h3>
-                                            <p className="text-sm text-muted-foreground">
-                                                {language === 'en' ? cap.desc_en : cap.desc_ar}
-                                            </p>
-                                        </WhenVisible>
+                        ) : (
+                            <>
+                                <div className="projects-grid__layout">
+                                    {visibleItems.map((item, index) => (
+                                        <ProjectCardFull
+                                            key={item.id}
+                                            href={item.href}
+                                            title={language === 'en' ? item.title_en : item.title_ar}
+                                            category={formatCategoryLabel(item.category, language, t)}
+                                            image={item.image}
+                                            year={item.year}
+                                            location={language === 'en' ? item.location_en : item.location_ar}
+                                            workers={item.workers}
+                                            featured={index === 0 && activeFilter === 'all' && !searchQuery}
+                                            language={language}
+                                        />
                                     ))}
                                 </div>
-                            </section>
-                        </WhenVisible>
 
-                        {/* Manpower Compliance */}
-                        <WhenVisible>
-                            <section className="relative overflow-hidden border-t-4 border-accent bg-primary p-8 lg:p-12">
-                                <ShieldCheck className="absolute -right-10 -top-10 h-56 w-56 text-primary-foreground/5" aria-hidden="true" />
-                                <div className="relative">
-                                    <span className="eyebrow text-accent">{language === 'en' ? 'Manpower Compliance' : 'امتثال القوى العاملة'}</span>
-                                    <h2 className="mt-2 mb-4 text-3xl font-bold text-primary-foreground sm:text-4xl">
-                                        {language === 'en' ? 'Fully Compliant, Every Deployment' : 'امتثال كامل مع كل عملية نشر'}
-                                    </h2>
-                                    <p className="mb-8 max-w-3xl text-primary-foreground/80">
-                                        {language === 'en'
-                                            ? 'We are committed to supplying qualified and compliant manpower that meets the highest standards of professionalism, safety, and regulatory compliance.'
-                                            : 'نحن ملتزمون بتوفير قوى عاملة مؤهلة وممتثلة تلبي أعلى معايير الاحترافية والسلامة والامتثال التنظيمي.'}
-                                    </p>
-                                    <div className="grid gap-4 sm:grid-cols-2">
-                                        {COMPLIANCE_STANDARDS.map((item) => (
-                                            <div key={item.en} className="flex items-start gap-3">
-                                                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
-                                                <span className="text-sm text-primary-foreground/90">
-                                                    {language === 'en' ? item.en : item.ar}
-                                                </span>
-                                            </div>
-                                        ))}
+                                {hasMore && (
+                                    <div className="projects-grid__load-more">
+                                        <button
+                                            type="button"
+                                            className="btn-gold-outline"
+                                            onClick={() => setVisibleCount((count) => count + LOAD_MORE_STEP)}
+                                            data-cursor-hover
+                                        >
+                                            {language === 'en' ? 'Load More Projects' : 'تحميل المزيد من المشاريع'}
+                                        </button>
                                     </div>
-                                </div>
-                            </section>
-                        </WhenVisible>
+                                )}
+                            </>
+                        )}
 
-                        {/* CTA */}
-                        <WhenVisible>
-                            <section className="text-center">
-                                <h2 className="mb-4 text-2xl font-bold text-foreground">
-                                    {language === 'en' ? 'Need Workforce Mobilized Quickly?' : 'هل تحتاج إلى تعبئة القوى العاملة بسرعة؟'}
-                                </h2>
-                                <p className="mx-auto mb-6 max-w-xl text-muted-foreground">
-                                    {language === 'en'
-                                        ? 'Tell us your requirements and our team will confirm deployment timelines and compliance details.'
-                                        : 'أخبرنا بمتطلباتك وسيؤكد فريقنا الجداول الزمنية للتعبئة وتفاصيل الامتثال.'}
-                                </p>
-                                <Button size="lg" className="gold-gradient text-accent-foreground" asChild>
-                                    <Link href="/hse-contact">
-                                        {language === 'en' ? 'Discuss Your Requirements' : 'ناقش متطلباتك معنا'}
-                                        <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
-                                    </Link>
-                                </Button>
-                            </section>
-                        </WhenVisible>
+                        {usingCapabilities && filteredItems.length > 0 && (
+                            <p className="projects-grid__note">
+                                {language === 'en'
+                                    ? 'Showing service capabilities until project case studies are added.'
+                                    : 'يتم عرض قدرات الخدمات حتى تتم إضافة دراسات حالة المشاريع.'}
+                                {' '}
+                                <Link href="/hse-contact" className="projects-grid__note-link" data-cursor-hover>
+                                    {language === 'en' ? 'Discuss your project' : 'ناقش مشروعك'}
+                                </Link>
+                            </p>
+                        )}
                     </div>
-                </div>
+                </section>
             </Layout>
         </>
     );

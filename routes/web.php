@@ -136,17 +136,16 @@ Route::get('/clients', function () {
 
 Route::get('/projects', function () {
     $hero = HeroSection::where('page', 'projects')->where('is_active', true)->first();
-    // No named case-study projects exist yet — until real ones are added,
-    // this page presents deployment-capability & compliance content instead
-    // (distinct from the service catalog on /services).
     $projects = Project::where('is_active', true)
         ->orderBy('order')
         ->with(['client', 'galleryItems'])
         ->get();
+    $services = Service::where('is_active', true)->orderBy('order')->get();
 
     return Inertia::render('Projects', [
         'hero' => $hero,
         'projects' => $projects,
+        'services' => $services,
     ]);
 })->name('projects');
 
