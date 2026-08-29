@@ -129,8 +129,7 @@ export default function HSEContact({
 
     return (
         <>
-            <Head>
-                <title>{pageTitle || 'HSE, Capabilities & Contact - Arkaan Construction Company'}</title>
+            <Head title={pageTitle || 'HSE, Capabilities & Contact - Arkaan Construction Company'}>
                 <meta name="description" content={metaDescription || 'Contact Arkaan Construction Company for civil construction, MEP, manpower, and cleaning services. Learn about our HSE commitment and why clients choose us.'} />
                 <meta name="keywords" content={metaKeywords || 'contact Arkaan Construction Company, HSE policy, safety commitment, construction contact, Saudi Arabia construction company'} />
 

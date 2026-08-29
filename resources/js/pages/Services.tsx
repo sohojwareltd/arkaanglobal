@@ -77,8 +77,7 @@ export default function Services({ hero, services = [] }: ServicesProps) {
 
     return (
         <>
-            <Head>
-                <title>{pageTitle}</title>
+            <Head title={pageTitle}>
                 <meta name="description" content={metaDesc} />
                 <meta name="keywords" content={metaKeywords} />
 

@@ -13,6 +13,7 @@ class Project extends Model
     use HasFactory;
 
     protected $fillable = [
+        'slug',
         'client_id',
         'title_en',
         'title_ar',
@@ -20,18 +21,31 @@ class Project extends Model
         'location_ar',
         'workers',
         'category',
+        'year',
+        'area_en',
+        'area_ar',
+        'duration_en',
+        'duration_ar',
+        'value_en',
+        'value_ar',
         'description_en',
         'description_ar',
+        'highlights_en',
+        'highlights_ar',
         'image',
         'order',
         'is_active',
+        'is_featured',
     ];
 
     protected function casts(): array
     {
         return [
             'is_active' => 'boolean',
+            'is_featured' => 'boolean',
             'order' => 'integer',
+            'highlights_en' => 'array',
+            'highlights_ar' => 'array',
         ];
     }
 

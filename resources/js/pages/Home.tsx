@@ -6,7 +6,6 @@ import ServicesSection from '@/components/home/ServicesSection';
 import HomeProjectsSection from '@/components/home/HomeProjectsSection';
 import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import StatsSection from '@/components/home/StatsSection';
-import CertificationsSection from '@/components/home/CertificationsSection';
 import ClientsSection from '@/components/home/ClientsSection';
 import SectionReveal from '@/components/ui/section-reveal';
 
@@ -45,15 +44,6 @@ interface WhyChooseUsItem {
     icon?: string;
 }
 
-interface CertificateItem {
-    id: number;
-    title_en: string;
-    title_ar: string;
-    description_en?: string;
-    description_ar?: string;
-    image?: string;
-}
-
 interface ClientItem {
     id: number;
     name: string;
@@ -84,7 +74,6 @@ interface HomeProps {
     stats?: StatItem[];
     projects?: ProjectItem[];
     whyChooseUs?: WhyChooseUsItem[];
-    certificates?: CertificateItem[];
     clients?: ClientItem[];
     clientCategories?: ClientCategoryItem[];
 }
@@ -95,7 +84,6 @@ export default function Home({
     stats = [],
     projects = [],
     whyChooseUs = [],
-    certificates = [],
     clients = [],
     clientCategories = [],
 }: HomeProps) {
@@ -138,10 +126,6 @@ export default function Home({
 
                 <SectionReveal>
                     <StatsSection stats={stats} />
-                </SectionReveal>
-
-                <SectionReveal delay={100}>
-                    <CertificationsSection certificates={certificates} />
                 </SectionReveal>
 
                 <SectionReveal delay={100}>

@@ -24,7 +24,6 @@ Route::get('/', function () {
     $stats = Stat::where('is_active', true)->orderBy('order')->get();
     $projects = Project::where('is_active', true)->orderBy('order')->limit(12)->get();
     $whyChooseUs = WhyChooseUs::where('is_active', true)->orderBy('order')->get();
-    $certificates = Certificate::where('is_active', true)->orderBy('order')->get();
     $clients = Client::where('is_active', true)->orderBy('order')->get();
     $clientCategories = ClientCategory::where('is_active', true)->orderBy('order')->get();
 
@@ -34,7 +33,6 @@ Route::get('/', function () {
         'stats' => $stats,
         'projects' => $projects,
         'whyChooseUs' => $whyChooseUs,
-        'certificates' => $certificates,
         'clients' => $clients,
         'clientCategories' => $clientCategories,
     ]);
@@ -156,13 +154,21 @@ Route::get('/projects/{project}', function (Project $project) {
 
     $project->load(['client', 'galleryItems']);
 
+    $relatedProjects = Project::query()
+        ->where('is_active', true)
+        ->where('id', '!=', $project->id)
+        ->where('category', $project->category)
+        ->orderBy('order')
+        ->limit(3)
+        ->get();
+
     $projectData = $project->toArray();
-    // Ensure gallery_items is always an array (Laravel uses snake_case in toArray)
     $projectData['gallery_items'] = $projectData['gallery_items'] ?? [];
     $projectData['galleryItems'] = $projectData['gallery_items'];
 
     return Inertia::render('ProjectDetail', [
         'project' => $projectData,
+        'relatedProjects' => $relatedProjects,
     ]);
 })->whereNumber('project')->name('projects.show');
 

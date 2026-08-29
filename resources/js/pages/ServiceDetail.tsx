@@ -144,12 +144,13 @@ export default function ServiceDetail({
     const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
     const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
+    const documentTitle = `${title} - Arkaan Construction Company`;
+
     return (
         <>
-            <Head>
-                <title>{`${title} - Arkaan Construction Company`}</title>
+            <Head title={documentTitle}>
                 <meta name="description" content={description} />
-                <meta property="og:title" content={`${title} - Arkaan Construction Company`} />
+                <meta property="og:title" content={documentTitle} />
                 <meta property="og:description" content={description} />
                 <meta property="og:url" content={currentUrl} />
                 <meta property="og:type" content="website" />

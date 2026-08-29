@@ -15,6 +15,9 @@ interface Project {
     location_ar: string;
     workers?: string;
     category: string;
+    year?: string;
+    duration_en?: string;
+    duration_ar?: string;
     description_en?: string;
     description_ar?: string;
     image?: string;
@@ -57,6 +60,7 @@ interface DisplayProject {
     image: string;
     href: string;
     year: string;
+    duration?: string;
     clientName?: string;
 }
 
@@ -83,6 +87,7 @@ const FILTER_DEFINITIONS = [
     { id: 'commercial', labelKey: 'projects.filter.commercial' },
     { id: 'residential', labelKey: 'projects.filter.residential' },
     { id: 'industrial', labelKey: 'projects.filter.industrial' },
+    { id: 'infrastructure', labelKey: 'projects.filter.infrastructure' },
 ] as const;
 
 function resolveImage(image?: string, slug?: string): string {
@@ -101,16 +106,24 @@ function resolveImage(image?: string, slug?: string): string {
     return FALLBACK_IMAGE;
 }
 
-function resolveYear(createdAt?: string): string {
-    if (createdAt) {
-        const year = new Date(createdAt).getFullYear();
+function resolveYear(year?: string, createdAt?: string): string {
+    if (year) {
+        return year;
+    }
 
-        if (! Number.isNaN(year)) {
-            return String(year);
+    if (createdAt) {
+        const parsedYear = new Date(createdAt).getFullYear();
+
+        if (! Number.isNaN(parsedYear)) {
+            return String(parsedYear);
         }
     }
 
     return String(new Date().getFullYear());
+}
+
+function normalizeCategory(category?: string | null): string {
+    return (category ?? 'commercial').toLowerCase();
 }
 
 function formatCategoryLabel(category: string, language: 'en' | 'ar', t: (key: string) => string): string {
@@ -144,13 +157,14 @@ function buildFromProjects(projects: Project[]): DisplayProject[] {
         id: project.id,
         title_en: project.title_en,
         title_ar: project.title_ar,
-        category: project.category.toLowerCase(),
+        category: normalizeCategory(project.category),
         location_en: project.location_en,
         location_ar: project.location_ar,
         workers: project.workers,
         image: resolveImage(project.image),
         href: `/projects/${project.id}`,
-        year: resolveYear(project.created_at),
+        year: resolveYear(project.year, project.created_at),
+        duration: project.duration_en,
         clientName: project.client?.name,
     }));
 }
@@ -261,27 +275,27 @@ export default function Projects({ hero, projects = [], services = [] }: Project
         setVisibleCount(INITIAL_VISIBLE);
     }, []);
 
-    const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
-    const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+    const pageTitle =
+        language === 'en'
+            ? 'Our Projects - Arkaan Construction Company'
+            : 'مشاريعنا - Arkaan Construction Company';
+    const pageDescription =
+        language === 'en'
+            ? 'Explore Arkaan Construction Company projects across commercial, residential, and industrial sectors in Saudi Arabia.'
+            : 'استكشف مشاريع شركة أركان للإنشاءات في القطاعات التجارية والسكنية والصناعية في المملكة العربية السعودية.';
+    const canonicalUrl =
+        typeof window !== 'undefined'
+            ? window.location.href
+            : 'https://arkaanconstruction.com/projects';
 
     return (
         <>
-            <Head>
-                <title>
-                    {language === 'en' ? 'Our Projects' : 'مشاريعنا'} - Arkaan Construction Company
-                </title>
-                <meta
-                    name="description"
-                    content={
-                        language === 'en'
-                            ? 'Explore Arkaan Construction Company projects across commercial, residential, and industrial sectors in Saudi Arabia.'
-                            : 'استكشف مشاريع شركة أركان للإنشاءات في القطاعات التجارية والسكنية والصناعية في المملكة العربية السعودية.'
-                    }
-                />
-                <meta property="og:title" content="Our Projects - Arkaan Construction Company" />
-                <meta property="og:url" content={currentUrl} />
+            <Head title={pageTitle}>
+                <meta name="description" content={pageDescription} />
+                <meta property="og:title" content={pageTitle} />
+                <meta property="og:url" content={canonicalUrl} />
                 <meta property="og:type" content="website" />
-                <link rel="canonical" href={currentUrl} />
+                <link rel="canonical" href={canonicalUrl} />
             </Head>
 
             <Layout>
