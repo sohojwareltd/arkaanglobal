@@ -25,7 +25,7 @@ interface ServiceItem {
     description_en?: string;
     description_ar?: string;
     image?: string;
-    items?: { title_en: string; title_ar: string }[];
+    items?: { text_en: string; text_ar: string }[];
 }
 
 interface ProjectItem {
@@ -129,7 +129,7 @@ export default function Home({
                 </SectionReveal>
 
                 <SectionReveal delay={100}>
-                    <HomeProjectsSection projects={projects} />
+                    <HomeProjectsSection projects={projects} services={services} />
                 </SectionReveal>
 
                 <SectionReveal delay={100}>

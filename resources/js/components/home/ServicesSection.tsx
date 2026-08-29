@@ -13,7 +13,40 @@ interface ServiceItemData {
     description_en?: string;
     description_ar?: string;
     image?: string;
-    items?: { title_en: string; title_ar: string }[];
+    items?: { text_en: string; text_ar: string }[];
+}
+
+const FALLBACK_TAGS_BY_SLUG: Record<string, { text_en: string; text_ar: string }[]> = {
+    construction: [
+        { text_en: 'General Construction', text_ar: 'البناء العام' },
+        { text_en: 'Civil Works', text_ar: 'الأعمال المدنية' },
+        { text_en: 'Finishing Works', text_ar: 'أعمال التشطيبات' },
+        { text_en: 'Maintenance', text_ar: 'الصيانة' },
+    ],
+    mep: [
+        { text_en: 'Electrical', text_ar: 'الكهرباء' },
+        { text_en: 'Plumbing', text_ar: 'السباكة' },
+        { text_en: 'HVAC', text_ar: 'التكييف' },
+        { text_en: 'Commissioning', text_ar: 'التشغيل' },
+    ],
+    manpower: [
+        { text_en: 'Skilled Labor', text_ar: 'عمالة ماهرة' },
+        { text_en: 'Semi-Skilled', text_ar: 'عمالة شبه ماهرة' },
+        { text_en: 'Site Support', text_ar: 'دعم الموقع' },
+        { text_en: 'Contract Supply', text_ar: 'توريد بالعقد' },
+    ],
+    cleaning: [
+        { text_en: 'Office Cleaning', text_ar: 'تنظيف المكاتب' },
+        { text_en: 'Industrial', text_ar: 'صناعي' },
+        { text_en: 'Post-Construction', text_ar: 'ما بعد البناء' },
+        { text_en: 'Periodic', text_ar: 'دوري' },
+    ],
+};
+
+function formatTagLabel(text: string): string {
+    const shortened = text.split(' — ')[0]?.split(' - ')[0]?.trim() ?? text;
+
+    return shortened.length > 36 ? `${shortened.slice(0, 33)}…` : shortened;
 }
 
 interface ServicesSectionProps {
@@ -72,7 +105,10 @@ export default function ServicesSection({ services = [] }: ServicesSectionProps)
                     {services.map((service, index) => {
                         const title = language === 'en' ? service.title_en : service.title_ar;
                         const description = language === 'en' ? service.description_en : service.description_ar;
-                        const tags = (service.items ?? []).slice(0, 4);
+                        const tags = (service.items?.length
+                            ? service.items
+                            : FALLBACK_TAGS_BY_SLUG[service.slug] ?? []
+                        ).slice(0, 4);
                         const category =
                             CATEGORY_BY_SLUG[service.slug] ??
                             service.slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
@@ -97,11 +133,18 @@ export default function ServicesSection({ services = [] }: ServicesSectionProps)
                                     <p className="service-row__text">{description}</p>
                                     {tags.length > 0 && (
                                         <div className="service-row__tags">
-                                            {tags.map((tag) => (
-                                                <span key={tag.title_en} className="service-row__tag">
-                                                    {language === 'en' ? tag.title_en : tag.title_ar}
-                                                </span>
-                                            ))}
+                                            {tags.map((tag) => {
+                                                const label =
+                                                    language === 'en'
+                                                        ? formatTagLabel(tag.text_en)
+                                                        : formatTagLabel(tag.text_ar);
+
+                                                return (
+                                                    <span key={tag.text_en} className="service-row__tag">
+                                                        {label}
+                                                    </span>
+                                                );
+                                            })}
                                         </div>
                                     )}
                                     <Link
