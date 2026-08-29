@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             LanguageSeeder::class,
             AdminSeeder::class,
             ContentSeeder::class,
+            JobPostingSeeder::class,
         ]);
     }
 }
