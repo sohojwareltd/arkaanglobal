@@ -1,114 +1,125 @@
 import React from 'react';
-import { HardHat, Users, Wrench, Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 
-import { Button } from '@/components/ui/button';
+import SectionHeader from '@/components/ui/section-header';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-    'hard-hat': HardHat,
-    'users': Users,
-    'wrench': Wrench,
-    'sparkles': Sparkles,
-};
-
-interface ServiceItem {
+interface ServiceItemData {
     id: number;
     slug: string;
     title_en: string;
     title_ar: string;
     description_en?: string;
     description_ar?: string;
-    icon?: string;
+    image?: string;
+    items?: { title_en: string; title_ar: string }[];
 }
 
 interface ServicesSectionProps {
-    services?: ServiceItem[];
+    services?: ServiceItemData[];
 }
 
-export default function ServicesSection({ services: propServices = [] }: ServicesSectionProps): JSX.Element {
+const IMAGE_BY_SLUG: Record<string, string> = {
+    construction: 'https://images.unsplash.com/photo-1541976590-713941681591?q=80&w=1400',
+    mep: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1400',
+    manpower: 'https://images.unsplash.com/photo-1587293852726-70cdb56c2866?q=80&w=1400',
+    cleaning: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=1400',
+};
+
+const CATEGORY_BY_SLUG: Record<string, string> = {
+    construction: 'Civil Engineering',
+    mep: 'MEP Works',
+    manpower: 'Workforce Supply',
+    cleaning: 'Facility Services',
+};
+
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1400';
+
+function resolveServiceImage(service: ServiceItemData): string {
+    if (service.image) {
+        if (service.image.startsWith('http')) {
+            return service.image;
+        }
+
+        return service.image.startsWith('/') ? service.image : `/storage/${service.image}`;
+    }
+
+    return IMAGE_BY_SLUG[service.slug] ?? FALLBACK_IMAGE;
+}
+
+export default function ServicesSection({ services = [] }: ServicesSectionProps): JSX.Element {
     const { t, direction, language } = useLanguage();
 
-    const services = propServices.length > 0
-        ? propServices.map((s) => {
-            const IconComponent = iconMap[s.icon || ''] || HardHat;
-            return {
-                icon: IconComponent,
-                title: language === 'en' ? s.title_en : s.title_ar,
-                description: language === 'en' ? (s.description_en || '') : (s.description_ar || ''),
-                link: `/services/${s.slug}`,
-            };
-        })
-        : [
-            { icon: Users, title: t('services.summary.manpower'), description: 'Comprehensive workforce deployment solutions', link: '/services/manpower' },
-            { icon: HardHat, title: t('services.summary.construction'), description: 'General construction, civil works, and MEP services', link: '/services/construction' },
-            { icon: Wrench, title: t('services.summary.cleaning'), description: 'Professional post-construction cleaning services', link: '/services/cleaning' },
-        ];
-
     return (
-        <section className="section-padding bg-muted/30">
-            <div className="container-custom">
-                {/* Header */}
-                <div className="mx-auto mb-12 max-w-2xl text-center">
-                    <span className="eyebrow">
-                        {t('services.title')}
-                    </span>
-                    <h2 className="mt-2 text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
-                        {t('services.subtitle')}
-                    </h2>
+        <section className="services-tabbed">
+            <div className="services-tabbed__inner">
+                <div className="services-tabbed__top">
+                    <SectionHeader
+                        tag={language === 'en' ? 'What We Offer' : 'ما نقدمه'}
+                        title={
+                            language === 'en' ? (
+                                <>Our <em>Services</em></>
+                            ) : (
+                                <>خدمات<em>نا</em></>
+                            )
+                        }
+                        subtitle={t('services.subtitle')}
+                    />
                 </div>
 
-                {/* Services Grid */}
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    {services.map((service) => {
-                        const IconComponent = service.icon;
+                <div className="services-tabbed__stack">
+                    {services.map((service, index) => {
+                        const title = language === 'en' ? service.title_en : service.title_ar;
+                        const description = language === 'en' ? service.description_en : service.description_ar;
+                        const tags = (service.items ?? []).slice(0, 4);
+                        const category =
+                            CATEGORY_BY_SLUG[service.slug] ??
+                            service.slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
                         return (
-                        <Link
-                            key={service.link}
-                            href={service.link}
-                            className="card-elevated group p-6"
-                        >
-                            <div className="mb-4 flex h-14 w-14 shrink-0 items-center justify-center rounded-sm hero-gradient border-b-2 border-accent transition-transform group-hover:scale-110">
-                                <IconComponent className="h-7 w-7 text-primary-foreground" />
+                            <div key={service.id} className="service-row">
+                                <div className="service-row__img-wrap">
+                                    <img
+                                        src={resolveServiceImage(service)}
+                                        alt={title}
+                                        className="service-row__img"
+                                        loading="lazy"
+                                    />
+                                    <div className="service-row__img-overlay" />
+                                </div>
+                                <div className="service-row__content">
+                                    <div className="service-row__number">
+                                        {String(index + 1).padStart(2, '0')}
+                                    </div>
+                                    <div className="service-row__category">{category}</div>
+                                    <h3 className="service-row__title">{title}</h3>
+                                    <p className="service-row__text">{description}</p>
+                                    {tags.length > 0 && (
+                                        <div className="service-row__tags">
+                                            {tags.map((tag) => (
+                                                <span key={tag.title_en} className="service-row__tag">
+                                                    {language === 'en' ? tag.title_en : tag.title_ar}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                    <Link
+                                        href={`/services/${service.slug}`}
+                                        className="service-row__link"
+                                        data-cursor-hover
+                                    >
+                                        {direction === 'ltr' ? 'View Solutions' : 'عرض الحلول'}
+                                        <ArrowRight
+                                            className={`h-4 w-4 ${direction === 'rtl' ? 'rotate-180' : ''}`}
+                                        />
+                                    </Link>
+                                </div>
                             </div>
-                            <h3 className="mb-2 text-xl font-semibold text-foreground">
-                                {service.title}
-                            </h3>
-                            <p className="mb-4 text-sm text-muted-foreground">
-                                {service.description}
-                            </p>
-                            <div className="flex items-center text-sm font-medium text-primary">
-                                <span>
-                                    {direction === 'ltr' ? 'Learn More' : 'اعرف المزيد'}
-                                </span>
-                                <ArrowRight
-                                    className={`ms-2 h-4 w-4 transition-transform group-hover:translate-x-1 ${
-                                        direction === 'rtl' ? 'rotate-180' : ''
-                                    }`}
-                                />
-                            </div>
-                        </Link>
                         );
                     })}
-                </div>
-
-                {/* CTA */}
-                <div className="mt-12 text-center">
-                    <Button
-                        size="lg"
-                        variant="outline"
-                        className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                        asChild
-                    >
-                        <Link href="/services">
-                            {direction === 'ltr'
-                                ? 'View All Services'
-                                : 'عرض جميع الخدمات'}
-                        </Link>
-                    </Button>
                 </div>
             </div>
         </section>
     );
 }
-

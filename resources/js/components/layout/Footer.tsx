@@ -10,30 +10,27 @@ interface ContactInfoMap {
 
 export default function Footer(): JSX.Element {
     const { t, language } = useLanguage();
-    const { contactInfo = {}, settings = {} } = usePage().props as {
+    const { contactInfo = {} } = usePage().props as {
         contactInfo?: ContactInfoMap;
-        settings?: Record<string, string | null>;
     };
 
     const getContactValue = (key: string): string => {
         const item = contactInfo?.[key];
-        if (!item) return '';
+        if (!item) {
+            return '';
+        }
+
         return language === 'en' ? item.value_en : item.value_ar;
     };
 
     const addressVal = getContactValue('address') || t('footer.address');
     const emailVal = getContactValue('email') || 'info@arkaanconstruction.com';
-    // The company profile doesn't publish CR/VAT numbers yet — only show
-    // this strip once real values are set in site settings, rather than a
-    // "to be added" placeholder.
-    const crNumber = settings['cr_number'] as string | undefined;
-    const vatNumber = settings['vat_number'] as string | undefined;
-    const hasRegistrationInfo = Boolean(crNumber || vatNumber);
 
     const quickLinks = [
         { path: '/', label: t('nav.home') },
         { path: '/about', label: t('nav.about') },
         { path: '/services', label: t('nav.services') },
+        { path: '/projects', label: language === 'en' ? 'Projects' : 'المشاريع' },
         { path: '/hse-contact', label: t('nav.hseContact') },
     ];
 
@@ -45,45 +42,26 @@ export default function Footer(): JSX.Element {
     ];
 
     return (
-        <footer className="bg-primary text-primary-foreground">
-            <div className="container-custom section-padding">
-                <div className="grid grid-cols-1 gap-8 lg:grid-cols-4 lg:gap-12">
-                    {/* Company Info */}
-                    <div>
-                        <div className="mb-4">
+        <footer className="site-footer">
+            <div className="container-custom pb-8">
+                <div className="grid grid-cols-1 gap-10 lg:grid-cols-4 lg:gap-12">
+                    <div className="lg:col-span-1">
+                        <Link href="/" className="mb-5 inline-flex items-center gap-3">
                             <img
                                 src="/logo-main.png"
                                 alt={language === 'en' ? 'Arkaan Construction Company' : 'شركة أركان للمقاولات'}
-                                className="h-16 w-auto"
+                                className="h-12 w-auto"
                             />
-                        </div>
-                        <p className="mb-6 text-sm text-primary-foreground/80">
-                            {t('footer.description')}
-                        </p>
-                        <div className="flex flex-col gap-3 text-sm">
-                            <div className="flex items-center gap-3">
-                                <MapPin className="h-4 w-4 text-primary-foreground/80 shrink-0" />
-                                <span>{addressVal}</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <Mail className="h-4 w-4 text-primary-foreground/80 shrink-0" />
-                                <a href={`mailto:${emailVal}`} className="hover:text-primary-foreground transition-colors">
-                                    {emailVal}
-                                </a>
-                            </div>
-                        </div>
+                        </Link>
+                        <p className="mb-6 text-sm leading-relaxed text-muted-foreground">{t('footer.description')}</p>
                     </div>
 
-                    {/* Quick Links */}
                     <div>
-                        <h4 className="mb-4 text-lg font-semibold">{t('footer.quickLinks')}</h4>
-                        <ul className="space-y-2">
+                        <h4 className="footer__col-title">{t('footer.quickLinks')}</h4>
+                        <ul className="flex flex-col gap-3">
                             {quickLinks.map((link) => (
                                 <li key={link.path}>
-                                    <Link
-                                        href={link.path}
-                                        className="text-sm text-primary-foreground/80 transition-colors hover:text-primary-foreground"
-                                    >
+                                    <Link href={link.path} className="footer__link">
                                         {link.label}
                                     </Link>
                                 </li>
@@ -91,16 +69,12 @@ export default function Footer(): JSX.Element {
                         </ul>
                     </div>
 
-                    {/* Services */}
                     <div>
-                        <h4 className="mb-4 text-lg font-semibold">{t('footer.services')}</h4>
-                        <ul className="space-y-2">
+                        <h4 className="footer__col-title">{t('footer.services')}</h4>
+                        <ul className="flex flex-col gap-3">
                             {services.map((service) => (
                                 <li key={service.path}>
-                                    <Link
-                                        href={service.path}
-                                        className="text-sm text-primary-foreground/80 transition-colors hover:text-primary-foreground"
-                                    >
+                                    <Link href={service.path} className="footer__link">
                                         {service.label}
                                     </Link>
                                 </li>
@@ -108,74 +82,37 @@ export default function Footer(): JSX.Element {
                         </ul>
                     </div>
 
-                    {/* Contact */}
                     <div>
-                        <h4 className="mb-4 text-lg font-semibold">{t('footer.contact')}</h4>
-                        <ul className="space-y-2 text-sm text-primary-foreground/80">
-                            <li>{getContactValue('hours') || t('contact.info.hours.value')}</li>
-                            <li>
-                                <Link
-                                    href="/hse-contact"
-                                    className="transition-colors hover:text-primary-foreground"
-                                >
-                                    {t('nav.hseContact')}
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                {/* Registration Info Strip — only shown once real CR/VAT numbers are set */}
-                <div className="mt-12 border-t border-primary-foreground/20 pt-6">
-                    <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-primary-foreground/70">
-                        {hasRegistrationInfo && crNumber && (
-                            <div>
-                                <span className="font-semibold">{t('footer.cr.label')}: </span>
-                                <span>{crNumber}</span>
+                        <h4 className="footer__col-title">{t('footer.contact')}</h4>
+                        <div className="flex flex-col gap-4">
+                            <div className="flex items-start gap-3">
+                                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                                <span className="text-sm leading-relaxed text-muted-foreground">{addressVal}</span>
                             </div>
-                        )}
-                        {hasRegistrationInfo && vatNumber && (
-                            <div>
-                                <span className="font-semibold">{t('footer.vat.label')}: </span>
-                                <span>{vatNumber}</span>
+                            <div className="flex items-center gap-3">
+                                <Mail className="h-4 w-4 shrink-0 text-primary" />
+                                <a href={`mailto:${emailVal}`} className="footer__link">
+                                    {emailVal}
+                                </a>
                             </div>
-                        )}
-                        <div>
-                            <a
-                                href="/company-profile.pdf"
-                                download
-                                className="flex items-center gap-2 transition-colors hover:text-primary-foreground"
-                            >
-                                <span>{t('footer.downloadProfile')}</span>
-                            </a>
                         </div>
                     </div>
                 </div>
 
-                {/* Bottom Bar */}
-                <div className="mt-8 border-t border-primary-foreground/20 pt-8">
-                    <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-                        <p className="text-sm text-primary-foreground/60">
-                            © {new Date().getFullYear()} Arkaan Construction Company. {t('footer.rights')}
-                        </p>
-                        <div className="flex items-center gap-4">
-                            <Link
-                                href="/privacy"
-                                className="text-sm text-primary-foreground/60 transition-colors hover:text-primary-foreground"
-                            >
-                                Privacy Policy
-                            </Link>
-                            <Link
-                                href="/terms"
-                                className="text-sm text-primary-foreground/60 transition-colors hover:text-primary-foreground"
-                            >
-                                Terms of Service
-                            </Link>
-                        </div>
+                <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
+                    <p className="text-xs text-muted-foreground">
+                        © {new Date().getFullYear()} Arkaan Construction Company. {t('footer.rights')}
+                    </p>
+                    <div className="flex items-center gap-6">
+                        <Link href="/privacy" className="text-xs text-muted-foreground transition-colors hover:text-primary">
+                            Privacy Policy
+                        </Link>
+                        <Link href="/terms" className="text-xs text-muted-foreground transition-colors hover:text-primary">
+                            Terms of Service
+                        </Link>
                     </div>
                 </div>
             </div>
         </footer>
     );
 }
-

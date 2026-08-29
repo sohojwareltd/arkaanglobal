@@ -22,7 +22,7 @@ function StatItem({ value, prefix, suffix, label, delay }: StatItemProps): JSX.E
                     setIsVisible(true);
                 }
             },
-            { threshold: 0.1 },
+            { threshold: 0.2 },
         );
 
         if (ref.current) {
@@ -33,7 +33,9 @@ function StatItem({ value, prefix, suffix, label, delay }: StatItemProps): JSX.E
     }, []);
 
     useEffect(() => {
-        if (!isVisible) return;
+        if (!isVisible) {
+            return;
+        }
 
         const timeout = setTimeout(() => {
             const duration = 1500;
@@ -58,13 +60,13 @@ function StatItem({ value, prefix, suffix, label, delay }: StatItemProps): JSX.E
     }, [isVisible, value, delay]);
 
     return (
-        <div ref={ref} className="border-l-2 border-accent/40 px-6 text-center first:border-l-0">
-            <div className="mb-2 text-4xl font-bold text-accent sm:text-5xl lg:text-6xl">
+        <div ref={ref} className="stat-item">
+            <div className="stat-item__number">
                 {prefix}
                 {count.toLocaleString()}
-                {suffix}
+                <span className="stat-item__suffix">{suffix}</span>
             </div>
-            <p className="font-medium text-primary-foreground/80">{label}</p>
+            <div className="stat-item__label">{label}</div>
         </div>
     );
 }
@@ -80,52 +82,54 @@ interface StatsSectionProps {
     stats?: StatData[];
 }
 
-/** Splits a display value like "6+", "100%", or "4" into an animatable
- * number plus its non-numeric prefix/suffix, so real (non-fabricated)
- * stat strings from the DB can still count up smoothly. */
 function parseStatValue(raw: string): { value: number; prefix: string; suffix: string } {
     const match = raw.match(/^([^\d]*)([\d,]+)(.*)$/);
     if (!match) {
         return { value: 0, prefix: '', suffix: raw };
     }
     const [, prefix, digits, suffix] = match;
+
     return { value: parseInt(digits.replace(/,/g, ''), 10) || 0, prefix, suffix };
 }
+
+const STATS_BG =
+    'https://images.unsplash.com/photo-1541976590-713941681591?q=80&w=2070';
 
 export default function StatsSection({ stats: propStats = [] }: StatsSectionProps): JSX.Element {
     const { t, language } = useLanguage();
 
-    const stats = propStats.length > 0
-        ? propStats.map((stat) => ({
-            ...parseStatValue(stat.value),
-            label: language === 'en' ? stat.label_en : stat.label_ar,
-        }))
-        : [
-            { value: 4, prefix: '', suffix: '', label: t('stats.years') },
-            { value: 3, prefix: '', suffix: '', label: t('stats.workers') },
-        ];
+    const stats =
+        propStats.length > 0
+            ? propStats.map((stat) => ({
+                  ...parseStatValue(stat.value),
+                  label: language === 'en' ? stat.label_en : stat.label_ar,
+              }))
+            : [
+                  { value: 4, prefix: '', suffix: '+', label: t('stats.years') },
+                  { value: 3, prefix: '', suffix: '+', label: t('stats.workers') },
+              ];
 
     return (
-        <section className="section-padding relative overflow-hidden bg-primary">
-            <div className="animate-kenburns absolute inset-0 opacity-10">
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1541976590-713941681591?q=80&w=1600')" }}
-                />
-            </div>
-            <div className="container-custom relative">
-                <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-12">
-                    {stats.map((stat, index) => (
-                        <StatItem
-                            key={stat.label}
-                            value={stat.value}
-                            prefix={stat.prefix}
-                            suffix={stat.suffix}
-                            label={stat.label}
-                            delay={index * 100}
-                        />
-                    ))}
-                </div>
+        <section
+            className="stats"
+            style={{
+                backgroundImage: `url('${STATS_BG}')`,
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: 'cover',
+            }}
+        >
+            <div className="stats__overlay" />
+            <div className="stats__inner">
+                {stats.map((stat, index) => (
+                    <StatItem
+                        key={stat.label}
+                        value={stat.value}
+                        prefix={stat.prefix}
+                        suffix={stat.suffix}
+                        label={stat.label}
+                        delay={index * 100}
+                    />
+                ))}
             </div>
         </section>
     );

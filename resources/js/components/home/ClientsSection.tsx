@@ -1,72 +1,102 @@
 import React from 'react';
-import { Link } from '@inertiajs/react';
-import { Building2, Landmark, Briefcase, Factory, LucideIcon } from 'lucide-react';
 
+import SectionHeader from '@/components/ui/section-header';
+import SectionReveal from '@/components/ui/section-reveal';
 import { useLanguage } from '@/contexts/LanguageContext';
 
-const iconMap: Record<string, LucideIcon> = {
-    building: Building2,
-    landmark: Landmark,
-    briefcase: Briefcase,
-    factory: Factory,
-};
-
-interface ClientCategoryItem {
+interface ClientItem {
     id: number;
-    name_en: string;
-    name_ar: string;
-    description_en?: string;
-    description_ar?: string;
-    icon?: string;
+    name: string;
+    abbr?: string;
+    logo?: string;
 }
 
 interface ClientsSectionProps {
-    clientCategories?: ClientCategoryItem[];
+    clients?: ClientItem[];
+    clientCategories?: { id: number; name_en: string; name_ar: string }[];
 }
 
-export default function ClientsSection({ clientCategories: categories = [] }: ClientsSectionProps): JSX.Element {
+function resolveLogoUrl(logo?: string): string | null {
+    if (!logo) {
+        return null;
+    }
+    if (logo.startsWith('http')) {
+        return logo;
+    }
+
+    return logo.startsWith('/') ? logo : `/storage/${logo}`;
+}
+
+function ClientCard({ label, logo }: { label: string; logo: string | null }): JSX.Element {
+    return (
+        <div className="client-logo-card">
+            {logo ? (
+                <img src={logo} alt={label} className="client-logo-card__img" loading="lazy" />
+            ) : (
+                <span className="client-logo-card__text">{label}</span>
+            )}
+        </div>
+    );
+}
+
+export default function ClientsSection({ clients = [], clientCategories = [] }: ClientsSectionProps): JSX.Element {
     const { t, language } = useLanguage();
 
+    const displayItems =
+        clients.length > 0
+            ? clients.map((c) => ({ id: c.id, label: c.name, logo: resolveLogoUrl(c.logo) }))
+            : clientCategories.map((c) => ({
+                  id: c.id,
+                  label: language === 'en' ? c.name_en : c.name_ar,
+                  logo: null as string | null,
+              }));
+
+    const row1 = [...displayItems, ...displayItems];
+    const row2 = [...displayItems.slice().reverse(), ...displayItems.slice().reverse()];
+
     return (
-        <section className="section-padding bg-muted/30">
-            <div className="container-custom">
-                {/* Header */}
-                <div className="mx-auto mb-12 max-w-2xl text-center">
-                    <span className="eyebrow">
-                        {t('clients.title')}
-                    </span>
-                    <h2 className="mt-2 text-3xl font-bold text-foreground sm:text-4xl">
-                        {t('clients.subtitle')}
-                    </h2>
-                </div>
+        <section className="clients-section">
+            <div className="clients-section__inner">
+                <SectionReveal>
+                    <SectionHeader
+                        tag={t('clients.title')}
+                        title={
+                            language === 'en' ? (
+                                <>Our <em>Clients</em></>
+                            ) : (
+                                <>عملاؤ<em>نا</em></>
+                            )
+                        }
+                        subtitle={
+                            language === 'en'
+                                ? 'Trusted by leading organizations across public and private sectors.'
+                                : 'موثوق به من قبل المؤسسات الرائدة في القطاعين العام والخاص.'
+                        }
+                    />
+                </SectionReveal>
 
-                {/* Sector Categories */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    {categories.map((category) => {
-                        const Icon = iconMap[category.icon || ''] || Building2;
-                        return (
-                            <Link
-                                key={category.id}
-                                href="/clients"
-                                className="card-elevated flex flex-col items-center gap-3 p-6 text-center hover:border-primary/50"
-                            >
-                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sm hero-gradient border-b-2 border-accent">
-                                    <Icon className="h-6 w-6 text-primary-foreground" />
-                                </div>
-                                <div className="text-sm font-semibold text-foreground">
-                                    {language === 'en' ? category.name_en : category.name_ar}
-                                </div>
-                            </Link>
-                        );
-                    })}
-                </div>
+                {displayItems.length > 0 && (
+                    <div className="clients__viewport">
+                        <div className="clients__edge-fade clients__edge-fade--left" />
+                        <div className="clients__edge-fade clients__edge-fade--right" />
 
-                {/* Trust Text */}
-                <p className="mt-8 text-center text-muted-foreground">
-                    {language === 'en'
-                        ? 'Serving government, semi-government, industrial, and private sector clients across the Kingdom of Saudi Arabia'
-                        : 'نخدم عملاء القطاعات الحكومية وشبه الحكومية والصناعية والخاصة في جميع أنحاء المملكة العربية السعودية'}
-                </p>
+                        <div className="clients__row">
+                            <div className="clients__track clients__track--left">
+                                {row1.map((item, index) => (
+                                    <ClientCard key={`l-${item.id}-${index}`} label={item.label} logo={item.logo} />
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="clients__row">
+                            <div className="clients__track clients__track--right">
+                                {row2.map((item, index) => (
+                                    <ClientCard key={`r-${item.id}-${index}`} label={item.label} logo={item.logo} />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </section>
     );

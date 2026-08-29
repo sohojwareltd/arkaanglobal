@@ -22,18 +22,20 @@ Route::get('/', function () {
     $hero = HeroSection::where('page', 'home')->where('is_active', true)->first();
     $services = Service::where('is_active', true)->orderBy('order')->with('items')->get();
     $stats = Stat::where('is_active', true)->orderBy('order')->get();
-    $aboutOverview = AboutContent::where('key', 'overview')->first();
-    $vision = AboutContent::where('key', 'vision')->first();
-    $mission = AboutContent::where('key', 'mission')->first();
+    $projects = Project::where('is_active', true)->orderBy('order')->limit(12)->get();
+    $whyChooseUs = WhyChooseUs::where('is_active', true)->orderBy('order')->get();
+    $certificates = Certificate::where('is_active', true)->orderBy('order')->get();
+    $clients = Client::where('is_active', true)->orderBy('order')->get();
     $clientCategories = ClientCategory::where('is_active', true)->orderBy('order')->get();
 
     return Inertia::render('Home', [
         'hero' => $hero,
         'services' => $services,
         'stats' => $stats,
-        'aboutOverview' => $aboutOverview,
-        'vision' => $vision,
-        'mission' => $mission,
+        'projects' => $projects,
+        'whyChooseUs' => $whyChooseUs,
+        'certificates' => $certificates,
+        'clients' => $clients,
         'clientCategories' => $clientCategories,
     ]);
 })->name('home');
