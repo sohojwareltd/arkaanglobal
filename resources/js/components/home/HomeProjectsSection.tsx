@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 
+import SectionHeader from '@/components/ui/section-header';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
@@ -171,31 +172,30 @@ export default function HomeProjectsSection({
         <section className="projects">
             <div className="projects__inner">
                 <div className="projects__header">
-                    <div>
-                        <span className="section-tag">
-                            {language === 'en' ? 'Our Work' : 'أعمالنا'}
-                        </span>
-                        <h2 className="section-title">
-                            {language === 'en' ? (
+                    <SectionHeader
+                        tag={language === 'en' ? 'Our Work' : 'أعمالنا'}
+                        title={
+                            language === 'en' ? (
                                 <>
                                     Our <em>Projects</em>
                                 </>
                             ) : (
                                 <>
-                                    مشاريع<em>نا</em>
+                                    مشاريع <em>نا</em>
                                 </>
-                            )}
-                        </h2>
-                        <p className="section-subtitle">
-                            {usingCapabilities
+                            )
+                        }
+                        subtitle={
+                            usingCapabilities
                                 ? language === 'en'
                                     ? 'Explore our core service capabilities across construction, MEP, manpower, and cleaning.'
                                     : 'استكشف قدراتنا الأساسية في البناء والأعمال الكهروميكانيكية والقوى العاملة والتنظيف.'
                                 : language === 'en'
                                   ? 'Explore our portfolio of completed projects across all sectors.'
-                                  : 'استكشف محفظة مشاريعنا المكتملة في جميع القطاعات.'}
-                        </p>
-                    </div>
+                                  : 'استكشف محفظة مشاريعنا المكتملة في جميع القطاعات.'
+                        }
+                        centered={false}
+                    />
                 </div>
 
                 {categories.length > 2 && (

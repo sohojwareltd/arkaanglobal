@@ -1,0 +1,1 @@
+function t(e){return e?"finished":"ongoing"}function i(e,n){return e==="finished"?n==="en"?"Finished":"مكتمل":n==="en"?"Ongoing":"جاري"}function o(e,n){const r=new Date(e);return Number.isNaN(r.getTime())?e:r.toLocaleDateString(n==="en"?"en-GB":"ar-SA",{year:"numeric",month:"short",day:"numeric"})}export{o as f,i as p,t as r};

@@ -10,6 +10,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class ProjectResource extends Resource
@@ -78,7 +79,25 @@ class ProjectResource extends Resource
                                             ->label('Completion Year')
                                             ->maxLength(4)
                                             ->placeholder('2024')
-                                            ->helperText('Shown on project cards and detail stats'),
+                                            ->helperText('Auto-filled from end date when empty'),
+                                        Forms\Components\DatePicker::make('start_date')
+                                            ->label('Start Date')
+                                            ->native(false)
+                                            ->displayFormat('d M Y'),
+                                        Forms\Components\DatePicker::make('end_date')
+                                            ->label('End Date')
+                                            ->native(false)
+                                            ->displayFormat('d M Y')
+                                            ->helperText('Leave empty while the project is still ongoing'),
+                                        Forms\Components\TextInput::make('label_en')
+                                            ->label('Badge Label (English)')
+                                            ->maxLength(255)
+                                            ->placeholder('Mega Project')
+                                            ->helperText('Optional short label shown on project cards'),
+                                        Forms\Components\TextInput::make('label_ar')
+                                            ->label('Badge Label (Arabic)')
+                                            ->maxLength(255)
+                                            ->placeholder('مشروع ضخم'),
                                         Forms\Components\Toggle::make('is_featured')
                                             ->label('Featured Project')
                                             ->helperText('Shows a featured badge on listing cards'),
@@ -129,13 +148,31 @@ class ProjectResource extends Resource
                                 Forms\Components\Section::make('About This Project')
                                     ->description('Long-form description shown on the project detail page')
                                     ->schema([
-                                        Forms\Components\Textarea::make('description_en')
+                                        Forms\Components\RichEditor::make('description_en')
                                             ->label('Description (English)')
-                                            ->rows(8)
+                                            ->toolbarButtons([
+                                                'bold',
+                                                'italic',
+                                                'underline',
+                                                'bulletList',
+                                                'orderedList',
+                                                'link',
+                                                'h2',
+                                                'h3',
+                                            ])
                                             ->columnSpanFull(),
-                                        Forms\Components\Textarea::make('description_ar')
+                                        Forms\Components\RichEditor::make('description_ar')
                                             ->label('Description (Arabic)')
-                                            ->rows(8)
+                                            ->toolbarButtons([
+                                                'bold',
+                                                'italic',
+                                                'underline',
+                                                'bulletList',
+                                                'orderedList',
+                                                'link',
+                                                'h2',
+                                                'h3',
+                                            ])
                                             ->columnSpanFull(),
                                     ]),
                                 Forms\Components\Section::make('Project Highlights')
@@ -240,6 +277,26 @@ class ProjectResource extends Resource
                 Tables\Columns\TextColumn::make('category')
                     ->badge()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->getStateUsing(fn (Project $record): string => $record->isFinished() ? 'Finished' : 'Ongoing')
+                    ->color(fn (string $state): string => $state === 'Finished' ? 'success' : 'warning'),
+                Tables\Columns\TextColumn::make('start_date')
+                    ->label('Start')
+                    ->date('d M Y')
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('end_date')
+                    ->label('End')
+                    ->date('d M Y')
+                    ->placeholder('Ongoing')
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('label_en')
+                    ->label('Label')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('year')
                     ->label('Year')
                     ->sortable()
@@ -262,6 +319,18 @@ class ProjectResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('category')
                     ->options(self::categoryOptions()),
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'ongoing' => 'Ongoing',
+                        'finished' => 'Finished',
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return match ($data['value'] ?? null) {
+                            'finished' => $query->whereNotNull('end_date'),
+                            'ongoing' => $query->whereNull('end_date'),
+                            default => $query,
+                        };
+                    }),
                 Tables\Filters\TernaryFilter::make('is_featured')
                     ->label('Featured'),
                 Tables\Filters\TernaryFilter::make('is_active')

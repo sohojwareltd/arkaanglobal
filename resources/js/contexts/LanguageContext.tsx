@@ -26,7 +26,7 @@ const translations: Record<Language, Record<string, string>> = {
         'nav.home': 'Home',
         'nav.about': 'About Us',
         'nav.services': 'Services',
-        'nav.hseContact': 'HSE & Contact',
+        'nav.hseContact': 'HSE',
 
         // Hero
         'hero.title': 'Your Trusted Partner in Construction and Workforce Solutions',

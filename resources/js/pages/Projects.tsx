@@ -16,6 +16,10 @@ interface Project {
     workers?: string;
     category: string;
     year?: string;
+    start_date?: string;
+    end_date?: string | null;
+    label_en?: string;
+    label_ar?: string;
     duration_en?: string;
     duration_ar?: string;
     description_en?: string;
@@ -60,7 +64,11 @@ interface DisplayProject {
     image: string;
     href: string;
     year: string;
-    duration?: string;
+    duration_en?: string;
+    duration_ar?: string;
+    label_en?: string;
+    label_ar?: string;
+    end_date?: string | null;
     clientName?: string;
 }
 
@@ -164,7 +172,11 @@ function buildFromProjects(projects: Project[]): DisplayProject[] {
         image: resolveImage(project.image),
         href: `/projects/${project.id}`,
         year: resolveYear(project.year, project.created_at),
-        duration: project.duration_en,
+        duration_en: project.duration_en,
+        duration_ar: project.duration_ar,
+        label_en: project.label_en,
+        label_ar: project.label_ar,
+        end_date: project.end_date,
         clientName: project.client?.name,
     }));
 }
@@ -355,6 +367,8 @@ export default function Projects({ hero, projects = [], services = [] }: Project
                                             year={item.year}
                                             location={language === 'en' ? item.location_en : item.location_ar}
                                             workers={item.workers}
+                                            label={language === 'en' ? item.label_en : item.label_ar}
+                                            endDate={item.end_date}
                                             featured={index === 0 && activeFilter === 'all' && !searchQuery}
                                             language={language}
                                         />

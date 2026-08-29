@@ -22,6 +22,10 @@ class Project extends Model
         'workers',
         'category',
         'year',
+        'start_date',
+        'end_date',
+        'label_en',
+        'label_ar',
         'area_en',
         'area_ar',
         'duration_en',
@@ -44,9 +48,20 @@ class Project extends Model
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
             'order' => 'integer',
+            'start_date' => 'date',
+            'end_date' => 'date',
             'highlights_en' => 'array',
             'highlights_ar' => 'array',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (Project $project): void {
+            if ($project->end_date && ! $project->year) {
+                $project->year = $project->end_date->format('Y');
+            }
+        });
     }
 
     public function client(): BelongsTo
@@ -57,5 +72,20 @@ class Project extends Model
     public function galleryItems(): HasMany
     {
         return $this->hasMany(ProjectGalleryItem::class)->orderBy('order');
+    }
+
+    public function isFinished(): bool
+    {
+        return $this->end_date !== null;
+    }
+
+    public function isOngoing(): bool
+    {
+        return $this->end_date === null;
+    }
+
+    public function status(): string
+    {
+        return $this->isFinished() ? 'finished' : 'ongoing';
     }
 }

@@ -5,6 +5,11 @@ import { ArrowRight, Clock, MapPin } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import ProjectImageSlider from '@/components/projects/ProjectImageSlider';
 import { useLanguage } from '@/contexts/LanguageContext';
+import {
+    formatProjectDate,
+    projectStatusLabel,
+    resolveProjectStatus,
+} from '@/lib/project-utils';
 
 interface GalleryItem {
     id: number;
@@ -22,6 +27,10 @@ interface Project {
     workers?: string;
     category: string;
     year?: string;
+    start_date?: string;
+    end_date?: string | null;
+    label_en?: string;
+    label_ar?: string;
     area_en?: string;
     area_ar?: string;
     duration_en?: string;
@@ -48,6 +57,9 @@ interface RelatedProject {
     year?: string;
     duration_en?: string;
     duration_ar?: string;
+    end_date?: string | null;
+    label_en?: string;
+    label_ar?: string;
     image?: string;
 }
 
@@ -171,8 +183,10 @@ export default function ProjectDetail({ project, relatedProjects = [] }: Project
     const area = project ? (language === 'en' ? project.area_en : project.area_ar) : '';
     const duration = project ? (language === 'en' ? project.duration_en : project.duration_ar) : '';
     const value = project ? (language === 'en' ? project.value_en : project.value_ar) : '';
+    const label = project ? (language === 'en' ? project.label_en : project.label_ar) : '';
     const categoryLabel = project ? formatCategoryLabel(project.category, language) : '';
     const galleryImages = project ? buildGalleryImages(project) : [];
+    const status = project ? resolveProjectStatus(project.end_date) : 'ongoing';
 
     const highlights = useMemo(() => {
         if (!project) {
@@ -210,6 +224,25 @@ export default function ProjectDetail({ project, relatedProjects = [] }: Project
         }
 
         const rows: DetailRow[] = [];
+
+        rows.push({
+            key: language === 'en' ? 'Status' : 'الحالة',
+            value: projectStatusLabel(status, language),
+        });
+
+        if (project.start_date) {
+            rows.push({
+                key: language === 'en' ? 'Start Date' : 'تاريخ البدء',
+                value: formatProjectDate(project.start_date, language),
+            });
+        }
+
+        if (project.end_date) {
+            rows.push({
+                key: language === 'en' ? 'End Date' : 'تاريخ الانتهاء',
+                value: formatProjectDate(project.end_date, language),
+            });
+        }
 
         if (project.client?.name) {
             rows.push({
@@ -254,7 +287,7 @@ export default function ProjectDetail({ project, relatedProjects = [] }: Project
         }
 
         return rows.filter((row) => row.value && row.value !== '—' && row.value !== 'N/A');
-    }, [language, project, area, duration, value]);
+    }, [language, project, area, duration, value, status]);
 
     const metaStats = useMemo(() => {
         if (!project) {
@@ -312,11 +345,13 @@ export default function ProjectDetail({ project, relatedProjects = [] }: Project
     }
 
     const pageTitle = `${title} - Arkaan Construction Company`;
+    const metaDescription =
+        description?.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160) ?? title;
 
     return (
         <>
             <Head title={pageTitle}>
-                <meta name="description" content={description ?? title} />
+                <meta name="description" content={metaDescription} />
             </Head>
 
             <Layout>
@@ -325,6 +360,15 @@ export default function ProjectDetail({ project, relatedProjects = [] }: Project
 
                     <div className="project-detail-header__inner">
                         <div className="project-detail-meta">
+                            <div className="project-detail-meta__badges">
+                                <span className={`project-status-badge project-status-badge--${status}`}>
+                                    {projectStatusLabel(status, language)}
+                                </span>
+                                {label && (
+                                    <span className="project-detail-meta__label">{label}</span>
+                                )}
+                            </div>
+
                             <div className="project-detail-meta__category">
                                 <span className="project-detail-meta__dot" />
                                 {categoryLabel}
@@ -362,7 +406,10 @@ export default function ProjectDetail({ project, relatedProjects = [] }: Project
                             </h2>
 
                             {description && (
-                                <p className="project-info__description">{description}</p>
+                                <div
+                                    className="project-info__description project-info__description--rich"
+                                    dangerouslySetInnerHTML={{ __html: description }}
+                                />
                             )}
 
                             {highlights.length > 0 && (

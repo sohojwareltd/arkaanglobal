@@ -60,7 +60,7 @@ class ContentSeeder extends Seeder
             ['path' => '/services', 'label_en' => 'Services', 'label_ar' => 'خدماتنا', 'order' => 3],
             ['path' => '/projects', 'label_en' => 'Capabilities', 'label_ar' => 'إمكانياتنا', 'order' => 4],
             ['path' => '/clients', 'label_en' => 'Clients', 'label_ar' => 'عملاؤنا', 'order' => 5],
-            ['path' => '/hse-contact', 'label_en' => 'HSE & Contact', 'label_ar' => 'السلامة والاتصال', 'order' => 6],
+            ['path' => '/hse-contact', 'label_en' => 'HSE', 'label_ar' => 'السلامة والاتصال', 'order' => 6],
         ];
 
         foreach ($items as $item) {

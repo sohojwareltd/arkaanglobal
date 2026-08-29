@@ -147,7 +147,7 @@ class HandleInertiaRequests extends Middleware
                         ['path' => '/services', 'label_en' => 'Services', 'label_ar' => 'خدماتنا'],
                         ['path' => '/projects', 'label_en' => 'Projects', 'label_ar' => 'مشاريعنا'],
                         ['path' => '/clients', 'label_en' => 'Clients', 'label_ar' => 'عملاؤنا'],
-                        ['path' => '/hse-contact', 'label_en' => 'HSE & Contact', 'label_ar' => 'السلامة والاتصال'],
+                        ['path' => '/hse-contact', 'label_en' => 'HSE', 'label_ar' => 'السلامة والاتصال'],
                     ];
                 }
             })(),

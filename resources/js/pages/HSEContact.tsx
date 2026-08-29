@@ -163,7 +163,7 @@ export default function HSEContact({
             <Layout>
             <PageHero
                 hero={hero}
-                fallbackTitle={language === 'en' ? 'HSE & Contact' : 'السلامة والاتصال'}
+                fallbackTitle={language === 'en' ? 'HSE' : 'السلامة والاتصال'}
                 fallbackSubtitle={language === 'en' ? 'Health, Safety, Quality Commitment & Get In Touch' : 'الالتزام بالصحة والسلامة والجودة والتواصل معنا'}
                 language={language}
             />

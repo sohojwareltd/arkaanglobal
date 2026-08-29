@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from '@inertiajs/react';
 import { MapPin, Users } from 'lucide-react';
 
+import { projectStatusLabel, resolveProjectStatus, type ProjectStatus } from '@/lib/project-utils';
+
 interface ProjectCardFullProps {
     href: string;
     title: string;
@@ -11,6 +13,9 @@ interface ProjectCardFullProps {
     location?: string;
     workers?: string;
     featured?: boolean;
+    label?: string;
+    status?: ProjectStatus;
+    endDate?: string | null;
     language: 'en' | 'ar';
 }
 
@@ -23,8 +28,13 @@ export default function ProjectCardFull({
     location,
     workers,
     featured = false,
+    label,
+    status,
+    endDate,
     language,
 }: ProjectCardFullProps): JSX.Element {
+    const projectStatus = status ?? resolveProjectStatus(endDate);
+
     return (
         <Link href={href} className="project-card-full" data-cursor-hover>
             <div className="project-card-full__img-wrap">
@@ -35,6 +45,12 @@ export default function ProjectCardFull({
             {year && year !== '—' && (
                 <div className="project-card-full__badge">{year}</div>
             )}
+
+            <div
+                className={`project-status-badge project-status-badge--${projectStatus} project-card-full__status-badge`}
+            >
+                {projectStatusLabel(projectStatus, language)}
+            </div>
 
             {featured && (
                 <div className="project-card-full__featured-badge">
@@ -49,6 +65,9 @@ export default function ProjectCardFull({
             </div>
 
             <div className="project-card-full__content">
+                {label && (
+                    <div className="project-card-full__label-badge">{label}</div>
+                )}
                 <div className="project-card-full__category">{category}</div>
                 <div className="project-card-full__title">{title}</div>
 

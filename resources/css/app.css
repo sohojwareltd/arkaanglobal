@@ -480,7 +480,11 @@
         margin-bottom: 24px;
     }
 
-    .projects__header .section-subtitle {
+    .projects__header .section-title {
+        margin-bottom: 0;
+    }
+
+    .projects__header .section-title__sub {
         max-width: 520px;
     }
 
@@ -1238,6 +1242,102 @@
 
     .project-detail-meta {
         padding: 4px 0 0;
+    }
+
+    .project-detail-meta__badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .project-detail-meta__label {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 14px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #1a1208;
+        background: rgba(45, 106, 53, 0.08);
+        border: 1px solid rgba(45, 106, 53, 0.2);
+        border-radius: 100px;
+    }
+
+    .project-status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 14px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border-radius: 100px;
+    }
+
+    .project-status-badge--ongoing {
+        color: #9a6700;
+        background: rgba(234, 179, 8, 0.15);
+        border: 1px solid rgba(234, 179, 8, 0.35);
+    }
+
+    .project-status-badge--finished {
+        color: #1f4d26;
+        background: rgba(45, 106, 53, 0.12);
+        border: 1px solid rgba(45, 106, 53, 0.35);
+    }
+
+    .project-card-full__status-badge {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        z-index: 2;
+    }
+
+    .project-card-full__label-badge {
+        display: inline-block;
+        margin-bottom: 8px;
+        padding: 4px 12px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #fff;
+        background: rgba(45, 106, 53, 0.85);
+        border-radius: 100px;
+    }
+
+    .project-card-full:has(.project-card-full__featured-badge) .project-card-full__featured-badge {
+        top: 52px;
+    }
+
+    .project-info__description--rich ul,
+    .project-info__description--rich ol {
+        margin: 1rem 0;
+        padding-left: 1.25rem;
+    }
+
+    .project-info__description--rich li {
+        margin-bottom: 0.5rem;
+    }
+
+    .project-info__description--rich p {
+        margin-bottom: 1rem;
+    }
+
+    .project-info__description--rich h2,
+    .project-info__description--rich h3 {
+        margin: 1.5rem 0 0.75rem;
+        font-family: var(--font-display);
+        font-weight: 700;
+        color: var(--color-foreground);
+    }
+
+    .project-info__description--rich a {
+        color: var(--color-primary);
+        text-decoration: underline;
+        text-underline-offset: 3px;
     }
 
     .project-detail-meta__category {
