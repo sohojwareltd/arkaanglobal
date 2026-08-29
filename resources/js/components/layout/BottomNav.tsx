@@ -1,20 +1,40 @@
-import { Home, User, Layers, LayoutGrid, MessageCircle } from 'lucide-react';
+import { Briefcase, Home, Layers, LayoutGrid, MessageCircle, User, type LucideIcon } from 'lucide-react';
 import { Link, usePage } from '@inertiajs/react';
 
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
-const navItems = [
-    { path: '/', icon: Home, labelEn: 'Home', labelAr: 'الرئيسية' },
-    { path: '/about', icon: User, labelEn: 'About Us', labelAr: 'من نحن' },
-    { path: '/services', icon: Layers, labelEn: 'Services', labelAr: 'الخدمات' },
-    { path: '/projects', icon: LayoutGrid, labelEn: 'Projects', labelAr: 'المشاريع' },
-    { path: '/hse-contact', icon: MessageCircle, labelEn: 'Contact', labelAr: 'تواصل' },
-];
+interface NavigationItem {
+    path: string;
+    label_en: string;
+    label_ar: string;
+}
+
+const ICON_BY_PATH: Record<string, LucideIcon> = {
+    '/': Home,
+    '/about': User,
+    '/services': Layers,
+    '/projects': LayoutGrid,
+    '/careers': Briefcase,
+    '/hse-contact': MessageCircle,
+};
+
+const MOBILE_NAV_PATHS = ['/', '/services', '/projects', '/careers', '/hse-contact'];
 
 export default function BottomNav(): JSX.Element {
-    const { url } = usePage();
+    const { url, props } = usePage();
     const { language } = useLanguage();
+
+    const rawNav = props.navigation;
+    const navigation = Array.isArray(rawNav) ? (rawNav as NavigationItem[]) : [];
+
+    const navItems = navigation
+        .filter((item) => MOBILE_NAV_PATHS.includes(item.path))
+        .map((item) => ({
+            path: item.path,
+            icon: ICON_BY_PATH[item.path] ?? MessageCircle,
+            label: language === 'en' ? item.label_en : item.label_ar,
+        }));
 
     const isActive = (path: string): boolean => {
         if (path === '/') {
@@ -40,9 +60,7 @@ export default function BottomNav(): JSX.Element {
                             <span className="bottom-nav__icon-wrap">
                                 <Icon className="bottom-nav__icon" strokeWidth={active ? 2.5 : 2} />
                             </span>
-                            <span className="bottom-nav__label">
-                                {language === 'en' ? item.labelEn : item.labelAr}
-                            </span>
+                            <span className="bottom-nav__label">{item.label}</span>
                         </Link>
                     );
                 })}
