@@ -5,16 +5,8 @@ import HeroSection from '@/components/home/HeroSection';
 import ServicesSection from '@/components/home/ServicesSection';
 import HomeProjectsSection from '@/components/home/HomeProjectsSection';
 import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
-import StatsSection from '@/components/home/StatsSection';
 import ClientsSection from '@/components/home/ClientsSection';
 import SectionReveal from '@/components/ui/section-reveal';
-
-interface StatItem {
-    id: number;
-    value: string;
-    label_en: string;
-    label_ar: string;
-}
 
 interface ServiceItem {
     id: number;
@@ -71,7 +63,6 @@ interface HeroData {
 interface HomeProps {
     hero?: HeroData | null;
     services?: ServiceItem[];
-    stats?: StatItem[];
     projects?: ProjectItem[];
     whyChooseUs?: WhyChooseUsItem[];
     clients?: ClientItem[];
@@ -81,7 +72,6 @@ interface HomeProps {
 export default function Home({
     hero,
     services = [],
-    stats = [],
     projects = [],
     whyChooseUs = [],
     clients = [],
@@ -122,10 +112,6 @@ export default function Home({
 
                 <SectionReveal delay={100}>
                     <WhyChooseUsSection items={whyChooseUs} />
-                </SectionReveal>
-
-                <SectionReveal>
-                    <StatsSection stats={stats} />
                 </SectionReveal>
 
                 <SectionReveal delay={100}>

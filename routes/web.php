@@ -13,7 +13,6 @@ use App\Models\HseContent;
 use App\Models\ManpowerCategory;
 use App\Models\Project;
 use App\Models\Service;
-use App\Models\Stat;
 use App\Models\WhyChooseUs;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,7 +20,6 @@ use Inertia\Inertia;
 Route::get('/', function () {
     $hero = HeroSection::where('page', 'home')->where('is_active', true)->first();
     $services = Service::where('is_active', true)->orderBy('order')->with('items')->get();
-    $stats = Stat::where('is_active', true)->orderBy('order')->get();
     $projects = Project::where('is_active', true)->orderBy('order')->limit(12)->get();
     $whyChooseUs = WhyChooseUs::where('is_active', true)->orderBy('order')->get();
     $clients = Client::where('is_active', true)->orderBy('order')->get();
@@ -30,7 +28,6 @@ Route::get('/', function () {
     return Inertia::render('Home', [
         'hero' => $hero,
         'services' => $services,
-        'stats' => $stats,
         'projects' => $projects,
         'whyChooseUs' => $whyChooseUs,
         'clients' => $clients,
