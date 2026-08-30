@@ -17,6 +17,8 @@ export default function Header(): JSX.Element {
     const { language, setLanguage, t, direction, languages } = useLanguage();
     const { url, props } = usePage();
     const scrollY = useScroll();
+    const logos = (props.logos ?? {}) as { default?: string; main?: string };
+    const logoSrc = logos.default ?? '/logo.png';
 
     const isScrolled = scrollY > 20;
 
@@ -47,7 +49,7 @@ export default function Header(): JSX.Element {
                 <div className="navbar__inner">
                     <Link href="/" className="navbar__logo">
                         <img
-                            src="/logo.png"
+                            src={logoSrc}
                             alt={language === 'en' ? 'Arkaan Construction Company' : 'شركة أركان للمقاولات'}
                             className="navbar__logo-img"
                         />
@@ -122,7 +124,7 @@ export default function Header(): JSX.Element {
                     >
                         <div className="flex items-center justify-between border-b border-border p-5">
                             <Link href="/" onClick={() => setIsMenuOpen(false)}>
-                                <img src="/logo.png" alt="Arkaan" className="h-10 w-auto" />
+                                <img src={logoSrc} alt="Arkaan" className="h-10 w-auto" />
                             </Link>
                             <button
                                 type="button"

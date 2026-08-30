@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Support\PublicAsset;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -28,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->brandName('Arkaan Global')
-            ->brandLogo(asset('logo.png'))
+            ->brandLogo(PublicAsset::url('logo.png'))
             ->brandLogoHeight('2.5rem')
             ->favicon(asset('favicon/favicon.ico'))
             ->colors([

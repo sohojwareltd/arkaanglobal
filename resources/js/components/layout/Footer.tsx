@@ -10,9 +10,11 @@ interface ContactInfoMap {
 
 export default function Footer(): JSX.Element {
     const { t, language } = useLanguage();
-    const { contactInfo = {} } = usePage().props as {
+    const { contactInfo = {}, logos = {} } = usePage().props as {
         contactInfo?: ContactInfoMap;
+        logos?: { default?: string; main?: string };
     };
+    const logoMainSrc = logos.main ?? '/logo-main.png';
 
     const getContactValue = (key: string): string => {
         const item = contactInfo?.[key];
@@ -49,7 +51,7 @@ export default function Footer(): JSX.Element {
                     <div className="lg:col-span-1">
                         <Link href="/" className="mb-5 inline-flex items-center gap-3">
                             <img
-                                src="/logo-main.png"
+                                src={logoMainSrc}
                                 alt={language === 'en' ? 'Arkaan Construction Company' : 'شركة أركان للمقاولات'}
                                 className="h-12 w-auto"
                             />

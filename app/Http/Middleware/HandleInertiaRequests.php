@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\PublicAsset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Inertia\Middleware;
@@ -119,6 +120,10 @@ class HandleInertiaRequests extends Middleware
             ],
             'contactInfo' => $contactInfo,
             'settings' => $settings,
+            'logos' => [
+                'default' => PublicAsset::url('logo.png'),
+                'main' => PublicAsset::url('logo-main.png'),
+            ],
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),

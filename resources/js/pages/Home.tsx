@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import Layout from '@/components/layout/Layout';
 import HeroSection from '@/components/home/HeroSection';
 import ServicesSection from '@/components/home/ServicesSection';
@@ -77,8 +77,10 @@ export default function Home({
     clients = [],
     clientCategories = [],
 }: HomeProps) {
+    const { logos = {} } = usePage().props as { logos?: { main?: string } };
     const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
     const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+    const organizationLogo = logos.main ?? `${siteUrl}/logo-main.png`;
 
     return (
         <>
@@ -95,7 +97,9 @@ export default function Home({
                         '@type': 'Organization',
                         name: 'Arkaan Construction Company',
                         url: siteUrl,
-                        logo: `${siteUrl}/logo-main.png`,
+                        logo: organizationLogo.startsWith('http')
+                            ? organizationLogo
+                            : `${siteUrl}${organizationLogo}`,
                     })}
                 </script>
             </Head>

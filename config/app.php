@@ -123,4 +123,17 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Public Asset Version
+    |--------------------------------------------------------------------------
+    |
+    | Bump ASSET_VERSION in .env (e.g. 1232) after updating static files like
+    | the site logo so browsers fetch the new image instead of a cached copy.
+    | When unset, the file's last-modified time is used automatically.
+    |
+    */
+
+    'asset_version' => env('ASSET_VERSION'),
+
 ];

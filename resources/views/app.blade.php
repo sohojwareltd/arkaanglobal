@@ -28,7 +28,7 @@
         <meta property="og:url" content="{{ url()->current() }}">
         <meta property="og:title" content="Arkaan Construction Company - Civil Construction, MEP, Manpower & Cleaning Services">
         <meta property="og:description" content="Trusted partner for civil construction, MEP, manpower supply, and dedicated cleaning services across Saudi Arabia.">
-        <meta property="og:image" content="{{ url('/logo-main.png') }}">
+        <meta property="og:image" content="{{ \App\Support\PublicAsset::url('logo-main.png') }}">
         <meta property="og:site_name" content="Arkaan Construction Company">
         <meta property="og:locale" content="en_US">
         <meta property="og:locale:alternate" content="ar_SA">
@@ -38,7 +38,7 @@
         <meta name="twitter:url" content="{{ url()->current() }}">
         <meta name="twitter:title" content="Arkaan Construction Company - Civil Construction, MEP, Manpower & Cleaning Services">
         <meta name="twitter:description" content="Trusted partner for civil construction, MEP, manpower supply, and dedicated cleaning services across Saudi Arabia.">
-        <meta name="twitter:image" content="{{ url('/logo-main.png') }}">
+        <meta name="twitter:image" content="{{ \App\Support\PublicAsset::url('logo-main.png') }}">
 
         <!-- Canonical URL -->
         <link rel="canonical" href="{{ url()->current() }}">
