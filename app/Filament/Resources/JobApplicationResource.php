@@ -28,69 +28,219 @@ class JobApplicationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Application Details')
-                    ->schema([
-                        Forms\Components\TextInput::make('jobPosting.title_en')
-                            ->label('Position')
-                            ->disabled()
-                            ->dehydrated(false),
-                        Forms\Components\TextInput::make('name')
-                            ->disabled()
-                            ->dehydrated(false),
-                        Forms\Components\TextInput::make('email')
-                            ->disabled()
-                            ->dehydrated(false),
-                        Forms\Components\TextInput::make('cv_original_name')
-                            ->label('CV File')
-                            ->disabled()
-                            ->dehydrated(false),
-                        Forms\Components\TextInput::make('ip_address')
-                            ->label('IP Address')
-                            ->disabled()
-                            ->dehydrated(false),
-                        Forms\Components\DateTimePicker::make('created_at')
-                            ->label('Submitted At')
-                            ->disabled()
-                            ->dehydrated(false),
-                    ])
-                    ->columns(2),
-                Forms\Components\Section::make('Additional Documents')
-                    ->schema([
-                        Forms\Components\Repeater::make('attachments')
-                            ->relationship()
+                Forms\Components\Tabs::make('Application')
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('Overview')
                             ->schema([
-                                Forms\Components\TextInput::make('label')
-                                    ->label('Document Type')
+                                Forms\Components\TextInput::make('application_number')
                                     ->disabled()
                                     ->dehydrated(false),
-                                Forms\Components\TextInput::make('original_name')
-                                    ->label('File Name')
+                                Forms\Components\TextInput::make('jobPosting.title_en')
+                                    ->label('Job Posting')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('position_applied')
+                                    ->label('Trade Applied For')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('name')
+                                    ->label('Full Name')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('email')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('mobile')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\DatePicker::make('date_of_birth')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('nationality')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('gender')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('cv_original_name')
+                                    ->label('CV File')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('photo_original_name')
+                                    ->label('Photo File')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\DateTimePicker::make('created_at')
+                                    ->label('Submitted At')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('ip_address')
+                                    ->label('IP Address')
                                     ->disabled()
                                     ->dehydrated(false),
                             ])
-                            ->columns(2)
-                            ->addable(false)
-                            ->deletable(false)
-                            ->reorderable(false)
-                            ->defaultItems(0),
+                            ->columns(2),
+                        Forms\Components\Tabs\Tab::make('Personal & Preferences')
+                            ->schema([
+                                Forms\Components\TextInput::make('current_country')
+                                    ->label('Country')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('current_city')
+                                    ->label('City')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\Textarea::make('address')
+                                    ->disabled()
+                                    ->dehydrated(false)
+                                    ->columnSpanFull(),
+                                Forms\Components\TextInput::make('years_experience')
+                                    ->label('Years Experience')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('expected_salary')
+                                    ->label('Expected Salary (SAR)')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('availability')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('preferred_location')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('employment_preference')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\Placeholder::make('mobility_summary')
+                                    ->label('Mobility Regions')
+                                    ->content(fn (?JobApplication $record): string => $record
+                                        ? implode(', ', $record->mobility_regions ?? []) ?: '—'
+                                        : '—')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(2),
+                        Forms\Components\Tabs\Tab::make('Passport & Experience')
+                            ->schema([
+                                Forms\Components\TextInput::make('passport_number')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\DatePicker::make('passport_expiry')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('visa_status')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\DatePicker::make('available_to_join')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('highest_qualification')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('field_major')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('institution')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('year_completed')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('recent_employer')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('employer_country')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('employer_position')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\Textarea::make('employment_history')
+                                    ->disabled()
+                                    ->dehydrated(false)
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(2),
+                        Forms\Components\Tabs\Tab::make('Skills & Languages')
+                            ->schema([
+                                Forms\Components\Placeholder::make('skills_summary')
+                                    ->label('Technical Skills')
+                                    ->content(fn (?JobApplication $record): string => $record
+                                        ? implode(', ', $record->technical_skills ?? []) ?: '—'
+                                        : '—')
+                                    ->columnSpanFull(),
+                                Forms\Components\Textarea::make('other_skills')
+                                    ->disabled()
+                                    ->dehydrated(false)
+                                    ->columnSpanFull(),
+                                Forms\Components\Textarea::make('certifications_notes')
+                                    ->label('Certifications (Notes)')
+                                    ->disabled()
+                                    ->dehydrated(false)
+                                    ->columnSpanFull(),
+                                Forms\Components\TextInput::make('lang_english')
+                                    ->label('English')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('lang_arabic')
+                                    ->label('Arabic')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('lang_hindi')
+                                    ->label('Hindi / Urdu')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('lang_bengali')
+                                    ->label('Bengali')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('other_language')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                                Forms\Components\TextInput::make('other_language_level')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                            ])
+                            ->columns(2),
+                        Forms\Components\Tabs\Tab::make('Documents')
+                            ->schema([
+                                Forms\Components\Repeater::make('attachments')
+                                    ->relationship()
+                                    ->schema([
+                                        Forms\Components\TextInput::make('label')
+                                            ->disabled()
+                                            ->dehydrated(false),
+                                        Forms\Components\TextInput::make('original_name')
+                                            ->label('File Name')
+                                            ->disabled()
+                                            ->dehydrated(false),
+                                    ])
+                                    ->columns(2)
+                                    ->addable(false)
+                                    ->deletable(false)
+                                    ->reorderable(false)
+                                    ->defaultItems(0),
+                            ]),
+                        Forms\Components\Tabs\Tab::make('Admin')
+                            ->schema([
+                                Forms\Components\Select::make('status')
+                                    ->options([
+                                        'new' => 'New',
+                                        'reviewing' => 'Reviewing',
+                                        'shortlisted' => 'Shortlisted',
+                                        'rejected' => 'Rejected',
+                                        'hired' => 'Hired',
+                                    ])
+                                    ->required(),
+                                Forms\Components\Textarea::make('admin_comments')
+                                    ->label('Internal Comments')
+                                    ->rows(4)
+                                    ->columnSpanFull(),
+                                Forms\Components\DateTimePicker::make('declaration_accepted_at')
+                                    ->disabled()
+                                    ->dehydrated(false),
+                            ]),
                     ])
-                    ->visible(fn (?JobApplication $record): bool => $record?->attachments()->exists() ?? false),
-                Forms\Components\Section::make('Admin Tracking')
-                    ->schema([
-                        Forms\Components\Select::make('status')
-                            ->options([
-                                'new' => 'New',
-                                'reviewing' => 'Reviewing',
-                                'shortlisted' => 'Shortlisted',
-                                'rejected' => 'Rejected',
-                                'hired' => 'Hired',
-                            ])
-                            ->default('new')
-                            ->required(),
-                        Forms\Components\Textarea::make('admin_comments')
-                            ->label('Internal Comments')
-                            ->rows(4),
-                    ]),
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -98,17 +248,27 @@ class JobApplicationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('jobPosting.title_en')
-                    ->label('Position')
+                Tables\Columns\TextColumn::make('application_number')
+                    ->label('App No.')
                     ->searchable()
                     ->sortable()
-                    ->limit(30),
+                    ->copyable(),
+                Tables\Columns\TextColumn::make('position_applied')
+                    ->label('Trade')
+                    ->searchable()
+                    ->sortable()
+                    ->limit(24),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('mobile')
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->copyable(),
+                Tables\Columns\TextColumn::make('nationality')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('attachments_count')
                     ->counts('attachments')
                     ->label('Docs')
@@ -145,7 +305,7 @@ class JobApplicationResource extends Resource
                         'hired' => 'Hired',
                     ]),
                 Tables\Filters\SelectFilter::make('job_posting_id')
-                    ->label('Position')
+                    ->label('Job Posting')
                     ->relationship('jobPosting', 'title_en'),
             ])
             ->actions([

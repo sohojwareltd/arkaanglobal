@@ -32,6 +32,18 @@ class EditJobApplication extends EditRecord
                 });
         }
 
+        if ($record->photo_path && Storage::disk('local')->exists($record->photo_path)) {
+            $actions[] = Actions\Action::make('downloadPhoto')
+                ->label('Download Photo')
+                ->icon('heroicon-m-photo')
+                ->action(function () use ($record): StreamedResponse {
+                    return Storage::disk('local')->download(
+                        $record->photo_path,
+                        $record->photo_original_name ?? 'photo.jpg',
+                    );
+                });
+        }
+
         $record->loadMissing('attachments');
 
         foreach ($record->attachments as $attachment) {

@@ -66,3 +66,37 @@ export function attachmentLabelText(value: string, language: 'en' | 'ar'): strin
 
     return value;
 }
+
+export const MOBILITY_REGIONS = [
+    'Saudi Arabia',
+    'GCC',
+    'Middle East',
+    'Asia',
+    'Europe',
+    'Worldwide',
+] as const;
+
+export const TECHNICAL_SKILL_OPTIONS = [
+    'Civil / Structural',
+    'Electrical / MEP',
+    'Mechanical / Piping',
+    'Welding / Fabrication',
+    'Scaffolding / Rigging',
+    'Heavy Equipment',
+    'HVAC',
+    'Finishing',
+    'QA/QC',
+    'HSE',
+    'Document Control',
+    'Other',
+] as const;
+
+export const LANGUAGE_LEVELS = ['Basic', 'Intermediate', 'Good', 'Fluent', 'Native'] as const;
+
+export const EMPLOYMENT_PREFERENCES = [
+    'Any',
+    'Permanent',
+    'Contract',
+    'Project Based',
+    'Temporary',
+] as const;

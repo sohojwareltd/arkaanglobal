@@ -117,6 +117,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
+                'application_number' => fn () => $request->session()->get('application_number'),
             ],
             'contactInfo' => $contactInfo,
             'settings' => $settings,

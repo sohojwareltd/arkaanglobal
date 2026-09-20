@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { ArrowLeft, Plus, Trash2, Upload } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 import Layout from '@/components/layout/Layout';
-import SectionHeader from '@/components/ui/section-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import {
-    ATTACHMENT_LABEL_OPTIONS,
-    attachmentLabelText,
+    EMPLOYMENT_PREFERENCES,
+    LANGUAGE_LEVELS,
+    MOBILITY_REGIONS,
+    TECHNICAL_SKILL_OPTIONS,
     type JobPosting,
 } from '@/lib/careers-utils';
 
@@ -19,81 +20,117 @@ interface CareerApplyProps {
     job: JobPosting;
 }
 
-interface ExtraDocument {
-    id: number;
-    label: string;
-    file: File | null;
-}
-
-let documentIdCounter = 0;
-
-function createDocumentRow(): ExtraDocument {
-    documentIdCounter += 1;
-
-    return {
-        id: documentIdCounter,
-        label: 'passport',
-        file: null,
-    };
+function FormSection({
+    title,
+    children,
+}: {
+    title: string;
+    children: React.ReactNode;
+}): JSX.Element {
+    return (
+        <div className="intl-app-card">
+            <div className="intl-app-card__title">{title}</div>
+            <div className="intl-app-card__body">{children}</div>
+        </div>
+    );
 }
 
 export default function CareerApply({ job }: CareerApplyProps): JSX.Element {
-    const { t, language, direction } = useLanguage();
+    const { language, direction } = useLanguage();
     const { toast } = useToast();
+    const formRef = useRef<HTMLFormElement>(null);
+    const [formKey, setFormKey] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [extraDocuments, setExtraDocuments] = useState<ExtraDocument[]>([]);
-    const { flash } = usePage().props as { flash?: { success?: boolean } };
+    const [mobility, setMobility] = useState<string[]>([]);
+    const [skills, setSkills] = useState<string[]>([]);
+    const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+    const [declaration, setDeclaration] = useState(false);
 
-    const title = language === 'en' ? job.title_en : job.title_ar;
+    const { flash, logos = {} } = usePage().props as {
+        flash?: { success?: boolean; application_number?: string };
+        logos?: { main?: string };
+    };
+
+    const defaultPosition = job.title_en;
 
     useEffect(() => {
         if (flash?.success) {
             toast({
-                title: language === 'en' ? 'Application Submitted' : 'تم إرسال الطلب',
-                description: t('careers.form.success'),
+                title: 'Application Submitted',
+                description: flash.application_number
+                    ? `Your application number is ${flash.application_number}.`
+                    : 'We have received your application.',
             });
         }
-    }, [flash?.success, language, t, toast]);
+    }, [flash?.success, flash?.application_number, toast]);
 
-    const addDocumentRow = (): void => {
-        if (extraDocuments.length >= 5) {
+    useEffect(() => {
+        return () => {
+            if (photoPreview) {
+                URL.revokeObjectURL(photoPreview);
+            }
+        };
+    }, [photoPreview]);
+
+    const toggleInList = (value: string, list: string[], setter: (next: string[]) => void): void => {
+        if (list.includes(value)) {
+            setter(list.filter((item) => item !== value));
+
             return;
         }
 
-        setExtraDocuments((rows) => [...rows, createDocumentRow()]);
+        setter([...list, value]);
     };
 
-    const removeDocumentRow = (id: number): void => {
-        setExtraDocuments((rows) => rows.filter((row) => row.id !== id));
+    const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        const file = event.target.files?.[0];
+
+        if (photoPreview) {
+            URL.revokeObjectURL(photoPreview);
+        }
+
+        if (!file) {
+            setPhotoPreview(null);
+
+            return;
+        }
+
+        setPhotoPreview(URL.createObjectURL(file));
     };
 
-    const updateDocumentLabel = (id: number, label: string): void => {
-        setExtraDocuments((rows) =>
-            rows.map((row) => (row.id === id ? { ...row, label } : row)),
-        );
-    };
+    const clearForm = (): void => {
+        formRef.current?.reset();
+        setMobility([]);
+        setSkills([]);
+        setDeclaration(false);
 
-    const updateDocumentFile = (id: number, file: File | null): void => {
-        setExtraDocuments((rows) =>
-            rows.map((row) => (row.id === id ? { ...row, file } : row)),
-        );
+        if (photoPreview) {
+            URL.revokeObjectURL(photoPreview);
+        }
+
+        setPhotoPreview(null);
+        setFormKey((key) => key + 1);
     };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
         event.preventDefault();
 
+        if (!declaration) {
+            toast({
+                title: 'Declaration required',
+                description: 'Please accept the applicant declaration before submitting.',
+                variant: 'destructive',
+            });
+
+            return;
+        }
+
         const formData = new FormData(event.currentTarget);
         formData.set('job_posting_id', String(job.id));
+        formData.set('declaration', '1');
 
-        extraDocuments.forEach((document, index) => {
-            if (document.file) {
-                formData.append(`attachments[${index}]`, document.file);
-                formData.append(
-                    `attachment_labels[${index}]`,
-                    attachmentLabelText(document.label, language),
-                );
-            }
-        });
+        mobility.forEach((region) => formData.append('mobility[]', region));
+        skills.forEach((skill) => formData.append('skills[]', skill));
 
         setIsSubmitting(true);
 
@@ -102,103 +139,392 @@ export default function CareerApply({ job }: CareerApplyProps): JSX.Element {
             preserveScroll: true,
             onFinish: () => setIsSubmitting(false),
             onSuccess: () => {
-                event.currentTarget.reset();
-                setExtraDocuments([]);
+                clearForm();
             },
         });
     };
 
-    const pageTitle =
-        language === 'en'
-            ? `Apply — ${title} - Arkaan Construction Company`
-            : `التقديم — ${title} - شركة أركان للمقاولات`;
+    const pageTitle = useMemo(
+        () => `International Job Application — ${defaultPosition}`,
+        [defaultPosition],
+    );
+
+    const logoMain = logos.main;
 
     return (
         <>
             <Head title={pageTitle} />
 
             <Layout>
-                <section className="careers-form-section">
-                    <div className="careers-form-section__inner">
+                <section className="intl-app-hero">
+                    <div className="intl-app-hero__inner">
                         <Link
                             href={`/careers/${job.id}`}
-                            className="career-detail__back"
+                            className="career-detail__back intl-app-hero__back"
                             data-cursor-hover
                         >
                             <ArrowLeft
                                 className={`h-4 w-4 ${direction === 'rtl' ? 'rotate-180' : ''}`}
                             />
-                            {language === 'en' ? 'Back to Job Details' : 'العودة إلى تفاصيل الوظيفة'}
+                            Back to Job Details
                         </Link>
 
-                        <SectionHeader
-                            tag={language === 'en' ? 'Apply Now' : 'قدّم الآن'}
-                            title={
-                                language === 'en' ? (
-                                    <>
-                                        Apply for <em>{title}</em>
-                                    </>
-                                ) : (
-                                    <>
-                                        التقديم على <em>{title}</em>
-                                    </>
-                                )
-                            }
-                            subtitle={
-                                language === 'en'
-                                    ? 'Submit your CV and any supporting documents. PDF, DOC, DOCX, JPG, and PNG files up to 5 MB each are accepted.'
-                                    : 'قدّم سيرتك الذاتية وأي مستندات داعمة. يُقبل PDF و DOC و DOCX و JPG و PNG بحد أقصى 5 ميجابايت لكل ملف.'
-                            }
-                            centered={false}
+                        {logoMain && (
+                            <img src={logoMain} alt="Arkaan" className="intl-app-hero__logo" />
+                        )}
+
+                        <h1 className="intl-app-hero__title">International Job Application</h1>
+                        <p className="intl-app-hero__brand">ARKAAN CONSTRUCTION COMPANY — International Recruitment</p>
+                        <p className="intl-app-hero__sub">
+                            Complete all required sections. Fields marked with * are mandatory.
+                        </p>
+                    </div>
+                </section>
+
+                <div className="intl-app-container">
+                    {flash?.success && flash.application_number && (
+                        <div className="intl-app-success" role="status">
+                            <strong>Application submitted successfully.</strong>
+                            <p>
+                                Your application number is{' '}
+                                <span className="intl-app-success__number">{flash.application_number}</span>.
+                                Please save this reference for future correspondence.
+                            </p>
+                        </div>
+                    )}
+
+                    <form
+                        key={formKey}
+                        ref={formRef}
+                        className="intl-app-form"
+                        onSubmit={handleSubmit}
+                        encType="multipart/form-data"
+                        noValidate
+                    >
+                        <input
+                            type="text"
+                            name="website"
+                            tabIndex={-1}
+                            autoComplete="off"
+                            className="careers-form__honeypot"
+                            aria-hidden="true"
                         />
+                        <input type="hidden" name="job_posting_id" value={job.id} />
 
-                        <form
-                            className="careers-form"
-                            onSubmit={handleSubmit}
-                            encType="multipart/form-data"
-                            noValidate
-                        >
-                            <input
-                                type="text"
-                                name="website"
-                                tabIndex={-1}
-                                autoComplete="off"
-                                className="careers-form__honeypot"
-                                aria-hidden="true"
-                            />
+                        <FormSection title="1. Personal Information">
+                            <div className="intl-app-grid">
+                                <div>
+                                    <Label htmlFor="full_name">
+                                        Full Name <span className="intl-app-required">*</span>
+                                    </Label>
+                                    <Input id="full_name" name="full_name" required maxLength={255} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="dob">
+                                        Date of Birth <span className="intl-app-required">*</span>
+                                    </Label>
+                                    <Input id="dob" name="dob" type="date" required />
+                                </div>
+                                <div>
+                                    <Label htmlFor="nationality">
+                                        Nationality <span className="intl-app-required">*</span>
+                                    </Label>
+                                    <Input id="nationality" name="nationality" required maxLength={255} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="gender">
+                                        Gender <span className="intl-app-required">*</span>
+                                    </Label>
+                                    <select id="gender" name="gender" className="intl-app-select" required defaultValue="">
+                                        <option value="" disabled>
+                                            Select
+                                        </option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <Label htmlFor="mobile">
+                                        Mobile / WhatsApp <span className="intl-app-required">*</span>
+                                    </Label>
+                                    <Input id="mobile" name="mobile" type="tel" required maxLength={50} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="email">
+                                        Email Address <span className="intl-app-required">*</span>
+                                    </Label>
+                                    <Input id="email" name="email" type="email" required maxLength={255} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="country">Current Country</Label>
+                                    <Input id="country" name="country" maxLength={255} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="city">Current City</Label>
+                                    <Input id="city" name="city" maxLength={255} />
+                                </div>
+                                <div className="intl-app-full">
+                                    <Label htmlFor="address">Address</Label>
+                                    <Input id="address" name="address" maxLength={1000} />
+                                </div>
+                            </div>
+                        </FormSection>
 
-                            <input type="hidden" name="job_posting_id" value={job.id} />
-
-                            <div className="careers-form__grid">
-                                <div className="careers-form__field">
-                                    <Label htmlFor="name">{t('careers.form.name')}</Label>
+                        <FormSection title="2. Position & Job Preferences">
+                            <div className="intl-app-grid">
+                                <div>
+                                    <Label htmlFor="position">
+                                        Position / Trade Applied For <span className="intl-app-required">*</span>
+                                    </Label>
                                     <Input
-                                        id="name"
-                                        name="name"
-                                        type="text"
+                                        id="position"
+                                        name="position"
+                                        defaultValue={defaultPosition}
                                         required
                                         maxLength={255}
-                                        autoComplete="name"
                                     />
                                 </div>
-
-                                <div className="careers-form__field">
-                                    <Label htmlFor="email">{t('careers.form.email')}</Label>
+                                <div>
+                                    <Label htmlFor="experience">
+                                        Years of Relevant Experience <span className="intl-app-required">*</span>
+                                    </Label>
                                     <Input
-                                        id="email"
-                                        name="email"
-                                        type="email"
+                                        id="experience"
+                                        name="experience"
+                                        type="number"
+                                        min={0}
+                                        max={80}
                                         required
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="salary">Expected Basic Salary (SAR)</Label>
+                                    <Input id="salary" name="salary" type="number" min={0} step="0.01" />
+                                </div>
+                                <div>
+                                    <Label htmlFor="availability">Availability / Notice Period</Label>
+                                    <Input
+                                        id="availability"
+                                        name="availability"
+                                        placeholder="e.g. Immediately / 30 days"
                                         maxLength={255}
-                                        autoComplete="email"
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="location">Preferred Work Location</Label>
+                                    <Input
+                                        id="location"
+                                        name="location"
+                                        placeholder="Saudi Arabia / GCC / Worldwide"
+                                        maxLength={255}
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="employment">Employment Preference</Label>
+                                    <select
+                                        id="employment"
+                                        name="employment"
+                                        className="intl-app-select"
+                                        defaultValue="Any"
+                                    >
+                                        {EMPLOYMENT_PREFERENCES.map((option) => (
+                                            <option key={option} value={option}>
+                                                {option}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        </FormSection>
+
+                        <FormSection title="3. Passport & Mobility">
+                            <div className="intl-app-grid">
+                                <div>
+                                    <Label htmlFor="passport">Passport Number</Label>
+                                    <Input id="passport" name="passport" maxLength={100} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="passport_expiry">Passport Expiry Date</Label>
+                                    <Input id="passport_expiry" name="passport_expiry" type="date" />
+                                </div>
+                                <div>
+                                    <Label htmlFor="visa_status">Current Visa / Residency Status</Label>
+                                    <Input
+                                        id="visa_status"
+                                        name="visa_status"
+                                        placeholder="e.g. Iqama, Visit Visa, Outside KSA"
+                                        maxLength={255}
+                                    />
+                                </div>
+                                <div>
+                                    <Label htmlFor="join_date">Available to Join</Label>
+                                    <Input id="join_date" name="join_date" type="date" />
+                                </div>
+                            </div>
+                            <div className="intl-app-checks">
+                                {MOBILITY_REGIONS.map((region) => (
+                                    <label key={region} className="intl-app-check">
+                                        <input
+                                            type="checkbox"
+                                            checked={mobility.includes(region)}
+                                            onChange={() => toggleInList(region, mobility, setMobility)}
+                                        />
+                                        {region}
+                                    </label>
+                                ))}
+                            </div>
+                        </FormSection>
+
+                        <FormSection title="4. Education & Qualifications">
+                            <div className="intl-app-grid">
+                                <div>
+                                    <Label htmlFor="qualification">Highest Qualification</Label>
+                                    <Input id="qualification" name="qualification" maxLength={255} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="major">Field / Major</Label>
+                                    <Input id="major" name="major" maxLength={255} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="institution">Institution</Label>
+                                    <Input id="institution" name="institution" maxLength={255} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="year">Year Completed</Label>
+                                    <Input id="year" name="year" type="number" min={1950} max={new Date().getFullYear() + 1} />
+                                </div>
+                            </div>
+                        </FormSection>
+
+                        <FormSection title="5. Employment & Project Experience">
+                            <div className="intl-app-stack">
+                                <div>
+                                    <Label htmlFor="employer">Most Recent Employer / Company</Label>
+                                    <Input id="employer" name="employer" maxLength={255} />
+                                </div>
+                                <div className="intl-app-grid">
+                                    <div>
+                                        <Label htmlFor="employer_country">Country</Label>
+                                        <Input id="employer_country" name="employer_country" maxLength={255} />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="employer_position">Position / Trade</Label>
+                                        <Input id="employer_position" name="employer_position" maxLength={255} />
+                                    </div>
+                                </div>
+                                <div>
+                                    <Label htmlFor="employment_history">Employment History</Label>
+                                    <textarea
+                                        id="employment_history"
+                                        name="employment_history"
+                                        className="intl-app-textarea"
+                                        rows={5}
+                                        placeholder="Company, project/client, position, country, dates and key responsibilities..."
                                     />
                                 </div>
                             </div>
+                        </FormSection>
 
-                            <div className="careers-form__field">
-                                <Label htmlFor="cv">{t('careers.form.cv')}</Label>
-                                <div className="careers-form__file">
-                                    <Upload className="h-5 w-5 text-primary" />
+                        <FormSection title="6. Technical Skills & Certifications">
+                            <div className="intl-app-checks intl-app-checks--skills">
+                                {TECHNICAL_SKILL_OPTIONS.map((skill) => (
+                                    <label key={skill} className="intl-app-check">
+                                        <input
+                                            type="checkbox"
+                                            checked={skills.includes(skill)}
+                                            onChange={() => toggleInList(skill, skills, setSkills)}
+                                        />
+                                        {skill === 'HVAC' ? 'HVAC / Refrigeration' : skill === 'Finishing' ? 'Finishing / Tiles / Masonry' : skill === 'QA/QC' ? 'QA/QC / Inspection' : skill === 'HSE' ? 'HSE / Safety' : skill === 'Document Control' ? 'Document Control / Admin' : skill}
+                                    </label>
+                                ))}
+                            </div>
+                            <div className="intl-app-stack intl-app-stack--spaced">
+                                <div>
+                                    <Label htmlFor="other_skills">Other Skills / Equipment / Software</Label>
+                                    <textarea id="other_skills" name="other_skills" className="intl-app-textarea" rows={3} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="certifications">Professional / Safety Certifications</Label>
+                                    <textarea
+                                        id="certifications"
+                                        name="certifications"
+                                        className="intl-app-textarea"
+                                        rows={3}
+                                        placeholder="e.g. Aramco approval, NEBOSH, IOSH, OSHA, trade certificate, driving license..."
+                                    />
+                                </div>
+                            </div>
+                        </FormSection>
+
+                        <FormSection title="7. Language Proficiency">
+                            <div className="intl-app-grid">
+                                {(
+                                    [
+                                        ['english', 'English'],
+                                        ['arabic', 'Arabic'],
+                                        ['hindi', 'Hindi / Urdu'],
+                                        ['bengali', 'Bengali'],
+                                    ] as const
+                                ).map(([name, label]) => (
+                                    <div key={name}>
+                                        <Label htmlFor={name}>{label}</Label>
+                                        <select id={name} name={name} className="intl-app-select" defaultValue="">
+                                            <option value="">—</option>
+                                            {LANGUAGE_LEVELS.map((level) => (
+                                                <option key={level} value={level}>
+                                                    {level}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                ))}
+                                <div>
+                                    <Label htmlFor="other_language">Other Language</Label>
+                                    <Input id="other_language" name="other_language" maxLength={100} />
+                                </div>
+                                <div>
+                                    <Label htmlFor="other_language_level">Level</Label>
+                                    <select
+                                        id="other_language_level"
+                                        name="other_language_level"
+                                        className="intl-app-select"
+                                        defaultValue=""
+                                    >
+                                        <option value="">—</option>
+                                        {LANGUAGE_LEVELS.map((level) => (
+                                            <option key={level} value={level}>
+                                                {level}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                        </FormSection>
+
+                        <FormSection title="8. Upload Your Documents">
+                            <div className="intl-app-grid intl-app-grid--docs">
+                                <div className="intl-app-photo">
+                                    {photoPreview && (
+                                        <img
+                                            src={photoPreview}
+                                            alt="Photo preview"
+                                            className="intl-app-photo__preview"
+                                        />
+                                    )}
+                                    <Label htmlFor="photo">Passport-Size Photo (JPG/PNG)</Label>
+                                    <Input
+                                        id="photo"
+                                        name="photo"
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/jpg"
+                                        onChange={handlePhotoChange}
+                                    />
+                                    <p className="intl-app-help">Optional — max 5 MB</p>
+                                </div>
+                                <div>
+                                    <Label htmlFor="cv">
+                                        CV / Resume <span className="intl-app-required">*</span>
+                                    </Label>
                                     <Input
                                         id="cv"
                                         name="cv"
@@ -206,136 +532,64 @@ export default function CareerApply({ job }: CareerApplyProps): JSX.Element {
                                         required
                                         accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                     />
+                                    <p className="intl-app-help">PDF, DOC, or DOCX — max 5 MB</p>
                                 </div>
-                                <p className="careers-form__hint">
-                                    {language === 'en'
-                                        ? 'Required — PDF, DOC, or DOCX (max 5 MB)'
-                                        : 'مطلوب — PDF أو DOC أو DOCX (بحد أقصى 5 ميجابايت)'}
+                                <div className="intl-app-full">
+                                    <Label htmlFor="cert_files">Certificates & Supporting Documents</Label>
+                                    <Input
+                                        id="cert_files"
+                                        name="cert_files[]"
+                                        type="file"
+                                        multiple
+                                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,application/pdf,image/jpeg,image/png"
+                                    />
+                                    <p className="intl-app-help">Optional — up to 5 files, max 5 MB each</p>
+                                </div>
+                            </div>
+                        </FormSection>
+
+                        <FormSection title="9. Applicant Declaration">
+                            <div className="intl-app-notice">
+                                I confirm that the information provided is true and accurate to the best of my
+                                knowledge. I understand that submission of this application does not guarantee
+                                employment and that selection is subject to document verification, client/project
+                                requirements, interviews, trade tests, medical fitness and applicable laws.
+                            </div>
+                            <label className="intl-app-check intl-app-check--declaration">
+                                <input
+                                    type="checkbox"
+                                    name="declaration"
+                                    checked={declaration}
+                                    onChange={(event) => setDeclaration(event.target.checked)}
+                                    value="1"
+                                />
+                                I agree to the applicant declaration. <span className="intl-app-required">*</span>
+                            </label>
+                        </FormSection>
+
+                        <div className="intl-app-card">
+                            <div className="intl-app-card__body">
+                                <div className="intl-app-actions">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="intl-app-btn-secondary"
+                                        onClick={clearForm}
+                                        disabled={isSubmitting}
+                                    >
+                                        Clear Form
+                                    </Button>
+                                    <Button type="submit" className="btn-gold" disabled={isSubmitting} data-cursor-hover>
+                                        {isSubmitting ? 'Submitting...' : 'Submit Job Application'}
+                                    </Button>
+                                </div>
+                                <p className="intl-app-help intl-app-help--right">
+                                    Application No. will be generated automatically after submission.
                                 </p>
                             </div>
-
-                            <div className="careers-form__attachments">
-                                <div className="careers-form__attachments-header">
-                                    <div>
-                                        <h3 className="careers-form__attachments-title">
-                                            {language === 'en'
-                                                ? 'Additional Documents'
-                                                : 'مستندات إضافية'}
-                                        </h3>
-                                        <p className="careers-form__hint">
-                                            {language === 'en'
-                                                ? 'Optional — passport copy, certificates, licenses, etc. (up to 5 files)'
-                                                : 'اختياري — نسخة جواز السفر، الشهادات، الرخص، إلخ (حتى 5 ملفات)'}
-                                        </p>
-                                    </div>
-                                    {extraDocuments.length < 5 && (
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            className="btn-gold-outline"
-                                            onClick={addDocumentRow}
-                                            data-cursor-hover
-                                        >
-                                            <Plus className="h-4 w-4" />
-                                            {language === 'en' ? 'Add Document' : 'إضافة مستند'}
-                                        </Button>
-                                    )}
-                                </div>
-
-                                {extraDocuments.length > 0 && (
-                                    <div className="careers-form__attachment-list">
-                                        {extraDocuments.map((document) => (
-                                            <div
-                                                key={document.id}
-                                                className="careers-form__attachment-row"
-                                            >
-                                                <div className="careers-form__field">
-                                                    <Label
-                                                        htmlFor={`attachment-label-${document.id}`}
-                                                    >
-                                                        {language === 'en'
-                                                            ? 'Document Type'
-                                                            : 'نوع المستند'}
-                                                    </Label>
-                                                    <select
-                                                        id={`attachment-label-${document.id}`}
-                                                        className="careers-form__select"
-                                                        value={document.label}
-                                                        onChange={(event) =>
-                                                            updateDocumentLabel(
-                                                                document.id,
-                                                                event.target.value,
-                                                            )
-                                                        }
-                                                    >
-                                                        {ATTACHMENT_LABEL_OPTIONS.map((option) => (
-                                                            <option
-                                                                key={option.value}
-                                                                value={option.value}
-                                                            >
-                                                                {language === 'en'
-                                                                    ? option.en
-                                                                    : option.ar}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-
-                                                <div className="careers-form__field careers-form__attachment-file">
-                                                    <Label
-                                                        htmlFor={`attachment-file-${document.id}`}
-                                                    >
-                                                        {language === 'en' ? 'File' : 'الملف'}
-                                                    </Label>
-                                                    <div className="careers-form__file">
-                                                        <Upload className="h-5 w-5 text-primary" />
-                                                        <Input
-                                                            id={`attachment-file-${document.id}`}
-                                                            type="file"
-                                                            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,application/pdf,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                                            onChange={(event) =>
-                                                                updateDocumentFile(
-                                                                    document.id,
-                                                                    event.target.files?.[0] ?? null,
-                                                                )
-                                                            }
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                                <button
-                                                    type="button"
-                                                    className="careers-form__attachment-remove"
-                                                    onClick={() => removeDocumentRow(document.id)}
-                                                    aria-label={
-                                                        language === 'en'
-                                                            ? 'Remove document'
-                                                            : 'إزالة المستند'
-                                                    }
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-
-                            <Button
-                                type="submit"
-                                className="btn-gold"
-                                disabled={isSubmitting}
-                                data-cursor-hover
-                            >
-                                {isSubmitting
-                                    ? language === 'en'
-                                        ? 'Submitting...'
-                                        : 'جاري الإرسال...'
-                                    : t('careers.form.submit')}
-                            </Button>
-                        </form>
-                    </div>
-                </section>
+                        </div>
+                    </form>
+                </div>
             </Layout>
         </>
     );
