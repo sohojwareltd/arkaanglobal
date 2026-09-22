@@ -3679,9 +3679,14 @@
 
 /* International job application form */
 .intl-app-hero {
-    padding: 48px 0 32px;
-    background: linear-gradient(180deg, #f4f7f4 0%, #fafbf9 100%);
+    padding: 32px 0 24px;
+    background: #fafbf9;
     border-bottom: 1px solid rgba(45, 106, 53, 0.1);
+}
+
+.intl-app-hero--minimal {
+    padding-top: 28px;
+    padding-bottom: 20px;
 }
 
 .intl-app-hero__inner {
@@ -3691,38 +3696,59 @@
     text-align: center;
 }
 
-.intl-app-hero__back {
-    display: inline-flex;
-    margin-bottom: 20px;
+.intl-app-hero__inner--minimal {
+    text-align: start;
 }
 
-.intl-app-hero__logo {
-    height: 56px;
-    width: auto;
-    margin: 0 auto 16px;
+.intl-app-hero__job {
+    margin-top: 16px;
+    padding: 20px 22px;
+    background: #fff;
+    border: 1px solid rgba(45, 106, 53, 0.12);
+    border-radius: 12px;
 }
 
-.intl-app-hero__title {
-    font-size: clamp(1.75rem, 4vw, 2.25rem);
-    font-weight: 700;
-    color: var(--color-primary, #2d6a35);
-    margin: 0 0 8px;
-}
-
-.intl-app-hero__brand {
-    font-size: 0.95rem;
+.intl-app-hero__type {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.02em;
-    color: #3d5240;
-    margin: 0 0 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #2d6a35;
+    background: rgba(45, 106, 53, 0.08);
+    border-radius: 999px;
 }
 
-.intl-app-hero__sub {
-    font-size: 0.9rem;
+.intl-app-hero__job-title {
+    margin: 10px 0 8px;
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
+    font-weight: 700;
+    color: #1e4624;
+    line-height: 1.25;
+}
+
+.intl-app-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
     color: #4a5c4d;
-    max-width: 640px;
-    margin: 0 auto;
-    line-height: 1.6;
+}
+
+.intl-app-hero__meta li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.intl-app-hero__hint {
+    margin: 12px 0 0;
+    font-size: 0.8125rem;
+    color: #6b7c6d;
 }
 
 .intl-app-container {
@@ -3756,7 +3782,6 @@
     background: #fff;
     border: 1px solid rgba(45, 106, 53, 0.12);
     border-radius: 14px;
-    overflow: hidden;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
@@ -3779,13 +3804,20 @@
     gap: 16px;
 }
 
+.intl-app-grid > div,
+.intl-app-grid > .intl-app-field,
+.intl-app-grid > .intl-app-lang {
+    min-width: 0;
+}
+
 @media (min-width: 640px) {
     .intl-app-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .intl-app-grid--docs {
-        grid-template-columns: repeat(2, 1fr);
+    .intl-app-grid--other-lang {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
     }
 }
 
@@ -3803,10 +3835,14 @@
     margin-top: 20px;
 }
 
-.intl-app-form label {
+.intl-app-field {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
+    min-width: 0;
+}
+
+.intl-app-field__label {
     font-size: 0.875rem;
     font-weight: 500;
     color: #2a3b2c;
@@ -3818,10 +3854,11 @@
 .intl-app-form input[type='email'],
 .intl-app-form input[type='tel'],
 .intl-app-form input[type='date'],
-.intl-app-form input[type='number'],
-.intl-app-form input[type='file'] {
+.intl-app-form input[type='number'] {
     width: 100%;
+    max-width: 100%;
     font-size: 0.95rem;
+    box-sizing: border-box;
 }
 
 .intl-app-select,
@@ -3831,6 +3868,7 @@
     background: #fff;
     border: 1px solid rgba(45, 106, 53, 0.2);
     border-radius: 8px;
+    max-width: 100%;
 }
 
 .intl-app-textarea {
@@ -3883,10 +3921,214 @@
     color: #4a5c4d;
 }
 
-.intl-app-photo {
+.intl-app-lang-stack {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 22px;
+}
+
+.intl-app-lang {
+    min-width: 0;
+    padding: 14px 16px;
+    background: #f8faf8;
+    border: 1px solid rgba(45, 106, 53, 0.1);
+    border-radius: 10px;
+}
+
+.intl-app-lang__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.intl-app-lang__label {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #2a3b2c;
+}
+
+.intl-app-lang__badge {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #2d6a35;
+    background: #fff;
+    border: 1px solid rgba(45, 106, 53, 0.2);
+    border-radius: 999px;
+    transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.intl-app-lang__badge--pulse {
+    transform: scale(1.06);
+    background: #e8f5ea;
+}
+
+.intl-app-lang__track-wrap {
+    position: relative;
+    height: 28px;
+    display: flex;
+    align-items: center;
+}
+
+.intl-app-lang__track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: rgba(45, 106, 53, 0.12);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.intl-app-lang__fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3d8248, #2d6a35);
+    border-radius: 999px;
+    transition: width 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.intl-app-lang__slider {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    margin: 0;
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+
+.intl-app-lang__slider:focus {
+    outline: none;
+}
+
+.intl-app-lang__slider:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 3px rgba(45, 106, 53, 0.25);
+}
+
+.intl-app-lang__slider::-webkit-slider-runnable-track {
+    height: 6px;
+    background: transparent;
+}
+
+.intl-app-lang__slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    margin-top: -8px;
+    background: #fff;
+    border: 2px solid #2d6a35;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.intl-app-lang__slider:active::-webkit-slider-thumb {
+    transform: scale(1.12);
+    box-shadow: 0 3px 10px rgba(45, 106, 53, 0.35);
+}
+
+.intl-app-lang__slider::-moz-range-track {
+    height: 6px;
+    background: transparent;
+}
+
+.intl-app-lang__slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border: 2px solid #2d6a35;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    transition: transform 0.2s ease;
+}
+
+.intl-app-lang__ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #8a9a8c;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.intl-app-lang__tick {
+    flex: 1;
+    text-align: center;
+}
+
+.intl-app-upload-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.intl-app-field:has(.intl-app-file-tile) {
+    position: relative;
+}
+
+.intl-app-file-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 140px;
+    padding: 20px 16px;
+    text-align: center;
+    background: #f8faf8;
+    border: 2px dashed rgba(45, 106, 53, 0.28);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+.intl-app-file-tile:hover {
+    background: #f0f6f1;
+    border-color: rgba(45, 106, 53, 0.45);
+    transform: translateY(-1px);
+}
+
+.intl-app-file-tile__input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.intl-app-file-tile__icon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.intl-app-file-tile__title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #2d6a35;
+}
+
+.intl-app-file-tile__hint {
+    font-size: 0.75rem;
+    color: #6b7c6d;
+}
+
+.intl-app-field--photo .intl-app-photo__preview {
+    width: 96px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(45, 106, 53, 0.2);
+    margin-bottom: 4px;
 }
 
 .intl-app-photo__preview {

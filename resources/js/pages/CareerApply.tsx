@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin } from 'lucide-react';
 
+import FileUploadTile from '@/components/careers/FileUploadTile';
+import LanguageLevelSlider from '@/components/careers/LanguageLevelSlider';
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,9 +12,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/hooks/use-toast';
 import {
     EMPLOYMENT_PREFERENCES,
-    LANGUAGE_LEVELS,
     MOBILITY_REGIONS,
     TECHNICAL_SKILL_OPTIONS,
+    employmentLabel,
+    formatJobDeadline,
     type JobPosting,
 } from '@/lib/careers-utils';
 
@@ -46,12 +49,13 @@ export default function CareerApply({ job }: CareerApplyProps): JSX.Element {
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
     const [declaration, setDeclaration] = useState(false);
 
-    const { flash, logos = {} } = usePage().props as {
+    const { flash } = usePage().props as {
         flash?: { success?: boolean; application_number?: string };
-        logos?: { main?: string };
     };
 
     const defaultPosition = job.title_en;
+    const jobTitle = language === 'en' ? job.title_en : job.title_ar;
+    const jobLocation = language === 'en' ? job.location_en : job.location_ar;
 
     useEffect(() => {
         if (flash?.success) {
@@ -149,18 +153,16 @@ export default function CareerApply({ job }: CareerApplyProps): JSX.Element {
         [defaultPosition],
     );
 
-    const logoMain = logos.main;
-
     return (
         <>
             <Head title={pageTitle} />
 
             <Layout>
-                <section className="intl-app-hero">
-                    <div className="intl-app-hero__inner">
+                <section className="intl-app-hero intl-app-hero--minimal">
+                    <div className="intl-app-hero__inner intl-app-hero__inner--minimal">
                         <Link
                             href={`/careers/${job.id}`}
-                            className="career-detail__back intl-app-hero__back"
+                            className="career-detail__back"
                             data-cursor-hover
                         >
                             <ArrowLeft
@@ -169,15 +171,29 @@ export default function CareerApply({ job }: CareerApplyProps): JSX.Element {
                             Back to Job Details
                         </Link>
 
-                        {logoMain && (
-                            <img src={logoMain} alt="Arkaan" className="intl-app-hero__logo" />
-                        )}
-
-                        <h1 className="intl-app-hero__title">International Job Application</h1>
-                        <p className="intl-app-hero__brand">ARKAAN CONSTRUCTION COMPANY — International Recruitment</p>
-                        <p className="intl-app-hero__sub">
-                            Complete all required sections. Fields marked with * are mandatory.
-                        </p>
+                        <div className="intl-app-hero__job">
+                            <span className="intl-app-hero__type">
+                                {employmentLabel(job.employment_type, language)}
+                            </span>
+                            <h1 className="intl-app-hero__job-title">{jobTitle}</h1>
+                            <ul className="intl-app-hero__meta">
+                                {jobLocation && (
+                                    <li>
+                                        <MapPin className="h-4 w-4" aria-hidden />
+                                        {jobLocation}
+                                    </li>
+                                )}
+                                {job.application_deadline && (
+                                    <li>
+                                        <Calendar className="h-4 w-4" aria-hidden />
+                                        {language === 'en' ? 'Apply by ' : 'آخر موعد '}
+                                        {formatJobDeadline(job.application_deadline, language)}
+                                    </li>
+                                )}
+                                <li>International job application</li>
+                            </ul>
+                            <p className="intl-app-hero__hint">Required fields are marked *</p>
+                        </div>
                     </div>
                 </section>
 
@@ -457,7 +473,7 @@ export default function CareerApply({ job }: CareerApplyProps): JSX.Element {
                         </FormSection>
 
                         <FormSection title="7. Language Proficiency">
-                            <div className="intl-app-grid">
+                            <div className="intl-app-lang-stack">
                                 {(
                                     [
                                         ['english', 'English'],
@@ -466,44 +482,31 @@ export default function CareerApply({ job }: CareerApplyProps): JSX.Element {
                                         ['bengali', 'Bengali'],
                                     ] as const
                                 ).map(([name, label]) => (
-                                    <div key={name}>
-                                        <Label htmlFor={name}>{label}</Label>
-                                        <select id={name} name={name} className="intl-app-select" defaultValue="">
-                                            <option value="">—</option>
-                                            {LANGUAGE_LEVELS.map((level) => (
-                                                <option key={level} value={level}>
-                                                    {level}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                    <LanguageLevelSlider
+                                        key={`${name}-${formKey}`}
+                                        name={name}
+                                        label={label}
+                                        resetKey={formKey}
+                                    />
                                 ))}
-                                <div>
-                                    <Label htmlFor="other_language">Other Language</Label>
-                                    <Input id="other_language" name="other_language" maxLength={100} />
-                                </div>
-                                <div>
-                                    <Label htmlFor="other_language_level">Level</Label>
-                                    <select
-                                        id="other_language_level"
+                                <div className="intl-app-grid intl-app-grid--other-lang">
+                                    <div className="intl-app-field">
+                                        <Label htmlFor="other_language">Other Language</Label>
+                                        <Input id="other_language" name="other_language" maxLength={100} />
+                                    </div>
+                                    <LanguageLevelSlider
+                                        key={`other_language_level-${formKey}`}
                                         name="other_language_level"
-                                        className="intl-app-select"
-                                        defaultValue=""
-                                    >
-                                        <option value="">—</option>
-                                        {LANGUAGE_LEVELS.map((level) => (
-                                            <option key={level} value={level}>
-                                                {level}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        label="Other Language Level"
+                                        resetKey={formKey}
+                                    />
                                 </div>
                             </div>
                         </FormSection>
 
                         <FormSection title="8. Upload Your Documents">
-                            <div className="intl-app-grid intl-app-grid--docs">
-                                <div className="intl-app-photo">
+                            <div className="intl-app-upload-stack">
+                                <div className="intl-app-field intl-app-field--photo">
                                     {photoPreview && (
                                         <img
                                             src={photoPreview}
@@ -511,40 +514,46 @@ export default function CareerApply({ job }: CareerApplyProps): JSX.Element {
                                             className="intl-app-photo__preview"
                                         />
                                     )}
-                                    <Label htmlFor="photo">Passport-Size Photo (JPG/PNG)</Label>
-                                    <Input
+                                    <FileUploadTile
+                                        key={`photo-${formKey}`}
                                         id="photo"
                                         name="photo"
-                                        type="file"
+                                        label="Passport-Size Photo (JPG/PNG)"
                                         accept="image/jpeg,image/png,image/jpg"
+                                        emptyTitle="Upload passport-size photo"
+                                        formatHint="JPG or PNG — max 5 MB"
+                                        help="Optional"
+                                        resetKey={formKey}
                                         onChange={handlePhotoChange}
                                     />
-                                    <p className="intl-app-help">Optional — max 5 MB</p>
                                 </div>
-                                <div>
-                                    <Label htmlFor="cv">
-                                        CV / Resume <span className="intl-app-required">*</span>
-                                    </Label>
-                                    <Input
-                                        id="cv"
-                                        name="cv"
-                                        type="file"
-                                        required
-                                        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                    />
-                                    <p className="intl-app-help">PDF, DOC, or DOCX — max 5 MB</p>
-                                </div>
-                                <div className="intl-app-full">
-                                    <Label htmlFor="cert_files">Certificates & Supporting Documents</Label>
-                                    <Input
-                                        id="cert_files"
-                                        name="cert_files[]"
-                                        type="file"
-                                        multiple
-                                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,application/pdf,image/jpeg,image/png"
-                                    />
-                                    <p className="intl-app-help">Optional — up to 5 files, max 5 MB each</p>
-                                </div>
+                                <FileUploadTile
+                                    key={`cv-${formKey}`}
+                                    id="cv"
+                                    name="cv"
+                                    label={
+                                        <>
+                                            CV / Resume <span className="intl-app-required">*</span>
+                                        </>
+                                    }
+                                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                    required
+                                    emptyTitle="Upload CV / resume"
+                                    formatHint="PDF, DOC, or DOCX — max 5 MB"
+                                    resetKey={formKey}
+                                />
+                                <FileUploadTile
+                                    key={`cert-${formKey}`}
+                                    id="cert_files"
+                                    name="cert_files[]"
+                                    label="Certificates & Supporting Documents"
+                                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,application/pdf,image/jpeg,image/png"
+                                    multiple
+                                    emptyTitle="Upload certificates or supporting files"
+                                    formatHint="Up to 5 files — max 5 MB each"
+                                    help="Optional"
+                                    resetKey={formKey}
+                                />
                             </div>
                         </FormSection>
 
