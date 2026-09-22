@@ -71,7 +71,7 @@ export default function LanguageLevelSlider({
             <div className="intl-app-lang__ticks" aria-hidden="true">
                 {STEP_LABELS.map((tick) => (
                     <span key={tick} className="intl-app-lang__tick">
-                        {tick === 'Not set' ? '—' : tick.charAt(0)}
+                        {tick === 'Not set' ? 'None' : tick}
                     </span>
                 ))}
             </div>

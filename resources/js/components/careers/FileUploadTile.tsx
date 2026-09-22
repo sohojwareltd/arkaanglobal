@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useState } from 'react';
+import { Download } from 'lucide-react';
 
 interface FileUploadTileProps {
     id?: string;
@@ -53,7 +54,9 @@ export default function FileUploadTile({
         <div className="intl-app-field">
             <span className="intl-app-field__label">{label}</span>
             <label htmlFor={id} className="intl-app-file-tile" data-cursor-hover>
-                <img src="/file-upload.svg" alt="" className="intl-app-file-tile__icon" width={48} height={48} />
+                <span className="intl-app-file-tile__icon-wrap" aria-hidden="true">
+                    <Download className="intl-app-file-tile__icon" strokeWidth={1.75} />
+                </span>
                 <span className="intl-app-file-tile__title">{summary ?? emptyTitle}</span>
                 <span className="intl-app-file-tile__hint">{formatHint}</span>
             </label>
